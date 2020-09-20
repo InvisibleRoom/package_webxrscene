@@ -22,7 +22,7 @@
     "three": "^0.120.1"
   },
   "devDependencies": {
-    "gltf-webpack-loader": "^1.0.6",
+    "gltf-webpack-loader": "^1.0.6"
 
   }
 }
