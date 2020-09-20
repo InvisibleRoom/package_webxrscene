@@ -19,6 +19,9 @@ class Update {
   AddUpdateMethod(name, event){
     this.updateMethod[name] = event;
   }
+  RemoveUpdateMethod(name){
+    delete this.updateMethod[name];
+  }
   __update(){
     this.frame = requestAnimationFrame( this.__update );
     

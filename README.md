@@ -12,19 +12,13 @@ import * as THREE from 'three';
 ## Create Instances
 
 ```js
-const renderer = new Renderer("main-scene-canvas");
-const scene = new THREE.Scene();
-const camera = new Camera();
-const loader = new Loader();
-const controls ={
-  desktop : new DesktopControls(camera.instance, renderer.instance.domElement)
-}
+const webXRScene = new webXRScene("element");
 ```
 
 ## Loader loadStack
 ```js
-const loader = new Loader();
-loader.loadStack({
+
+webXRScene.Loader.loadStack({
   progress: (percentage,singleProgress)=>{
     console.log(percentage,singleProgress);
   },
@@ -43,8 +37,7 @@ loader.loadStack({
 
 ## Loader load
 ```js
-  const loader = new Loader();
-  loader.load({
+  webXRScene.Loader.load({
     url : "URL TO YOUR GLTF MODEL",
     progress : (percentage)=>{
       console.log(percentage);
@@ -61,16 +54,15 @@ loader.loadStack({
 
 ## Update loop
 ```js
-  const loop = new Update();
-
-  loop.AddUpdateMethod("common", ()=>{
+  
+  webXRScene.Update.AddUpdateMethod("common", ()=>{
      renderer.instance.render( scene, camera.instance );
   });
 
   //start the loop
-  loop.start();
+  webXRScene.Update.start();
 
   //stop the loop
-  loop.stop();
+  webXRScene.Update.stop();
 
 ```

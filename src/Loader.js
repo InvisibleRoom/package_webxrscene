@@ -1,7 +1,10 @@
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
+import {AnimationMixer} from 'three';
 import Promise from 'promise-polyfill';
 import {Events} from './Events';
+import * as THREE from 'three';
+
 class Loader {
   constructor(context){
     this.context = context;
@@ -27,7 +30,6 @@ class Loader {
       });    
       Promise.all(promises).then((el)=>{
         let library = {};
-        
         el.map((obj,index)=>{
           library[obj.name] = obj;
         });
@@ -41,6 +43,25 @@ class Loader {
     return new Promise((resolve,reject)=>{
       this.instance.load(url,(gltf)=>{
         gltf.name = name;
+        gltf.mixer = new AnimationMixer(gltf.scene);
+        console.log(gltf);
+
+        gltf.actions = {};
+        gltf.animations.map((anim,index)=>{
+          console.log("anim" , anim);
+          let clipAction = gltf.mixer.clipAction( anim );
+              clipAction.clampWhenFinished = true;
+              clipAction.loop = THREE.LoopOnce;
+              clipAction.name = anim.name;
+          gltf.actions[anim.name] = clipAction;
+
+        })
+        // gltf.action = gltf.mixer.clipAction( gltf.animations[ 0 ] );
+        // gltf.action.clampWhenFinished = true;
+        this.context.Events.addEventListener("OnAnimationLoop",()=>{
+          gltf.mixer.update(this.context.Renderer.clock.getDelta());
+        })
+
         resolve(gltf);
         this.context.Events.dispatchEvent('OnLoad',{name: name, scene : gltf.scene});
       },(_step)=>{

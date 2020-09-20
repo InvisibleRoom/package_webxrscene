@@ -13,7 +13,7 @@ class Renderer {
   
   constructor(id = "app", context){
     this.context = context;
-
+    this.clock = new THREE.Clock();
     this.context.Events.registerEvent('OnAnimationLoop');
     
     this.instance = new THREE.WebGLRenderer({
@@ -26,6 +26,9 @@ class Renderer {
     this.instance.xr.enabled = true;
     this.instance.setAnimationLoop(()=>{
       this.AnimationLoop();
+      
+      var delta = this.clock.getDelta();
+      this.context.Mixer.update(delta);
     });
 
     this.scene = new THREE.Scene();
