@@ -4,13 +4,13 @@
 `npm i webxrscene --save`
 
 ## Import into Projekt
-```
+```js
 import {Renderer,Camera,Update,Loader,DesktopControls} from 'webxrscene';
 ```
 
 ## Create Instances
 
-```
+```js
 const renderer = new Renderer("main-scene-canvas");
 const scene = new THREE.Scene();
 const camera = new Camera();
@@ -21,7 +21,7 @@ const controls ={
 ```
 
 ## Loader loadStack
-```
+```js
 const loader = new Loader();
 loader.loadStack({
   progress: (percentage,singleProgress)=>{console.log("progress", percentage,singleProgress);},
@@ -39,7 +39,7 @@ loader.loadStack({
 ```
 
 ## Loader load
-```
+```js
 const loader = new Loader();
   this.loader.load({
     url : ape,
@@ -57,7 +57,7 @@ const loader = new Loader();
 
 
 ## Update loop
-```
+```js
   this.loop = new Update();
 
   this.loop.AddUpdateMethod("common", ()=>{
