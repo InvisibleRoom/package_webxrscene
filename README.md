@@ -64,7 +64,6 @@ loader.loadStack({
   const loop = new Update();
 
   loop.AddUpdateMethod("common", ()=>{
-      TWEEN.update();
      renderer.instance.render( scene, camera.instance );
   });
 
