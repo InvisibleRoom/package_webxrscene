@@ -1,15 +1,16 @@
 # webxrscene Package
 
-##Installation
+## Installation
 `npm i webxrscene --save`
 
-##Import into Projekt
-`
+## Import into Projekt
+```
 import {Renderer,Camera,Update,Loader,DesktopControls} from 'webxrscene';
-`
+```
+
 ## Create Instances
 
-`
+```
 const renderer = new Renderer("main-scene-canvas");
 const scene = new THREE.Scene();
 const camera = new Camera();
@@ -17,9 +18,10 @@ const loader = new Loader();
 const controls ={
   desktop : new DesktopControls(camera.instance, renderer.instance.domElement)
 }
-`
-##Loader loadStack
-`
+```
+
+## Loader loadStack
+```
 const loader = new Loader();
 loader.loadStack({
   progress: (percentage,singleProgress)=>{console.log("progress", percentage,singleProgress);},
@@ -34,10 +36,10 @@ loader.loadStack({
       scene.add(library[elements].scene);
     });
   });
-`
+```
 
-##Loader load
-`
+## Loader load
+```
 const loader = new Loader();
   this.loader.load({
     url : ape,
@@ -51,16 +53,15 @@ const loader = new Loader();
   }).finally(()=>{
     console.log("load complete");
   });
-`
+```
 
 
-
-##Update loop
-`
+## Update loop
+```
   this.loop = new Update();
 
   this.loop.AddUpdateMethod("common", ()=>{
       TWEEN.update();
      this.renderer.instance.render( this.scene, this.camera.instance );
   });
-`
+```
