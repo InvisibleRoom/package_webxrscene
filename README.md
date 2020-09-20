@@ -6,6 +6,7 @@
 ## Import into Projekt
 ```js
 import {Renderer,Camera,Update,Loader,DesktopControls} from 'webxrscene';
+import * as THREE from 'three';
 ```
 
 ## Create Instances
@@ -40,14 +41,14 @@ loader.loadStack({
 
 ## Loader load
 ```js
-const loader = new Loader();
-  this.loader.load({
+  const loader = new Loader();
+  loader.load({
     url : ape,
     progress : (percentage)=>{
       console.log(percentage);
     },
   }).then((gltf)=>{
-    this.scene.add(gltf.scene);
+    scene.add(gltf.scene);
   }).catch((err)=>{
     console.log("error: " , err );
   }).finally(()=>{
@@ -58,10 +59,10 @@ const loader = new Loader();
 
 ## Update loop
 ```js
-  this.loop = new Update();
+  const loop = new Update();
 
   this.loop.AddUpdateMethod("common", ()=>{
       TWEEN.update();
-     this.renderer.instance.render( this.scene, this.camera.instance );
+     renderer.instance.render( scene, camera.instance );
   });
 ```
