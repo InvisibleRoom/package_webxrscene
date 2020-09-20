@@ -1,11 +1,15 @@
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
 import Promise from 'promise-polyfill';
-
+import {Events} from './Events';
 class Loader {
   constructor(){
     this.instance = new GLTFLoader();
 
+    this.events = new Events();
+    this.events.registerEvent('OnLoadStack');
+    this.events.registerEvent('OnLoad');
+    
     this.dracoLoader = new DRACOLoader();
     this.dracoLoader.setDecoderPath( '/examples/js/libs/draco/' );
     this.instance.setDRACOLoader( this.dracoLoader );
@@ -29,7 +33,7 @@ class Loader {
         el.map((obj,index)=>{
           library[obj.name] = obj;
         });
-
+        this.events.dispatchEvent('OnLoadStack',library);
         resolve(library);
       }).catch(reject);
     });
@@ -40,6 +44,7 @@ class Loader {
       this.instance.load(url,(gltf)=>{
         gltf.name = name;
         resolve(gltf);
+        this.events.dispatchEvent('OnLoad',{name: name, scene : gltf.scene});
       },(_step)=>{
         if(typeof(progress) != "undefined"){
           progress({progress: _step.loaded / _step.total,name : name });
