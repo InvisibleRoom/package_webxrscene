@@ -25,7 +25,9 @@ const controls ={
 ```js
 const loader = new Loader();
 loader.loadStack({
-  progress: (percentage,singleProgress)=>{console.log("progress", percentage,singleProgress);},
+  progress: (percentage,singleProgress)=>{
+    console.log(percentage,singleProgress);
+  },
   stack : [{
     url: "URL TO YOUR GLTF MODEL",
     name:"Name of your model"
@@ -34,7 +36,7 @@ loader.loadStack({
     console.log("library", library);
 
     Object.keys(library).map((elements, index)=>{
-      scene.add(library[elements].scene);
+      console.log(library[elements].scene);
     });
   });
 ```
@@ -43,12 +45,12 @@ loader.loadStack({
 ```js
   const loader = new Loader();
   loader.load({
-    url : ape,
+    url : "URL TO YOUR GLTF MODEL",
     progress : (percentage)=>{
       console.log(percentage);
     },
   }).then((gltf)=>{
-    scene.add(gltf.scene);
+    console.log(gltf.scene);
   }).catch((err)=>{
     console.log("error: " , err );
   }).finally(()=>{
@@ -65,4 +67,11 @@ loader.loadStack({
       TWEEN.update();
      renderer.instance.render( scene, camera.instance );
   });
+
+  //start the loop
+  loop.start();
+
+  //stop the loop
+  loop.stop();
+
 ```
