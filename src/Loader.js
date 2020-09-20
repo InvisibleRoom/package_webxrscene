@@ -3,12 +3,12 @@ import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
 import Promise from 'promise-polyfill';
 import {Events} from './Events';
 class Loader {
-  constructor(){
+  constructor(context){
+    this.context = context;
     this.instance = new GLTFLoader();
 
-    this.events = new Events();
-    this.events.registerEvent('OnLoadStack');
-    this.events.registerEvent('OnLoad');
+    this.context.Events.registerEvent('OnLoadStack');
+    this.context.Events.registerEvent('OnLoad');
     
     this.dracoLoader = new DRACOLoader();
     this.dracoLoader.setDecoderPath( '/examples/js/libs/draco/' );
@@ -19,7 +19,6 @@ class Loader {
     function progress(progress){
       stack.progress(progress, stack);
     }
-    console.log(stack);
     return new Promise((resolve,reject)=>{
       let promises = stack.stack.map((s,index)=>{
         return this.load(Object.assign(s,{
@@ -27,13 +26,12 @@ class Loader {
         }));
       });    
       Promise.all(promises).then((el)=>{
-        console.log("all" , el);
         let library = {};
         
         el.map((obj,index)=>{
           library[obj.name] = obj;
         });
-        this.events.dispatchEvent('OnLoadStack',library);
+        this.context.Events.dispatchEvent('OnLoadStack',library);
         resolve(library);
       }).catch(reject);
     });
@@ -44,7 +42,7 @@ class Loader {
       this.instance.load(url,(gltf)=>{
         gltf.name = name;
         resolve(gltf);
-        this.events.dispatchEvent('OnLoad',{name: name, scene : gltf.scene});
+        this.context.Events.dispatchEvent('OnLoad',{name: name, scene : gltf.scene});
       },(_step)=>{
         if(typeof(progress) != "undefined"){
           progress({progress: _step.loaded / _step.total,name : name });

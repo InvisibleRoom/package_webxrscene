@@ -1,28 +1,33 @@
-function Event(name){
-  this.name = name;
-  this.callbacks = [];
+class Event{
+  constructor(name){
+    this.name = name;
+    this.callbacks = [];
+  }
+  
+  registerCallback(callback){
+    this.callbacks.push(callback);
+  }
 }
-Event.prototype.registerCallback = function(callback){
-  this.callbacks.push(callback);
+
+class Events{
+  constructor(){
+    this.events = {};
+  }
+
+  registerEvent(eventName){
+    var event = new Event(eventName);
+    this.events[eventName] = event;
+  }
+
+  dispatchEvent(eventName, eventArgs){
+    this.events[eventName].callbacks.forEach(function(callback){
+      callback(eventArgs);
+    });
+  }
+  addEventListener(eventName, callback){
+    this.events[eventName].registerCallback(callback);
+  }
 }
 
-function Events(){
-  this.events = {};
-}
-
-Events.prototype.registerEvent = function(eventName){
-  var event = new Event(eventName);
-  this.events[eventName] = event;
-};
-
-Events.prototype.dispatchEvent = function(eventName, eventArgs){
-  this.events[eventName].callbacks.forEach(function(callback){
-    callback(eventArgs);
-  });
-};
-
-Events.prototype.addEventListener = function(eventName, callback){
-  this.events[eventName].registerCallback(callback);
-};
 
 export {Events};

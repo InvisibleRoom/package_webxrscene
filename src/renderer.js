@@ -1,13 +1,20 @@
 import * as THREE from 'three';
-import TWEEN from '@tweenjs/tween.js';
+//import TWEEN from '@tweenjs/tween.js';
 
 import {Events} from './Events';
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { ARButton } from 'three/examples/jsm/webxr/ARButton.js';
+import { Camera } from './Camera.js';
+import { DesktopControls } from './DesktopControls.js';
+import { Loader } from './Loader.js';
+import {webXRScene}from "../index.js";
 
 class Renderer {
   
-  constructor(id = "app"){
+  constructor(id = "app", context){
+    this.context = context;
+
+    this.context.Events.registerEvent('OnAnimationLoop');
     
     this.instance = new THREE.WebGLRenderer({
       alpha : true,
@@ -20,30 +27,44 @@ class Renderer {
     this.instance.setAnimationLoop(()=>{
       this.AnimationLoop();
     });
-    this.events = new Events();
-    this.events.registerEvent('OnAnimationLoop');
 
+    this.scene = new THREE.Scene();
+
+    this.camera = new Camera();
+   
     let domElement = document.getElementById(id);
 
     if(typeof(domElement) == "undefined"){console.logwarn("couldn't find an element with id:"+id);}
 
     document.getElementById(id).appendChild( this.instance.domElement );
 
+    this.controls = {
+      desktop : new DesktopControls(this.camera.instance,this.instance.domElement),
+    }
+
+    this.vrButton = VRButton.createButton(this.instance);
+    this.arButton = ARButton.createButton(this.instance);
+
+    this.vrButton.addEventListener("click",()=>{console.log("AR Mode enabled");})
+    this.arButton.addEventListener("click",()=>{console.log("VR Mode enabled");})
+
     this.GetARButton = this.GetARButton.bind(this);
     this.GetVRButton = this.GetVRButton.bind(this);
   }
 
   GetVRButton(){
-    
-    return VRButton.createButton(this.instance);
+    return this.vrButton;
   }
   
   GetARButton(){
-    return ARButton.createButton(this.instance);
+    return this.arButton;
   }
 
   AnimationLoop(){
-    this.events.dispatchEvent('OnAnimationLoop');
+    this.context.Events.dispatchEvent('OnAnimationLoop');
+
+    //this.controls.desktop.update();
+    this.instance.render( this.scene, this.camera.instance );
   }
 
 }
