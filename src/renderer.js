@@ -2,8 +2,8 @@ import * as THREE from 'three';
 //import TWEEN from '@tweenjs/tween.js';
 
 import {Events} from './Events';
-import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
-import { ARButton } from 'three/examples/jsm/webxr/ARButton.js';
+import { VRButton } from './VRButton.js';
+import { ARButton } from './ARButton.js';
 import { Camera } from './Camera.js';
 import { DesktopControls } from './DesktopControls.js';
 import { Loader } from './Loader.js';
