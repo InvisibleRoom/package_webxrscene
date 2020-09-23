@@ -43,6 +43,9 @@ class Renderer {
 
     this.controls = {
       desktop : new DesktopControls(this.camera.instance,this.instance.domElement),
+      update : ()=>{
+        this.controls.desktop.instance.update();
+      }
     }
 
     this.vrButton = VRButton.createButton(this.instance);

@@ -6,6 +6,12 @@ class Camera {
     this.instance.position.z = 5;
   }
 
+  SetPosition(vector3){
+    this.SetPosition({...vector3});
+  }
+  SetPosition(x,y,z){
+    this.instance.position.set(x,y,z);
+  }
 }
 
 export {Camera};

@@ -12,6 +12,7 @@ class Loader {
 
     this.context.Events.registerEvent('OnLoadStack');
     this.context.Events.registerEvent('OnLoad');
+    this.context.Events.registerEvent('OnProgress');
     
     this.dracoLoader = new DRACOLoader();
     this.dracoLoader.setDecoderPath( '/examples/js/libs/draco/' );
@@ -19,14 +20,10 @@ class Loader {
     this.load = this.load.bind(this);
   }
   loadStack(stack){
-    function progress(progress){
-      stack.progress(progress, stack);
-    }
+    
     return new Promise((resolve,reject)=>{
       let promises = stack.stack.map((s,index)=>{
-        return this.load(Object.assign(s,{
-          progress : stack.progress
-        }));
+        return this.load(s);
       });    
       Promise.all(promises).then((el)=>{
         let library = {};
@@ -39,25 +36,21 @@ class Loader {
     });
   }
   load(...arg){
-    let {name, url,progress} = arg[0]; 
+    let {name, url} = arg[0]; 
     return new Promise((resolve,reject)=>{
       this.instance.load(url,(gltf)=>{
         gltf.name = name;
         gltf.mixer = new AnimationMixer(gltf.scene);
-        console.log(gltf);
 
         gltf.actions = {};
         gltf.animations.map((anim,index)=>{
-          console.log("anim" , anim);
           let clipAction = gltf.mixer.clipAction( anim );
               clipAction.clampWhenFinished = true;
               clipAction.loop = THREE.LoopOnce;
               clipAction.name = anim.name;
           gltf.actions[anim.name] = clipAction;
 
-        })
-        // gltf.action = gltf.mixer.clipAction( gltf.animations[ 0 ] );
-        // gltf.action.clampWhenFinished = true;
+        });
         this.context.Events.addEventListener("OnAnimationLoop",()=>{
           gltf.mixer.update(this.context.Renderer.clock.getDelta());
         })
@@ -65,9 +58,7 @@ class Loader {
         resolve(gltf);
         this.context.Events.dispatchEvent('OnLoad',{name: name, scene : gltf.scene});
       },(_step)=>{
-        if(typeof(progress) != "undefined"){
-          progress({progress: _step.loaded / _step.total,name : name });
-        }
+        this.context.Events.dispatchEvent('OnProgress',{isLoading:( _step.loaded / _step.total == 1 ? false : true), progress: _step.loaded / _step.total,name : name });
       },reject);
     });
   }

@@ -5,7 +5,7 @@
 
 ## Import into Projekt
 ```js
-import {Renderer,Camera,Update,Loader,DesktopControls} from 'webxrscene';
+import {webXRscene} from 'webxrscene';
 import * as THREE from 'three';
 ```
 
