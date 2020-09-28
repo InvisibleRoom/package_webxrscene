@@ -31,9 +31,9 @@ class Renderer {
       this.context.Mixer.update(delta);
     });
 
-    this.scene = new THREE.Scene();
+    // this.scene = new THREE.Scene();
 
-    this.camera = new Camera();
+    // this.camera = new Camera();
    
     let domElement = document.getElementById(id);
 
@@ -41,12 +41,19 @@ class Renderer {
 
     document.getElementById(id).appendChild( this.instance.domElement );
 
-    this.controls = {
-      desktop : new DesktopControls(this.camera.instance,this.instance.domElement),
-      update : ()=>{
-        this.controls.desktop.instance.update();
-      }
-    }
+    // this.controls = {
+    //   desktop : new DesktopControls(this.camera.instance,this.instance.domElement),
+    //   update : ()=>{
+    //     this.controls.desktop.instance.update();
+    //   },
+    //   setPosition: (x,y,z)=>{
+    //     this.camera.instance.position.set(x,y,z);
+    //   },
+    //   setTarget: (x,y,z)=>{
+    //     this.controls.desktop.instance.target.set(x,y,z);
+    //     this.controls.desktop.instance.update();
+    //   }
+    // }
 
     this.vrButton = VRButton.createButton(this.instance);
     this.arButton = ARButton.createButton(this.instance);
@@ -70,7 +77,7 @@ class Renderer {
     this.context.Events.dispatchEvent('OnAnimationLoop');
 
     //this.controls.desktop.update();
-    this.instance.render( this.scene, this.camera.instance );
+    this.instance.render( this.context.Scene, this.context.Camera.instance );
   }
 
 }

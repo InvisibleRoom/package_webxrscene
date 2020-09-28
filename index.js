@@ -1,9 +1,12 @@
 var exports = {"__esModule": true};
 
+import * as THREE from 'three';
 import { Renderer } from './src/Renderer.js';
 import { Update } from './src/Update.js';
 import { Loader } from './src/Loader.js';
 import { Events } from './src/Events.js';
+import { Camera } from './src/Camera.js';
+import { Controls } from './src/Controls.js';
 import {AnimationMixer} from 'three';
 
 
@@ -15,6 +18,12 @@ class webXRScene{
     this.Loader = new Loader(this);
     this.Update = new Update(this);
 
+    this.Scene = new THREE.Scene();
+
+    this.Camera = new Camera();
+
+    this.Controls = new Controls(this);
+    
   }
 }
 export {webXRScene};
