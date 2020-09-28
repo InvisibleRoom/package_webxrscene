@@ -20,6 +20,8 @@ class Events{
   }
 
   dispatchEvent(eventName, eventArgs){
+    if(typeof(this.events[eventName]) == "undefined"){return;}
+    
     this.events[eventName].callbacks.forEach(function(callback){
       callback(eventArgs);
     });

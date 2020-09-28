@@ -2,8 +2,6 @@ import * as THREE from 'three';
 //import TWEEN from '@tweenjs/tween.js';
 
 import {Events} from './Events';
-import { VRButton } from './VRButton.js';
-import { ARButton } from './ARButton.js';
 import { Camera } from './Camera.js';
 import { DesktopControls } from './DesktopControls.js';
 import { Loader } from './Loader.js';
@@ -55,23 +53,9 @@ class Renderer {
     //   }
     // }
 
-    this.vrButton = VRButton.createButton(this.instance);
-    this.arButton = ARButton.createButton(this.instance);
-
-    this.vrButton.addEventListener("click",()=>{console.log("AR Mode enabled");})
-    this.arButton.addEventListener("click",()=>{console.log("VR Mode enabled");})
-
-    this.GetARButton = this.GetARButton.bind(this);
-    this.GetVRButton = this.GetVRButton.bind(this);
   }
 
-  GetVRButton(){
-    return this.vrButton;
-  }
   
-  GetARButton(){
-    return this.arButton;
-  }
 
   AnimationLoop(){
     this.context.Events.dispatchEvent('OnAnimationLoop');
