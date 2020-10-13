@@ -16,8 +16,12 @@ class Renderer {
     
     this.instance = new THREE.WebGLRenderer({
       alpha : true,
-      antialias: true
+      antialias: true,
     });
+
+    this.instance.shadowMap.enabled = true;
+    this.instance.shadowMap.type = THREE.PCFSoftShadowMap;
+    
     
     this.instance.setSize(window.innerWidth, window.innerHeight);
     this.instance.setClearColor(0x000000,0);

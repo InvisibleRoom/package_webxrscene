@@ -14,6 +14,8 @@ var VRButton = {
 
 			function onSessionStarted( session ) {
 
+				console.log(session);
+				
 				session.addEventListener( 'end', onSessionEnded );
 
 				renderer.xr.setSession( session );
@@ -48,7 +50,9 @@ var VRButton = {
 					// ('local' is always available for immersive sessions and doesn't need to
 					// be requested separately.)
 
-					var sessionInit = { optionalFeatures: [ 'local-floor', 'bounded-floor', 'hand-tracking' ] };
+					var sessionInit = { 
+						optionalFeatures: [ 'local-floor', 'bounded-floor', 'hand-tracking' ] 
+					};
 					navigator.xr.requestSession( 'immersive-vr', sessionInit ).then( onSessionStarted );
 
 				} else {

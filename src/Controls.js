@@ -35,7 +35,7 @@ class Controls{
     this.context.Events.registerEvent("ui-mouse-down");
     this.context.Events.registerEvent("ui-hovered");
     this.context.Events.registerEvent("ui-idle");
-
+    this.context.Events.registerEvent("OnChangeXRView");
 
     /** VR AR DOM ELEMENTS - Buttons */
     this.vrButton = VRButton.createButton(this.context.Renderer.instance);
@@ -46,13 +46,24 @@ class Controls{
 
     this.vrButton.addEventListener("click",()=>{ 
       if(this.currentControls != "VR"){ 
+        this.context.Events.dispatchEvent("OnChangeXRView", {xrMode : "VR",previousXRMode : this.currentControls});
         this.SetupVR(); 
       }else{
+        this.context.Events.dispatchEvent("OnChangeXRView", {xrMode : "Desktop",previousXRMode : this.currentControls});
         this.SetupDesktop();  
       }
       console.log("VR Mode enabled");
+
     });
-    this.arButton.addEventListener("click",()=>{this.SetupAR();console.log("AR Mode enabled");})
+    this.arButton.addEventListener("click",()=>{
+      if(this.currentControls != "AR"){
+        this.context.Events.dispatchEvent("OnChangeXRView", {xrMode : "AR",previousXRMode : this.currentControls});
+        this.SetupAR();
+      }else{
+        this.context.Events.dispatchEvent("OnChangeXRView", {xrMode : "Desktop",previousXRMode : this.currentControls});
+        this.SetupDesktop();
+      }
+    });
 
     this.GetARButton = this.GetARButton.bind(this);
     this.GetVRButton = this.GetVRButton.bind(this);
@@ -87,6 +98,9 @@ class Controls{
   getClientBox(){
     var size = this.context.Renderer.instance.domElement.getBoundingClientRect();
     return size;
+  }
+  GetCurrentXRMode(){
+    return this.currentControls;
   }
   mousedown(){ this.selectState = true; }
   mouseup(){ this.selectState = false; }
@@ -135,6 +149,17 @@ class Controls{
     this.cameraHelper.position.set(_position.x,_position.y,_position.z);
     this.context.Renderer.instance.setClearColor(0xffffff,1);
     console.log("set original camera to zero and parent it under cameraHelper");
+
+    console.log(this.vr_controller.controllerGrips);
+    this.vr_controller.controllerGrips.forEach((controller)=>{
+      controller.parent = this.cameraHelper;      
+    });
+    this.vr_controller.controllers.forEach((controller)=>{
+      controller.parent = this.cameraHelper;
+    });
+
+
+
   }
 
   SetupAR(){
@@ -152,7 +177,7 @@ class Controls{
       this.FindIntersection();
     }
     if(this.currentControls == "VR"){
-      this.vr_controller.Update();
+      //this.vr_controller.Update();
     }
     if(this.currentControls == "Desktop"){
       this.[this.currentControls].instance.update();
@@ -176,6 +201,8 @@ class Controls{
      switch (this.currentControls) {
       case "VR":
         this.cameraHelper.lookAt(new THREE.Vector3(x,y,z));
+        this.cameraHelper.rotation.x = 0;
+        this.cameraHelper.rotation.z = 0;
       break;
       default:
         this.[this.currentControls].instance.target.set(x,y,z);

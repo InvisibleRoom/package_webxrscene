@@ -20,7 +20,7 @@ class webXRScene{
 
     this.Scene = new THREE.Scene();
 
-    this.Camera = new Camera();
+    this.Camera = new Camera(this);
 
     this.Controls = new Controls(this);
     
