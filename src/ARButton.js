@@ -1,10 +1,14 @@
 var ARButton = {
 
-	createButton: function ( renderer, sessionInit = {} ) {
+	createButton: function ( renderer, context ) {
 
 		function showStartAR( /*device*/ ) {
 
 			var currentSession = null;
+
+			var sessionInit = { 
+				optionalFeatures: [ 'local-floor',"local" ]
+			}
 
 			function onSessionStarted( session ) {
 
@@ -16,11 +20,15 @@ var ARButton = {
 				} );
 				*/
 
-				renderer.xr.setReferenceSpaceType( 'local' );
+			//	renderer.xr.setReferenceSpaceType( 'local' );
 				renderer.xr.setSession( session );
-				button.textContent = 'STOP AR';
 
+				
+				
+				button.textContent = 'STOP AR';
+				
 				currentSession = session;
+				context.Events.dispatchEvent("OnChangeXRView",  {xrMode : "AR",previousXRMode : context.Controls.GetCurrentXRMode(), session: session});
 
 			}
 
@@ -31,6 +39,7 @@ var ARButton = {
 				button.textContent = 'START AR';
 
 				currentSession = null;
+				context.Events.dispatchEvent("OnChangeXRView",  {xrMode : "Desktop",previousXRMode : "AR", session: null});
 
 			}
 

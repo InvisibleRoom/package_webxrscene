@@ -9,7 +9,6 @@ class Controls{
   constructor(context){
     this.context = context;
     this.currentControls = "Desktop";
-
     //Binding
     this.SetupMouse = this.SetupMouse.bind(this);
     this.getClientBox = this.getClientBox.bind(this);
@@ -25,6 +24,7 @@ class Controls{
     this.Update = this.Update.bind(this);
     this.SetPosition = this.SetPosition.bind(this);
     this.SetTarget = this.SetTarget.bind(this);
+    this.GetTarget = this.GetTarget.bind(this);
 
     //array of active elements in scene
     this.ActiveObjects = [];
@@ -38,30 +38,26 @@ class Controls{
     this.context.Events.registerEvent("OnChangeXRView");
 
     /** VR AR DOM ELEMENTS - Buttons */
-    this.vrButton = VRButton.createButton(this.context.Renderer.instance);
-    this.arButton = ARButton.createButton(this.context.Renderer.instance);
+    this.vrButton = VRButton.createButton(this.context.Renderer.instance,this.context);
+    this.arButton = ARButton.createButton(this.context.Renderer.instance,this.context);
 
     this.SetupVR = this.SetupVR.bind(this);
     this.SetupAR = this.SetupAR.bind(this);
 
-    this.vrButton.addEventListener("click",()=>{ 
-      if(this.currentControls != "VR"){ 
-        this.context.Events.dispatchEvent("OnChangeXRView", {xrMode : "VR",previousXRMode : this.currentControls});
-        this.SetupVR(); 
-      }else{
-        this.context.Events.dispatchEvent("OnChangeXRView", {xrMode : "Desktop",previousXRMode : this.currentControls});
-        this.SetupDesktop();  
-      }
-      console.log("VR Mode enabled");
+    this.context.Events.addEventListener("OnChangeXRView",(settings)=>{
 
-    });
-    this.arButton.addEventListener("click",()=>{
-      if(this.currentControls != "AR"){
-        this.context.Events.dispatchEvent("OnChangeXRView", {xrMode : "AR",previousXRMode : this.currentControls});
-        this.SetupAR();
-      }else{
-        this.context.Events.dispatchEvent("OnChangeXRView", {xrMode : "Desktop",previousXRMode : this.currentControls});
-        this.SetupDesktop();
+      this.currentControls = settings.xrMode;
+
+      switch(settings.xrMode){
+        case "VR":
+          this.SetupVR(settings);
+        break;
+        case "AR":
+          this.SetupAR(settings);
+        break;
+        default:
+          this.SetupDesktop(settings);
+        break;
       }
     });
 
@@ -82,7 +78,7 @@ class Controls{
 
   }
 
-  SetupMouse(){
+  SetupMouse(settings){
     this.mouse = new THREE.Vector2();
     this.mouse.x = null;
     this.mouse.y = null;
@@ -120,8 +116,8 @@ class Controls{
   }
 //
 
-  SetupDesktop(){
-    this.currentControls = "Desktop";
+  SetupDesktop(settings){
+    
     if(this.context.Camera.instance.parent.name == "cameraHelper"){
       var pos = this.context.Camera.instance.parent.position.clone();
       var rot = this.context.Camera.instance.parent.rotation.clone();
@@ -137,8 +133,10 @@ class Controls{
     this.context.Renderer.instance.setClearColor(0xffffff,0);
   }
 
-  SetupVR(){
-    this.currentControls = "VR";
+  SetupVR(settings){
+
+    console.log(settings);
+
     if(typeof(this.cameraHelper) == "undefined"){
       this.cameraHelper = new THREE.Object3D();
       this.cameraHelper.name = "cameraHelper";
@@ -163,6 +161,23 @@ class Controls{
   }
 
   SetupAR(){
+
+    if(typeof(this.cameraHelper) == "undefined"){
+      this.cameraHelper = new THREE.Object3D();
+      this.cameraHelper.name = "cameraHelper";
+    }
+    this.cameraHelper.add(this.context.Camera.instance);
+    var _position = this.context.Camera.instance.position.clone();
+    this.context.Camera.instance.position.set(0,0,0);
+    this.cameraHelper.position.set(_position.x,_position.y,_position.z);
+    this.context.Renderer.instance.setClearColor(0xffffff,0);
+
+    this.vr_controller.controllerGrips.forEach((controller)=>{
+      controller.parent = this.cameraHelper;      
+    });
+    this.vr_controller.controllers.forEach((controller)=>{
+      controller.parent = this.cameraHelper;
+    });
   }
 
   GetVRButton(){
@@ -198,6 +213,7 @@ class Controls{
     }
   }
   SetTarget (x,y,z){
+    
      switch (this.currentControls) {
       case "VR":
         this.cameraHelper.lookAt(new THREE.Vector3(x,y,z));
@@ -208,7 +224,11 @@ class Controls{
         this.[this.currentControls].instance.target.set(x,y,z);
         this.[this.currentControls].instance.update();
       break;
-    } 
+    }
+  }
+
+  GetTarget(){
+    return this.[this.currentControls].instance.target;
   }
 
   /**Interactive Objects */
