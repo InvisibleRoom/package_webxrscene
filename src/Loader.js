@@ -23,8 +23,13 @@ class Loader {
     
     return new Promise((resolve,reject)=>{
       let promises = stack.stack.map((s,index)=>{
-        return this.load(s);
-      });    
+
+        console.log(s);
+
+        return this.load(Object.assign(s,{
+          progress : stack.progress
+        }));
+      });
       Promise.all(promises).then((el)=>{
         let library = {};
         el.map((obj,index)=>{
@@ -35,8 +40,20 @@ class Loader {
       }).catch(reject);
     });
   }
-  load(...arg){
-    let {name, url} = arg[0]; 
+
+  load(arg){
+   console.log(arg);
+    let {name, url,progress} = arg; 
+
+
+    if(typeof(progress) != "undefined"){
+      this.context.Events.addEventListener("OnProgress",progress);
+      this.context.Events.addEventListener("OnLoad",()=>{
+        this.context.Events.removeEventListener("OnProgress", progress);
+        this.context.Events.removeEventListener("OnLoad", progress);
+      });
+    }
+
     return new Promise((resolve,reject)=>{
       this.instance.load(url,(gltf)=>{
         gltf.name = name;
