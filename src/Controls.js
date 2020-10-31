@@ -25,6 +25,7 @@ class Controls{
     this.SetPosition = this.SetPosition.bind(this);
     this.SetTarget = this.SetTarget.bind(this);
     this.GetTarget = this.GetTarget.bind(this);
+    this.GetCameraPosition = this.GetCameraPosition.bind(this);
 
     //array of active elements in scene
     this.ActiveObjects = [];
@@ -195,7 +196,7 @@ class Controls{
       //this.vr_controller.Update();
     }
     if(this.currentControls == "Desktop"){
-      this.[this.currentControls].instance.update();
+      this[this.currentControls].instance.update();
     }
   }
 
@@ -221,14 +222,29 @@ class Controls{
         this.cameraHelper.rotation.z = 0;
       break;
       default:
-        this.[this.currentControls].instance.target.set(x,y,z);
-        this.[this.currentControls].instance.update();
+        this[this.currentControls].instance.target.set(x,y,z);
+        this[this.currentControls].instance.update();
       break;
     }
   }
 
   GetTarget(){
-    return this.[this.currentControls].instance.target;
+    return this[this.currentControls].instance.target;
+  }
+
+  GetCameraPosition(){
+    switch(this.currentControls){
+      case "VR":
+        return this.context.Renderer.instance.xr.getCamera(this.context.Camera.instance).position;
+      break;
+      case "AR":
+        return this.context.Renderer.instance.xr.getCamera(this.context.Camera.instance).position;
+       // return this.context.Camera.instance.position;//this.cameraHelper.position;
+      break;
+      default:
+        return this.context.Camera.instance.position;
+      break;
+    }
   }
 
   /**Interactive Objects */

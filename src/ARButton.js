@@ -1,34 +1,31 @@
 var ARButton = {
-
-	createButton: function ( renderer, context ) {
+	domOverlay : null,
+	createButton: function ( renderer, context) {
 
 		function showStartAR( /*device*/ ) {
 
 			var currentSession = null;
 
 			var sessionInit = { 
-				optionalFeatures: [ 'local-floor',"local" ]
+				optionalFeatures: [ 'local-floor',"local", 'dom-overlay' ],
+				domOverlay: { root: ARButton.domOverlay }
 			}
 
 			function onSessionStarted( session ) {
 
 				session.addEventListener( 'end', onSessionEnded );
 
-				/*
-				session.updateWorldTrackingState( {
-					'planeDetectionState': { 'enabled': true }
-				} );
-				*/
-
-			//	renderer.xr.setReferenceSpaceType( 'local' );
-				renderer.xr.setSession( session );
-
-				
+				renderer.xr.setSession( session );				
 				
 				button.textContent = 'STOP AR';
 				
 				currentSession = session;
-				context.Events.dispatchEvent("OnChangeXRView",  {xrMode : "AR",previousXRMode : context.Controls.GetCurrentXRMode(), session: session});
+
+				context.Events.dispatchEvent("OnChangeXRView",  {
+					xrMode : "AR",
+					previousXRMode : context.Controls.GetCurrentXRMode(), 
+					session: session
+				});
 
 			}
 
@@ -39,7 +36,11 @@ var ARButton = {
 				button.textContent = 'START AR';
 
 				currentSession = null;
-				context.Events.dispatchEvent("OnChangeXRView",  {xrMode : "Desktop",previousXRMode : "AR", session: null});
+				context.Events.dispatchEvent("OnChangeXRView", {
+					xrMode : "Desktop",
+					previousXRMode : "AR",
+					session: null
+				});
 
 			}
 
@@ -48,7 +49,7 @@ var ARButton = {
 			button.onclick = function () {
 
 				if ( currentSession === null ) {
-
+					sessionInit.domOverlay.root = typeof(button._domOverlayElement) != "undefined" ? button._domOverlayElement : sessionInit.domOverlay.root;
 					navigator.xr.requestSession( 'immersive-ar', sessionInit ).then( onSessionStarted );
 
 				} else {

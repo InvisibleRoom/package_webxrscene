@@ -21,8 +21,11 @@ class Renderer {
 
     this.instance.shadowMap.enabled = true;
     this.instance.shadowMap.type = THREE.PCFSoftShadowMap;
-    
-    
+    // this.instance.physicallyCorrectLights = true;
+    // this.instance.toneMapping = THREE.LinearToneMapping;
+    // this.instance.outputEncoding = THREE.sRGBEncoding;
+    // this.instance.toneMappingExposure = 1;
+
     this.instance.setSize(window.innerWidth, window.innerHeight);
     this.instance.setClearColor(0x000000,0);
     this.instance.xr.enabled = true;
@@ -37,25 +40,33 @@ class Renderer {
 
     // this.camera = new Camera();
    
-    let domElement = document.getElementById(id);
+    this.domElement = document.getElementById(id);
 
-    if(typeof(domElement) == "undefined"){console.logwarn("couldn't find an element with id:"+id);}
+    if(typeof(this.domElement) == "undefined"){console.logwarn("couldn't find an element with id:"+id);}
 
-    document.getElementById(id).appendChild( this.instance.domElement );
+    this.domElement.appendChild( this.instance.domElement );
 
-    // this.controls = {
-    //   desktop : new DesktopControls(this.camera.instance,this.instance.domElement),
-    //   update : ()=>{
-    //     this.controls.desktop.instance.update();
-    //   },
-    //   setPosition: (x,y,z)=>{
-    //     this.camera.instance.position.set(x,y,z);
-    //   },
-    //   setTarget: (x,y,z)=>{
-    //     this.controls.desktop.instance.target.set(x,y,z);
-    //     this.controls.desktop.instance.update();
-    //   }
-    // }
+
+    window.addEventListener("resize", ()=>{
+      var size = {
+        x : window.innerWidth,
+        y : window.innerHeight
+      }
+
+      if( typeof( this.domElement) != "undefined"){
+        var domRect = this.domElement.getBoundingClientRect();
+        size.x = domRect.width;
+        size.y = domRect.height;
+      }
+
+
+      this.context.Camera.instance.aspect = size.x / size.y;
+      this.context.Camera.instance.updateProjectionMatrix();
+      this.instance.setSize( size.x , size.y );
+
+
+
+    })
 
   }
 
