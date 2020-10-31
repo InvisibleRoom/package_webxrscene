@@ -3,10 +3,7 @@ class Camera {
 
   constructor(context){
     this.context = context;
-    // this.context.Events.addEventListener("OnChangeXRMode", ()=>{
-    //   console.log("Camera");
-    // })
-    this.instance = new PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 0.01, 100 );
+    this.instance = new PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 0.1, 1000 );
   }
 
   SetPosition(vector3){
