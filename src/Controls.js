@@ -5,7 +5,6 @@ import { VRButton } from './VRButton.js';
 import { ARButton } from './ARButton.js';
 
 class Controls{
-  
   constructor(context){
     this.context = context;
     this.currentControls = "Desktop";
@@ -33,6 +32,8 @@ class Controls{
     this.SetupMouse();
     this.selectState = false;
 
+    this.context.Events.registerEvent("mouse-down");
+    this.context.Events.registerEvent("mouse-up");
     this.context.Events.registerEvent("ui-mouse-down");
     this.context.Events.registerEvent("ui-hovered");
     this.context.Events.registerEvent("ui-idle");
@@ -70,12 +71,18 @@ class Controls{
 
     this.context.Scene.add( this.vr_controller.controllerGrips[ 0 ], this.vr_controller.controllers[ 0 ] );
 
-    this.vr_controller.controllers[ 0 ].addEventListener( 'selectstart', ()=> { this.selectState = true } );
-    this.vr_controller.controllers[ 0 ].addEventListener( 'selectend', ()=> { this.selectState = false } );
-
-    this.context.Events.addEventListener("OnAnimationLoop",()=>{
-      this.Update();
+    this.vr_controller.controllers[ 0 ].addEventListener( 'selectstart', ()=> { 
+      this.selectState = true;
+      
+      this.context.Events.dispatchEvent("mouse-down",{});
+    
     });
+    this.vr_controller.controllers[ 0 ].addEventListener( 'selectend', ()=> { 
+      this.selectState = false;
+      this.context.Events.dispatchEvent("mouse-up",{});
+    });
+
+    this.context.Events.addEventListener("OnAnimationLoop", this.Update );
 
   }
 
@@ -139,13 +146,19 @@ class Controls{
     console.log(settings);
 
     if(typeof(this.cameraHelper) == "undefined"){
-      this.cameraHelper = new THREE.Object3D();
+      this.cameraHelper = new THREE.Group();
       this.cameraHelper.name = "cameraHelper";
+      this.cameraHelper.position.set(0,0,0);
+
     }
+    
+    var vrCamera = this.context.Renderer.instance.xr.getCamera(this.context.Camera.instance);
     this.cameraHelper.add(this.context.Camera.instance);
-    var _position = this.context.Camera.instance.position.clone();
-    this.context.Camera.instance.position.set(0,0,0);
+    var _position = vrCamera.position.clone();
+    vrCamera.position.set(0,1.7,0);
     this.cameraHelper.position.set(_position.x,_position.y,_position.z);
+
+    this.context.Renderer.instance.autoClear = true;
     this.context.Renderer.instance.setClearColor(0xffffff,1);
     console.log("set original camera to zero and parent it under cameraHelper");
 
@@ -189,6 +202,7 @@ class Controls{
     return this.arButton;
   }
   Update(){
+
     if(this.ActiveObjects.length > 0){
       this.FindIntersection();
     }
@@ -201,6 +215,9 @@ class Controls{
   }
 
   SetPosition (x,y,z){
+
+    console.log(this.currentControls);
+
     switch (this.currentControls) {
       case "Desktop":
         this.context.Camera.instance.position.set(x,y,z);
@@ -229,12 +246,22 @@ class Controls{
   }
 
   GetTarget(){
-    return this[this.currentControls].instance.target;
+    switch(this.currentControls){
+      case "VR":
+        return {x:0,y:0,z:0}
+      break;
+      default:
+        return this[this.currentControls].instance.target;
+      break;
+    }
   }
 
   GetCameraPosition(){
     switch(this.currentControls){
       case "VR":
+
+        console.log(this.context.Camera.instance)
+
         return this.context.Renderer.instance.xr.getCamera(this.context.Camera.instance).position;
       break;
       case "AR":

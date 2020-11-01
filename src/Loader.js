@@ -23,9 +23,6 @@ class Loader {
     
     return new Promise((resolve,reject)=>{
       let promises = stack.stack.map((s,index)=>{
-
-        console.log(s);
-
         return this.load(Object.assign(s,{
           progress : stack.progress
         }));
@@ -42,9 +39,7 @@ class Loader {
   }
 
   load(arg){
-   console.log(arg);
     let {name, url,progress} = arg; 
-
 
     if(typeof(progress) != "undefined"){
       this.context.Events.addEventListener("OnProgress",progress);

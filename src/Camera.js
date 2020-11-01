@@ -1,9 +1,24 @@
-import {PerspectiveCamera} from 'three';
-class Camera {
+import {PerspectiveCamera,Vector2} from 'three';
+import StereoCamera from './StereoCamera';
 
+import { RenderPass } from "postprocessing";
+
+class Camera {
   constructor(context){
     this.context = context;
     this.instance = new PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 0.1, 1000 );
+   
+
+    this.context.Events.addEventListener("OnMount",this.AddEvents);
+    
+    this.cameras = [];
+    this.renderPass = new RenderPass(this.context.Scene, this.instance);
+    
+  }
+
+  AddEvents = ()=>{
+    this.context.Events.addEventListener("OnAnimationLoop",this.update);
+    
   }
 
   SetPosition(vector3){
@@ -23,6 +38,10 @@ class Camera {
         return this.instance.position;
         break;
     }
+  }
+ 
+  update = ()=>{
+        
   }
 
 }

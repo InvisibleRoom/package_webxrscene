@@ -20,48 +20,39 @@ class Renderer {
     
     this.instance = new THREE.WebGLRenderer({
       alpha : true,
-      //antialias: true,
+      autoClear: true,
       powerPreference: "high-performance",
-      antialias: false,
-      stencil: false,
-      depth: false
+      antialias: true,
+      //stencil: false,
+      //depth: false
     });
 
     this.instance.shadowMap.enabled = true;
     this.instance.shadowMap.type = THREE.PCFSoftShadowMap;
-    
+    this.instance.colorManagement = true;
+    this.instance.setClearColor(0xffffff,0);
     
     this.instance.setSize(window.innerWidth, window.innerHeight);
-    this.instance.setClearColor(0x000000,0);
     this.instance.xr.enabled = true;
-    this.instance.setAnimationLoop(()=>{
-      this.AnimationLoop();
-      var delta = this.clock.getDelta();
-      this.context.Mixer.update(delta);
-    });
+    this.instance.setAnimationLoop(this.AnimationLoop);
     
     let domElement = document.getElementById(id);
 
     if(typeof(domElement) == "undefined"){console.logwarn("couldn't find an element with id:"+id);}
 
     document.getElementById(id).appendChild( this.instance.domElement );
-
-
-          
-    console.log(this.context);
-
   
     this.context.Events.addEventListener("OnMount",()=> this.InitComposer());
 
-    this.LoadSMAA().then(this.initSMAA).catch(console.error);
   }
 
   InitComposer(){
     this.effects = true;
     this.composer = new EffectComposer(this.instance);
-    this.composer.addPass(new RenderPass(this.context.Scene, this.context.Camera.instance));
-   // this.composer.addPass(new EffectPass(this.context.Camera.instance, new BloomEffect()));
+    this.composer.addPass(this.context.Camera.renderPass);
     
+    this.LoadSMAA().then(this.initSMAA).catch(console.error);
+
     this.clock = new Clock();
   }
 
@@ -97,12 +88,14 @@ class Renderer {
     this.composer.addPass(new EffectPass(this.context.Camera.instance, smaaEffect));
   }
 
-  AnimationLoop(){
+  AnimationLoop = () => {
+    const delta = this.clock.getDelta();
     this.context.Events.dispatchEvent('OnAnimationLoop');
 
-    this.composer.render(this.clock.getDelta());
-    //this.controls.desktop.update();
-   // this.instance.render( this.context.Scene, this.context.Camera.instance );
+    this.context.Mixer.update(delta);
+
+    this.instance.render(this.context.Scene, this.context.Camera.instance);
+    //this.composer.render(delta);
   }
 
 }
