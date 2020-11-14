@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { Renderer } from "./Renderer.js";
 import { Update } from './Update.js';
 import { Loader } from './Loader.js';
+import { CustomTextureLoader } from './CustomTextureLoader.js';
 import { Events } from './Events.js';
 import { Camera } from './Camera.js';
 import { Controls } from './Controls.js';
@@ -20,6 +21,7 @@ class webXRScene{
     this.Mixer = new AnimationMixer();
     this.Renderer = new Renderer(elementID,this);
     this.Loader = new Loader(this);
+    this.CustomTextureLoader = new CustomTextureLoader(this);
     this.Update = new Update(this);
 
     this.Scene = new THREE.Scene();
