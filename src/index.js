@@ -1,12 +1,12 @@
 var exports = {"__esModule": true};
 
 import * as THREE from 'three';
-import { Renderer } from "./Renderer.js";
-import { Update } from './Update.js';
-import { Loader } from './Loader.js';
-import { Events } from './Events.js';
-import { Camera } from './Camera.js';
-import { Controls } from './Controls.js';
+import { Renderer } from "./Renderer";
+import { Update } from './Update';
+import { Loader } from './Loader';
+import { Events } from './Events';
+import { Camera } from './Camera';
+import { Controls } from './Controls';
 import {AnimationMixer} from 'three';
 import StatClass from './StatClass';
 
@@ -33,4 +33,4 @@ class webXRScene{
     this.Events.dispatchEvent("OnMount");
   }
 }
-export {webXRScene};
+export default webXRScene;

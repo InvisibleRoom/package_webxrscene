@@ -18,4 +18,4 @@ class StatClass extends Stats {
 
 }
 
-export default StatClass
+export default StatClass;

@@ -129,9 +129,6 @@ class Controls{
     if(this.context.Camera.instance.parent.name == "cameraHelper"){
       var pos = this.context.Camera.instance.parent.position.clone();
       var rot = this.context.Camera.instance.parent.rotation.clone();
-      console.log(pos);
-
-      console.log(this.context.Camera.instance);
       this.cameraHelper.remove(this.context.Camera.instance);
       this.context.Scene.add(this.context.Camera.instance);
       this.context.Camera.instance.position = pos;
@@ -216,8 +213,6 @@ class Controls{
 
   SetPosition (x,y,z){
 
-    console.log(this.currentControls);
-
     switch (this.currentControls) {
       case "Desktop":
         this.context.Camera.instance.position.set(x,y,z);
@@ -244,6 +239,19 @@ class Controls{
       break;
     }
   }
+  GetPosition(){
+    
+    let _currentControls = this.GetCurrentXRMode();
+    switch(_currentControls){
+      case "VR":
+        return this.context.Renderer.instance.xr.getCamera(this.instance).position;
+      break;
+      default:
+        return this.context.Camera.instance.position;
+        break;
+    }
+  }
+
 
   GetTarget(){
     switch(this.currentControls){
