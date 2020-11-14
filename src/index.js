@@ -1,12 +1,13 @@
 var exports = {"__esModule": true};
 
 import * as THREE from 'three';
-import { Renderer } from "./Renderer";
-import { Update } from './Update';
-import { Loader } from './Loader';
-import { Events } from './Events';
-import { Camera } from './Camera';
-import { Controls } from './Controls';
+import { Renderer } from "./Renderer.js";
+import { Update } from './Update.js';
+import { Loader } from './Loader.js';
+import { CustomTextureLoader } from './CustomTextureLoader.js';
+import { Events } from './Events.js';
+import { Camera } from './Camera.js';
+import { Controls } from './Controls.js';
 import {AnimationMixer} from 'three';
 import StatClass from './StatClass';
 
@@ -20,6 +21,7 @@ class webXRScene{
     this.Mixer = new AnimationMixer();
     this.Renderer = new Renderer(elementID,this);
     this.Loader = new Loader(this);
+    this.CustomTextureLoader = new CustomTextureLoader(this);
     this.Update = new Update(this);
 
     this.Scene = new THREE.Scene();
@@ -33,4 +35,4 @@ class webXRScene{
     this.Events.dispatchEvent("OnMount");
   }
 }
-export default webXRScene;
+export {webXRScene};

@@ -123,12 +123,23 @@ class Controls{
       this.mouse.y = null;
   }
 //
+  ChangeToDefault = ()=>{
+    if(this.currentControls == "Desktop"){
+      this.Desktop.ChangeToDefault();
+    }
+  }
+  ChangeToStatic = ()=>{
+    if(this.currentControls == "Desktop"){
+      this.Desktop.ChangeToStatic();
+    }
+  }
 
   SetupDesktop(settings){
     
     if(this.context.Camera.instance.parent.name == "cameraHelper"){
       var pos = this.context.Camera.instance.parent.position.clone();
       var rot = this.context.Camera.instance.parent.rotation.clone();
+
       this.cameraHelper.remove(this.context.Camera.instance);
       this.context.Scene.add(this.context.Camera.instance);
       this.context.Camera.instance.position = pos;
@@ -239,19 +250,6 @@ class Controls{
       break;
     }
   }
-  GetPosition(){
-    
-    let _currentControls = this.GetCurrentXRMode();
-    switch(_currentControls){
-      case "VR":
-        return this.context.Renderer.instance.xr.getCamera(this.instance).position;
-      break;
-      default:
-        return this.context.Camera.instance.position;
-        break;
-    }
-  }
-
 
   GetTarget(){
     switch(this.currentControls){
@@ -267,9 +265,7 @@ class Controls{
   GetCameraPosition(){
     switch(this.currentControls){
       case "VR":
-
-        console.log(this.context.Camera.instance)
-
+        
         return this.context.Renderer.instance.xr.getCamera(this.context.Camera.instance).position;
       break;
       case "AR":
