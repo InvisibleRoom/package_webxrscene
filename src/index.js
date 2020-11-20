@@ -35,4 +35,4 @@ class webXRScene{
     this.Events.dispatchEvent("OnMount");
   }
 }
-export {webXRScene};
+export default webXRScene;

@@ -6,7 +6,7 @@ import { RenderPass } from "postprocessing";
 class Camera {
   constructor(context){
     this.context = context;
-    this.instance = new PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 0.1, 1000 );
+    this.instance = new PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 0.001, 1000 );
    
 
     this.context.Events.addEventListener("OnMount",this.AddEvents);

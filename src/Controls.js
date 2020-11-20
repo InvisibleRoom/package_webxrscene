@@ -221,6 +221,9 @@ class Controls{
       this[this.currentControls].instance.update();
     }
   }
+  GetPosition(){
+    return this.context.Camera.instance.position;
+  }
 
   SetPosition (x,y,z){
 
