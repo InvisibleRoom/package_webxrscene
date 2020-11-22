@@ -16,10 +16,10 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass.js';
 import { SavePass } from 'three/examples/jsm/postprocessing/SavePass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-      
+import motionBlurShader from './MotionBlur';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
-import { BlendShader } from 'three/examples/jsm/shaders/BlendShader.js';
+import { BlendShader } from 'three/examples/jsm/shaders/BlendShader';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
 import { DoFShader } from './DoFShader.js';
@@ -35,7 +35,8 @@ class Renderer {
     this.instance = new THREE.WebGLRenderer({
       alpha : true,
       antialias: true,
-      autoClear: false,
+      //autoClear: false,
+      logarithmicDepthBuffer: false
       // powerPreference: "high-performance",
       // stencil: false,
       //depth: false
@@ -65,33 +66,32 @@ class Renderer {
   InitComposer = () => {
     this.effects = true;
 
-  
 
-    this.postprocessing.bokehPass = new BokehPass( this.context.Scene, this.context.Camera.instance , {
-      focus: 50.0,
-			aperture: 1,
-			maxblur: 0.01,
-
-      width: window.innerWidth,
-      height: window.innerHeight
-    } );
-
-
-    this.renderTarget = new THREE.WebGLRenderTarget( this.size.x ,this.size.y, { 
+    this.renderTarget = new THREE.WebGLRenderTarget( this.size.x ,this.size.y, 
+      { 
       minFilter: THREE.LinearFilter, 
       magFilter: THREE.LinearFilter, 
       format: THREE.RGBAFormat, 
-      stencilBuffer: false
+      stencilBuffer: true
     });
+    this.renderTarget.depthBuffer = true
+    this.renderTarget.depthTexture = new THREE.DepthTexture();
+
+    this.motionBlurRenderTarget = new THREE.WebGLRenderTarget(
+      this.size.x,
+      this.size.y,
+      {
+        minFilter: THREE.LinearFilter,
+        magFilter: THREE.LinearFilter,
+        format: THREE.RGBAFormat,
+        stencilBuffer: false
+      }
+    )
 
 
 
     this.renderPass = new RenderPass( this.context.Scene, this.context.Camera.instance );
-    
-    // this.renderPass.autoClear = false;
-    // this.renderPass.clearColor = true;
-    // this.renderPass.clearAlpha = false;
-
+  
 
 
     //Init Composer
@@ -99,7 +99,7 @@ class Renderer {
     this.postprocessing.composer = new EffectComposer( this.instance,this.renderTarget );
     this.postprocessing.composer.addPass( this.renderPass );
 
-
+    
    
    
     //Bloom
@@ -112,8 +112,13 @@ class Renderer {
     // 
     this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
 
-     //Bokeh
-     this.postprocessing.bokehPass = new BokehPass( this.context.Scene , this.context.Camera.instance, {
+
+
+
+   
+    //Bokeh
+    
+    this.postprocessing.bokehPass = new BokehPass( this.context.Scene , this.context.Camera.instance, {
       focus: .62,
       aperture: .09,
       maxblur: 0.02,
@@ -121,158 +126,53 @@ class Renderer {
       width: this.size.x,
       height: this.size.y
     });
+    
 
+
+    this.postprocessing.savePass = new SavePass( new THREE.WebGLRenderTarget( this.size.x,this.size.y, {
+			minFilter: THREE.LinearFilter,
+			magFilter: THREE.LinearFilter,
+			stencilBuffer: false
+    }));
+    
+    this.postprocessing.blendPass = new ShaderPass( BlendShader, 'tDiffuse1' );
+		this.postprocessing.blendPass.uniforms[ 'tDiffuse2' ].value = this.postprocessing.savePass.renderTarget.texture;
+		this.postprocessing.blendPass.uniforms[ 'mixRatio' ].value = 0.95;
+
+    this.postprocessing.outputPass = new ShaderPass( CopyShader );
+		//outputPass.renderToScreen = true;
+
+
+		this.postprocessing.composer.addPass( this.postprocessing.blendPass );
+		this.postprocessing.composer.addPass( this.postprocessing.savePass );
+    this.postprocessing.composer.addPass( this.postprocessing.outputPass );
+    
     this.postprocessing.composer.addPass( this.postprocessing.bokehPass );
 
+    //this.postprocessing.bokehPass.needsSwap = true;
+    //this.postprocessing.bokehPass.renderToScreen = true;
     
+    // // add a motion blur pass
+    // this.postprocessing.motionPass = new ShaderPass(motionBlurShader);
+    // this.postprocessing.motionPass.renderToScreen = true;
+    // console.log( this.postprocessing.motionPass)
+    // // this.postprocessing.motionPass.material.uniforms.tDepth.value = this.depthTexture;
+    // // this.postprocessing.motionPass.material.uniforms.velocityFactor.value = 1;
+    // this.postprocessing.composer.addPass(this.postprocessing.motionPass);
+//  //     // save pass
+//  this.savePass = new SavePass(this.renderTarget );
+//  this.postprocessing.composer.addPass(this.savePass);
+// // // blend pass
+// this.blendPass = new ShaderPass(BlendShader, "tDiffuse1");
+// this.blendPass.uniforms["tDiffuse2"].value = this.motionBlurRenderTarget.texture;
+// this.blendPass.uniforms["mixRatio"].value = 0.6;
+// this.postprocessing.composer.addPass(this.blendPass);
 
-
-    // save pass
-    // this.savePass = new SavePass(
-    //   new THREE.WebGLRenderTarget(
-    //     this.size.x,
-    //     this.size.y,
-    //     {
-    //       minFilter: THREE.LinearFilter,
-    //       magFilter: THREE.LinearFilter,
-    //       stencilBuffer: false
-    //     }
-    //   )
-    // );
-    // // blend pass
-    // this.blendPass = new ShaderPass(BlendShader, "tDiffuse1");
-    // this.blendPass.uniforms["tDiffuse2"].value = this.savePass.renderTarget.texture;
-    // this.blendPass.uniforms["mixRatio"].value = 0.9;
-
-    // // output pass
-    // this.outputPass = new ShaderPass(CopyShader);
-    // this.outputPass.renderToScreen = true;
-
-    // // adding passes to composer
-    // this.postprocessing.composer.addPass(this.blendPass);
-    // this.postprocessing.composer.addPass(this.savePass);
-    // this.postprocessing.composer.addPass(this.outputPass);
-
-
-
-
-   // const depthShader = BokehDepthShader;
-
-    // this.materialDepth = new THREE.ShaderMaterial( {
-    //   uniforms: depthShader.uniforms,
-    //   vertexShader: depthShader.vertexShader,
-    //   fragmentShader: depthShader.fragmentShader
-    // } );
-
-    // this.materialDepth.uniforms[ 'mNear' ].value = this.context.Camera.instance.near;
-    // this.materialDepth.uniforms[ 'mFar' ].value = this.context.Camera.instance.far;
-
-    // const pars = { 
-    //   minFilter: THREE.LinearFilter, 
-    //   magFilter: THREE.LinearFilter, 
-    //   format: THREE.RGBFormat 
-    // };
-		// this.postprocessing.rtTextureDepth = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, pars );
-		// this.postprocessing.rtTextureColor = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, pars );
-
-		// 	const bokeh_shader = BokehShader;
-
-		// this.postprocessing.bokeh_uniforms = THREE.UniformsUtils.clone( bokeh_shader.uniforms );
-
-		// this.postprocessing.bokeh_uniforms[ 'tColor' ].value = this.postprocessing.rtTextureColor.texture;
-		// this.postprocessing.bokeh_uniforms[ 'tDepth' ].value = this.postprocessing.rtTextureDepth.texture;
-		// this.postprocessing.bokeh_uniforms[ 'textureWidth' ].value = window.innerWidth;
-		// this.postprocessing.bokeh_uniforms[ 'textureHeight' ].value = window.innerHeight;
-
-		// this.postprocessing.materialBokeh = new THREE.ShaderMaterial( {
-
-		// 		uniforms: this.postprocessing.bokeh_uniforms,
-		// 		vertexShader: bokeh_shader.vertexShader,
-		// 		fragmentShader: bokeh_shader.fragmentShader,
-		// 		defines: {
-		// 			RINGS: 3,
-		// 			SAMPLES: 4
-		// 		}
-
-		// 	} );
-
-		// this.postprocessing.quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( window.innerWidth, window.innerHeight ), this.postprocessing.materialBokeh );
-		// this.postprocessing.quad.position.z = - 500;
-		// this.context.Scene.add( this.postprocessing.quad );
-
-
+// //  // output pass
+//  this.outputPass = new ShaderPass(CopyShader);
+//  this.outputPass.renderToScreen = true;
+//  this.postprocessing.composer.addPass(this.outputPass);
    
-
-        
-
-    ///
-    // depth of field
-    
-		// this.postprocessing.dof = new ShaderPass( DoFShader );
-		// this.postprocessing.dof.uniforms[ 'tDepth' ].value = this.depthTarget;
-		// this.postprocessing.dof.uniforms[ 'size' ].value = this.size;//.set( size.x , size.y );
-		// this.postprocessing.dof.uniforms[ 'textel' ].value = new Vector2(1.0 / this.size.x,1.0 / this.size.y);// .set( 1.0/size.x, 1.0/size.y);
-
-		// //make sure that these two values are the same for your camera, otherwise distances will be wrong.
-		// this.postprocessing.dof.uniforms[ 'znear' ].value = 1;//this.context.Camera.instance.near; //camera clipping start
-		// this.postprocessing.dof.uniforms[ 'zfar' ].value = 200;//this.context.Camera.instance.far; //camera clipping end
-
-		// this.postprocessing.dof.uniforms[ 'focalDepth' ].value = 100.0; //focal distance value in meters, but you may use autofocus option below
-		// this.postprocessing.dof.uniforms[ 'focalLength' ].value	= this.context.Camera.instance.focalLength; //focal length in mm
-		// this.postprocessing.dof.uniforms[ 'fstop' ].value = 4.01; //f-stop value
-		// this.postprocessing.dof.uniforms[ 'showFocus' ].value = false; //show debug focus point and focal range (orange = focal point, blue = focal range)
-
-		// this.postprocessing.dof.uniforms[ 'manualdof' ].value = true; //manual dof calculation
-		// this.postprocessing.dof.uniforms[ 'ndofstart' ].value = 5.90; //near dof blur start
-		// this.postprocessing.dof.uniforms[ 'ndofdist' ].value = 5.02; //near dof blur falloff distance	
-		// this.postprocessing.dof.uniforms[ 'fdofstart' ].value = 10.1; //far dof blur start
-		// this.postprocessing.dof.uniforms[ 'fdofdist' ].value = 10.002; //far dof blur falloff distance	
-
-		// this.postprocessing.dof.uniforms[ 'CoC' ].value = 0.03;//circle of confusion size in mm (35mm film = 0.03mm)	
-
-		// this.postprocessing.dof.uniforms[ 'vignetting' ].value = true; //use optical lens vignetting?
-		// this.postprocessing.dof.uniforms[ 'vignout' ].value = 1.5;//vignetting outer border
-		// this.postprocessing.dof.uniforms[ 'vignin' ].value = 0.1;//vignetting inner border
-		// this.postprocessing.dof.uniforms[ 'vignfade' ].value = 100.0;//f-stops till vignete fades	
-
-		// this.postprocessing.dof.uniforms[ 'autofocus' ].value = true;//use autofocus in shader? disable if you use external focalDepth value
-		// this.postprocessing.dof.uniforms[ 'focus' ].value = new Vector2(0.5, 0.5);// autofocus point on screen (0.0,0.0 - left lower corner, 1.0,1.0 - upper right) 
-		// this.postprocessing.dof.uniforms[ 'maxblur' ].value = 2.2; //clamp value of max blur (0.0 = no blur,1.0 default)	
-
-		// this.postprocessing.dof.uniforms[ 'threshold' ].value = 0.5;//highlight threshold;
-		// this.postprocessing.dof.uniforms[ 'gain' ].value = 2.0; //highlight gain;
-
-    // this.postprocessing.dof.uniforms[ 'bias' ].value = 0.5;//bokeh edge bias		
-		// this.postprocessing.dof.uniforms[ 'fringe' ].value = 3.7;//bokeh chromatic aberration/fringing
-
-    // this.postprocessing.dof.uniforms[ 'noise' ].value = false; //use noise instead of pattern for sample dithering
-		// this.postprocessing.dof.uniforms[ 'namount' ].value	= 0.0001; //dither amount
-
-    // this.postprocessing.dof.uniforms[ 'depthblur' ].value = true;//blur the depth buffer?
-		// this.postprocessing.dof.uniforms[ 'dbsize' ].value  = 1.25;//depthblursize
-    // this.postprocessing.composer.addPass( this.postprocessing.dof );
-
-
-
-    //this.smaaPass = new SMAAPass( this.size.x, this.size.y );
-    //this.postprocessing.composer.addPass( this.smaaPass );
-
-    
-    // this.postprocessing.composer.addPass( this.fxaaPass );
-    
-    //this.postprocessing.composer.addPass( this.postprocessing.bokehPass );
-    
-
-  
-    
-    // this.postprocessing.fxaaPass = new ShaderPass( FXAAShader );    
-    // const pixelRatio = this.instance.getPixelRatio();    
-    // this.postprocessing.fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( this.size.x * pixelRatio );
-    // this.postprocessing.fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / (  this.size.y * pixelRatio ); 
-    
-    // this.postprocessing.composer.addPass(  this.postprocessing.fxaaPass );
-
-
 
 
 
