@@ -29,7 +29,10 @@ class Renderer {
   constructor(id = "app", context){
     this.context = context;
     this.clock = new THREE.Clock();
-    this.postprocessing = {};
+    this.postprocessing = {
+      enabled : true,
+      initialized : false
+    };
     this.context.Events.registerEvent('OnAnimationLoop');
     
     this.instance = new THREE.WebGLRenderer({
@@ -59,8 +62,9 @@ class Renderer {
 
     this.domElement.appendChild( this.instance.domElement );
     
-   this.context.Events.addEventListener("OnMount",()=>this.InitComposer() );
-
+    if(this.postprocessing.enabled){
+      this.context.Events.addEventListener("OnMount",()=>this.InitComposer() );
+    }
   }
 
   InitComposer = () => {
@@ -112,9 +116,6 @@ class Renderer {
     // 
     this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
 
-
-
-
    
     //Bokeh
     
@@ -149,33 +150,8 @@ class Renderer {
     
     this.postprocessing.composer.addPass( this.postprocessing.bokehPass );
 
-    //this.postprocessing.bokehPass.needsSwap = true;
-    //this.postprocessing.bokehPass.renderToScreen = true;
-    
-    // // add a motion blur pass
-    // this.postprocessing.motionPass = new ShaderPass(motionBlurShader);
-    // this.postprocessing.motionPass.renderToScreen = true;
-    // console.log( this.postprocessing.motionPass)
-    // // this.postprocessing.motionPass.material.uniforms.tDepth.value = this.depthTexture;
-    // // this.postprocessing.motionPass.material.uniforms.velocityFactor.value = 1;
-    // this.postprocessing.composer.addPass(this.postprocessing.motionPass);
-//  //     // save pass
-//  this.savePass = new SavePass(this.renderTarget );
-//  this.postprocessing.composer.addPass(this.savePass);
-// // // blend pass
-// this.blendPass = new ShaderPass(BlendShader, "tDiffuse1");
-// this.blendPass.uniforms["tDiffuse2"].value = this.motionBlurRenderTarget.texture;
-// this.blendPass.uniforms["mixRatio"].value = 0.6;
-// this.postprocessing.composer.addPass(this.blendPass);
 
-// //  // output pass
-//  this.outputPass = new ShaderPass(CopyShader);
-//  this.outputPass.renderToScreen = true;
-//  this.postprocessing.composer.addPass(this.outputPass);
-   
-
-
-
+    this.postprocessing.initialized = true;
   }
 
 
@@ -184,11 +160,14 @@ class Renderer {
     this.context.Events.dispatchEvent('OnAnimationLoop', this.clock);
 
     this.context.Mixer.update(0.1);
-
-   //this.instance.render(this.context.Scene, this.context.Camera.instance);
-    this.postprocessing.composer.render(.1);
-
-//    this.composer.render(delta);
+    if(this.postprocessing.enabled){
+      if(!this.postprocessing.initialized){
+        this.InitComposer();
+      }
+      this.postprocessing.composer.render(.1);
+    }else{
+      this.instance.render(this.context.Scene, this.context.Camera.instance);
+    }
   }
 
 }
