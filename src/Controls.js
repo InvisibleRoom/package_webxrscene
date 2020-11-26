@@ -3,6 +3,7 @@ import {DesktopControls} from './DesktopControls';
 import {VRController} from './VRController';
 import { VRButton } from './VRButton.js';
 import { ARButton } from './ARButton.js';
+import { Vector3 } from 'three';
 
 class Controls{
   constructor(context){
@@ -255,9 +256,11 @@ class Controls{
   }
 
   GetTarget(){
+    console.log("GetTarget" , this.currentControls,this[this.currentControls].instance.target, this.context.Camera.instance.position);
+
     switch(this.currentControls){
       case "VR":
-        return {x:0,y:0,z:0}
+        return new Vector3(0,0,0);//{x:0,y:0,z:0}
       break;
       default:
         return this[this.currentControls].instance.target;
@@ -266,6 +269,9 @@ class Controls{
   }
 
   GetCameraPosition(){
+
+    console.log("GetCameraPosition" , this.currentControls, this.context.Camera.instance.position);
+
     switch(this.currentControls){
       case "VR":
         

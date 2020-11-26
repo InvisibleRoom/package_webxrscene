@@ -26,13 +26,21 @@ class Events{
       callback(eventArgs);
     });
   }
+
   addEventListener(eventName, callback){
     this.events[eventName].registerCallback(callback);
   }
+
   removeEventListener(eventName, callback){
+    
+    console.log("remove" , eventName, callback);
+
     if(this.events.hasOwnProperty(eventName)){
-       this.events[eventName].callbacks = this.events[eventName].callbacks.filter(c => c != callback);
+      this.events[eventName].callbacks = this.events[eventName].callbacks.filter(c => c != callback);
     }
+
+
+
   }
 }
 

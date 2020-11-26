@@ -19,14 +19,22 @@ class Loader {
     this.instance.setDRACOLoader( this.dracoLoader );
     this.load = this.load.bind(this);
   }
+
+
   loadStack(stack){
     
     return new Promise((resolve,reject)=>{
+
       let promises = stack.stack.map((s,index)=>{
-        return this.load(Object.assign(s,{
-          progress : stack.progress
-        }));
+
+        s.progress = function(opt){
+          stack.progress(opt);
+        }
+
+        return this.load(s);
       });
+
+
       Promise.all(promises).then((el)=>{
         let library = {};
         el.map((obj,index)=>{
@@ -42,11 +50,19 @@ class Loader {
     let {name, url,progress} = arg; 
 
     if(typeof(progress) != "undefined"){
-      this.context.Events.addEventListener("OnProgress",progress);
-      this.context.Events.addEventListener("OnLoad",()=>{
-        this.context.Events.removeEventListener("OnProgress", progress);
-        this.context.Events.removeEventListener("OnLoad", progress);
-      });
+
+      this.context.Events.addEventListener("OnProgress", progress);
+
+      function OnLoad(opt){
+
+        if(opt.name === name){
+          this.context.Events.removeEventListener("OnProgress", progress);
+          this.context.Events.removeEventListener("OnLoad", OnLoad);
+        }
+      }
+
+      this.context.Events.addEventListener("OnLoad",OnLoad);
+
     }
 
     return new Promise((resolve,reject)=>{
@@ -63,6 +79,8 @@ class Loader {
           gltf.actions[anim.name] = clipAction;
 
         });
+
+
         this.context.Events.addEventListener("OnAnimationLoop",()=>{
           gltf.mixer.update(this.context.Renderer.clock.getDelta());
         })
