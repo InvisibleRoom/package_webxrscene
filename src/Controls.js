@@ -7,6 +7,7 @@ import { Vector3 } from 'three';
 
 class Controls{
   constructor(context){
+    this.enabled = true;
     this.context = context;
     this.currentControls = "Desktop";
     //Binding
@@ -152,7 +153,6 @@ class Controls{
 
   SetupVR(settings){
 
-    console.log(settings);
 
     if(typeof(this.cameraHelper) == "undefined"){
       this.cameraHelper = new THREE.Group();
@@ -218,7 +218,9 @@ class Controls{
     if(this.currentControls == "VR"){
       //this.vr_controller.Update();
     }
+
     if(this.currentControls == "Desktop"){
+      this[this.currentControls].instance.enabled = this.enabled;
       this[this.currentControls].instance.update();
     }
   }
@@ -256,8 +258,7 @@ class Controls{
   }
 
   GetTarget(){
-    console.log("GetTarget" , this.currentControls,this[this.currentControls].instance.target, this.context.Camera.instance.position);
-
+   
     switch(this.currentControls){
       case "VR":
         return new Vector3(0,0,0);//{x:0,y:0,z:0}
@@ -270,8 +271,7 @@ class Controls{
 
   GetCameraPosition(){
 
-    console.log("GetCameraPosition" , this.currentControls, this.context.Camera.instance.position);
-
+    
     switch(this.currentControls){
       case "VR":
         

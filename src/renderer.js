@@ -38,19 +38,23 @@ class Renderer {
     this.instance = new THREE.WebGLRenderer({
       alpha : true,
       antialias: true,
+      transparent : true,
       //autoClear: false,
-      logarithmicDepthBuffer: false
+      //logarithmicDepthBuffer: false
       // powerPreference: "high-performance",
       // stencil: false,
       //depth: false
     });
     this.instance.physicallyCorrectLights = true;
     this.size = new Vector2(window.innerWidth, window.innerHeight);
-
+    
     this.instance.shadowMap.enabled = true;
     this.instance.shadowMap.type = THREE.PCFSoftShadowMap;
-    // this.instance.colorManagement = true;
-   // this.instance.setClearColor(0xcccccc,1);
+    this.instance.toneMapping = THREE.ACESFilmicToneMapping;
+    this.instance.outputEncoding = THREE.sRGBEncoding;
+    this.instance.gammaFactor = 1.4;
+    this.instance.colorManagement = true;
+    this.instance.setClearColor(0xcccccc,0);
     
     this.instance.setSize(this.size.x,this.size.y);
     this.instance.xr.enabled = true;
@@ -65,6 +69,8 @@ class Renderer {
     if(this.postprocessing.enabled){
       this.context.Events.addEventListener("OnMount",()=>this.InitComposer() );
     }
+
+    window.addEventListener("resize", this.Resize);
   }
 
   InitComposer = () => {
@@ -114,7 +120,7 @@ class Renderer {
     this.postprocessing.bloomPass.exposure = 2.0;
 // 
     // 
-    this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
+    //this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
 
    
     //Bokeh
@@ -144,17 +150,24 @@ class Renderer {
 		//outputPass.renderToScreen = true;
 
 
-		this.postprocessing.composer.addPass( this.postprocessing.blendPass );
-		this.postprocessing.composer.addPass( this.postprocessing.savePass );
-    this.postprocessing.composer.addPass( this.postprocessing.outputPass );
-    
+		// this.postprocessing.composer.addPass( this.postprocessing.blendPass );
+		// this.postprocessing.composer.addPass( this.postprocessing.savePass );
+    // this.postprocessing.composer.addPass( this.postprocessing.outputPass );
+    // 
     this.postprocessing.composer.addPass( this.postprocessing.bokehPass );
 
 
     this.postprocessing.initialized = true;
   }
 
+  EnablePostProcessing(cb){
+    this.postprocessing.enabled = true;
+    this.InitComposer();
 
+    if(typeof(cb)!="undefined"){
+      cb();
+    }
+  }
 
   AnimationLoop = () => {
     this.context.Events.dispatchEvent('OnAnimationLoop', this.clock);
@@ -168,6 +181,21 @@ class Renderer {
     }else{
       this.instance.render(this.context.Scene, this.context.Camera.instance);
     }
+  }
+
+  Resize = () =>{
+
+    var size = this.domElement.getBoundingClientRect();
+    this.size = new Vector2(size.width, size.height);
+    this.instance.setSize(this.size.x,this.size.y);
+
+    this.context.Camera.instance.aspect = this.size.x / this.size.y;
+    this.context.Camera.instance.updateProjectionMatrix();
+    if(this.postprocessing.enabled){
+      this.renderTarget.setSize(this.size.x,this.size.y);
+      this.motionBlurRenderTarget.setSize(this.size.x,this.size.y);
+    }
+
   }
 
 }

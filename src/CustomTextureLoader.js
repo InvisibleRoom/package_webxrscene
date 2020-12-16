@@ -1,4 +1,4 @@
-import {TextureLoader} from 'three';
+import {TextureLoader,PMREMGenerator,DefaultLoadingManager} from 'three';
 
 class CustomTextureLoader {
 
@@ -10,6 +10,15 @@ class CustomTextureLoader {
     this.context.Events.registerEvent('OnTextureProgress');
 
     this.instance = new TextureLoader();
+
+    this.pmremGenerator = new PMREMGenerator( this.context.Renderer.instance );
+    this.pmremGenerator.compileEquirectangularShader();
+    
+    DefaultLoadingManager.onLoad = () => {
+
+      this.pmremGenerator.dispose();
+
+    };
   }
 
   loadStack(stack){
@@ -42,6 +51,9 @@ class CustomTextureLoader {
       },reject);
     });
   }
+
+
+
 
 }
 
