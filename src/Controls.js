@@ -334,7 +334,7 @@ class Controls{
 
 
     //TODO: Not only for UI elements
-    if ( intersect && intersect.object.isUI ) {
+    if ( intersect && intersect.object.isClickEnabled ) {
 
       if ( this.selectState ) {
         // Component.setState internally call component.set with the options you defined in component.setupState
