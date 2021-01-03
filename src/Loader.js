@@ -15,7 +15,7 @@ class Loader {
     this.context.Events.registerEvent('OnProgress');
     
     this.dracoLoader = new DRACOLoader();
-    this.dracoLoader.setDecoderPath( '/examples/js/libs/draco/' );
+    this.dracoLoader.setDecoderPath("./gltf/");
     this.instance.setDRACOLoader( this.dracoLoader );
     this.load = this.load.bind(this);
   }
