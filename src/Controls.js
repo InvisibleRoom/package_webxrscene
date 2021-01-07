@@ -287,6 +287,20 @@ class Controls{
     }
   }
 
+  GetInputPosition(){
+    if(this.currentControls == "VR"){
+      console.log(this.vr_controller);
+      return this.vr_controller.controllers[0].position;
+    }
+
+    if(this.currentControls == "Desktop"){
+      if ( this.mouse.x !== null && this.mouse.y !== null ) {
+        console.log(this.mouse);
+        return this.mouse
+      }
+    }
+  }
+
   /**Interactive Objects */
 
   Raycast() {
