@@ -49,12 +49,37 @@ class Renderer {
     this.size = new Vector2(window.innerWidth, window.innerHeight);
     
     this.instance.shadowMap.enabled = true;
+    this.instance.shadowMap.autoUpdate = false;
     this.instance.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.instance.toneMapping = THREE.ACESFilmicToneMapping;
+
+    this.instance.toneMapping = THREE.CustomToneMapping;//THREE.ReinhardToneMapping;
     this.instance.outputEncoding = THREE.sRGBEncoding;
-    this.instance.gammaFactor = 1.4;
+    this.instance.gammaFactor = 1;
     this.instance.colorManagement = true;
     this.instance.setClearColor(0xcccccc,0);
+
+    //http://filmicworlds.com/blog/filmic-tonemapping-operators/
+    THREE.ShaderChunk.tonemapping_pars_fragment = THREE.ShaderChunk.tonemapping_pars_fragment.replace(
+      'vec3 CustomToneMapping( vec3 color ) { return color; }',
+      `
+      float A = 0.25;
+      float B = 0.50;
+      float C = 0.10;
+      float D = 0.20;
+      float E = 0.02;
+      float F = 0.30;
+      float W = 11.2;
+
+vec3 Uncharted2Helper(vec3 x) { return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;}			
+      float toneMappingWhitePoint = 1.6;
+      vec3 CustomToneMapping( vec3 color ) {
+        color *= toneMappingExposure;
+        return saturate( Uncharted2Helper( color ) / Uncharted2Helper( vec3( toneMappingWhitePoint ) ) );
+      }`
+    );
+
+
+
     
     this.instance.setSize(this.size.x,this.size.y);
     this.instance.xr.enabled = true;
