@@ -52,14 +52,14 @@ class Renderer {
     this.instance.shadowMap.autoUpdate = false;
     this.instance.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    this.instance.toneMapping = THREE.CustomToneMapping;//THREE.ReinhardToneMapping;
+    //this.instance.toneMapping = THREE.CustomToneMapping;//THREE.ReinhardToneMapping;
     this.instance.outputEncoding = THREE.sRGBEncoding;
     this.instance.gammaFactor = 1;
     this.instance.colorManagement = true;
     this.instance.setClearColor(0xcccccc,0);
 
     //http://filmicworlds.com/blog/filmic-tonemapping-operators/
-    THREE.ShaderChunk.tonemapping_pars_fragment = THREE.ShaderChunk.tonemapping_pars_fragment.replace(
+    /*THREE.ShaderChunk.tonemapping_pars_fragment = THREE.ShaderChunk.tonemapping_pars_fragment.replace(
       'vec3 CustomToneMapping( vec3 color ) { return color; }',
       `
       float A = 0.25;
@@ -76,7 +76,7 @@ vec3 Uncharted2Helper(vec3 x) { return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;}
         color *= toneMappingExposure;
         return saturate( Uncharted2Helper( color ) / Uncharted2Helper( vec3( toneMappingWhitePoint ) ) );
       }`
-    );
+    );*/
 
 
 

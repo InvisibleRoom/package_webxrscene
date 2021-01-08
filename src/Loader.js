@@ -36,6 +36,7 @@ class Loader {
 
 
       Promise.all(promises).then((el)=>{
+
         let library = {};
         el.map((obj,index)=>{
           library[obj.name] = obj;
@@ -67,6 +68,7 @@ class Loader {
 
     return new Promise((resolve,reject)=>{
       this.instance.load(url,(gltf)=>{
+
         gltf.name = name;
         gltf.mixer = new AnimationMixer(gltf.scene);
 
