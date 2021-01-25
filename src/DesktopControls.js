@@ -1,4 +1,5 @@
 
+import { Vector3 } from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import {StaticControls} from './StaticControls';
 
@@ -19,6 +20,7 @@ class DesktopControls {
   }
 
   ChangeToStatic = () =>{
+
     this.instance = this.static;
     this.static.enabled = true;
     this.orbit.enabled = false;
@@ -27,6 +29,14 @@ class DesktopControls {
     this.instance = this.orbit;
     this.static.enabled = false;
     this.orbit.enabled = true;
+  }
+
+  SetTarget = (x,y,z)=>{
+    this.static.target.set(x,y,z);
+    this.orbit.target.set(x,y,z);
+
+    this.static.update();
+    this.orbit.update();
   }
 
 

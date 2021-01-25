@@ -197,6 +197,10 @@ vec3 Uncharted2Helper(vec3 x) { return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;}
   AnimationLoop = () => {
     this.context.Events.dispatchEvent('OnAnimationLoop', this.clock);
 
+    if(this.size.x == 0 || this.size.y === 0){
+      this.Resize();
+    }
+
     this.context.Mixer.update(0.1);
     if(this.postprocessing.enabled){
       if(!this.postprocessing.initialized){

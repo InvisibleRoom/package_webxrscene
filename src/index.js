@@ -30,7 +30,7 @@ class webXRScene{
 
     this.Controls = new Controls(this);
 
-    this.Stats  = new StatClass(this);
+    //this.Stats  = new StatClass(this);
 
     this.Events.dispatchEvent("OnMount");
   }
