@@ -19,8 +19,11 @@ class SceneController{
     
     if(!this.scenes.hasOwnProperty(sceneName)){
       this.scenes[sceneName] = new THREE.Scene();
-      this.scenes[sceneName] = sceneName;
+      this.scenes[sceneName].name = sceneName;
     }
+
+
+    console.log("scene" , this.scenes[sceneName]);
 
     this.scenes[sceneName].add(model);
   }
