@@ -23,8 +23,17 @@ class webXRScene{
     this.Loader = new Loader(this);
     this.CustomTextureLoader = new CustomTextureLoader(this);
     this.Update = new Update(this);
-
     this.Scene = new THREE.Scene();
+
+    //this.Scene = new SceneController(this);
+    //SceneController.rooms (IRoom)
+    //{AddToSCene(model) => scene exists in room? => model.props.ownProperty.room == room.Name => room.add(model)}
+    //this.xr.SwitchScene(this.currentRoom)
+    //{check currentroom, transition, camera übergabe??, setzte camerainstance in renderer }.then{this.currentRoom = this.rooms.House;}
+    //SceneControoler.SetSCene(
+    //SceneControoler.context.Scene = SceneControoler.currentScene)
+
+    
 
     this.Camera = new Camera(this);
 
