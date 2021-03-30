@@ -31,13 +31,13 @@ class StaticControls {
   bind = ()=>{
     this.domElement.ownerDocument.addEventListener( 'mousemove', this.onMouseMove, false );
     this.domElement.ownerDocument.addEventListener( 'mousedown', this.onMouseDown, false );
-    document.body.addEventListener( 'mouseup', this.onMouseUp, false );  
+    window.addEventListener( 'mouseup', this.onMouseUp, false );  
   }
 
   unbind = ()=>{
     this.domElement.ownerDocument.removeEventListener( 'mousemove', this.onMouseMove, false );
     this.domElement.ownerDocument.removeEventListener( 'mousedown', this.onMouseDown, false );
-    document.body.ownerDocument.removeEventListener( 'mouseup', this.onMouseUp, false );
+    window.removeEventListener( 'mouseup', this.onMouseUp, false );
   }
 
   update = (t)=>{
@@ -49,12 +49,12 @@ class StaticControls {
     if(((Math.abs(this.movement.x) + Math.abs(this.movement.y)) < this.threshold) && angle > 0.0001 ) 
       { 
         
-      const delta = t.getDelta();
+      // const delta = t.getDelta();
 
-      this.rotationMatrix.lookAt( this.camera.position, this.target, this.camera.up );
-      this.targetQuaternion.setFromRotationMatrix( this.rotationMatrix );
+      // this.rotationMatrix.lookAt( this.camera.position, this.target, this.camera.up );
+      // this.targetQuaternion.setFromRotationMatrix( this.rotationMatrix );
 
-      this.camera.quaternion.rotateTowards( this.targetQuaternion, delta  * .1 );
+      // this.camera.quaternion.rotateTowards( this.targetQuaternion, delta  * .1 );
       
       return;
     }

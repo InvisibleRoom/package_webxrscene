@@ -15,7 +15,6 @@ class webXRScene{
   constructor(elementID){
     this.Events = new Events(this);
 
-
     this.Events.registerEvent("OnMount");
 
     this.Mixer = new AnimationMixer();
