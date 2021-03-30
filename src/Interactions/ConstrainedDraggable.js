@@ -1,11 +1,7 @@
-import Draggable from './Draggable'
-class ConstrainedDraggable extends Draggable {
-    constructor() {
-        super()
-    }
-
-    DragMove(position){
-        
-    }
+class ConstrainedDraggable {
+  constructor(props){
+    
+  }
+  
 }
-export default ConstrainedDraggable
+export default ConstrainedDraggable;

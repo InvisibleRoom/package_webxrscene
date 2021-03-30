@@ -15,7 +15,6 @@ class webXRScene{
   constructor(elementID){
     this.Events = new Events(this);
 
-
     this.Events.registerEvent("OnMount");
 
     this.Mixer = new AnimationMixer();
@@ -39,7 +38,7 @@ class webXRScene{
 
     this.Controls = new Controls(this);
 
-    this.Stats  = new StatClass(this);
+    //this.Stats  = new StatClass(this);
 
     this.Events.dispatchEvent("OnMount");
   }

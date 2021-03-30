@@ -70,22 +70,22 @@ class Loader {
       this.instance.load(url,(gltf)=>{
 
         gltf.name = name;
-        gltf.mixer = new AnimationMixer(gltf.scene);
+        // gltf.mixer = new AnimationMixer(gltf.scene);
 
-        gltf.actions = {};
-        gltf.animations.map((anim,index)=>{
-          let clipAction = gltf.mixer.clipAction( anim );
-              clipAction.clampWhenFinished = true;
-              clipAction.loop = THREE.LoopOnce;
-              clipAction.name = anim.name;
-          gltf.actions[anim.name] = clipAction;
+        // gltf.actions = {};
+        // gltf.animations.map((anim,index)=>{
+        //   let clipAction = gltf.mixer.clipAction( anim );
+        //       clipAction.clampWhenFinished = true;
+        //       clipAction.loop = THREE.LoopOnce;
+        //       clipAction.name = anim.name;
+        //   gltf.actions[anim.name] = clipAction;
 
-        });
+        // });
 
 
-        this.context.Events.addEventListener("OnAnimationLoop",()=>{
-          gltf.mixer.update(this.context.Renderer.clock.getDelta());
-        })
+        // this.context.Events.addEventListener("OnAnimationLoop",()=>{
+        //   gltf.mixer.update(this.context.Renderer.clock.getDelta());
+        // })
 
         resolve(gltf);
         this.context.Events.dispatchEvent('OnLoad',{name: name, scene : gltf.scene});

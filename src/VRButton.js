@@ -8,9 +8,6 @@ var VRButton = {
 			var currentSession = null;
 
 			function onSessionStarted( session ) {
-
-				console.log(session);
-
 				session.addEventListener( 'end', onSessionEnded );
 
 				renderer.xr.setSession( session );

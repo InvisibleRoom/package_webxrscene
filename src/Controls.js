@@ -8,6 +8,7 @@ import { Vector3 } from 'three';
 class Controls{
   constructor(context){
     this.enabled = true;
+    this.interactivityEnabled = true;
     this.context = context;
     this.currentControls = "Desktop";
     //Binding
@@ -169,9 +170,7 @@ class Controls{
 
     this.context.Renderer.instance.autoClear = true;
     this.context.Renderer.instance.setClearColor(0xffffff,1);
-    console.log("set original camera to zero and parent it under cameraHelper");
-
-    console.log(this.vr_controller.controllerGrips);
+  
     this.vr_controller.controllerGrips.forEach((controller)=>{
       controller.parent = this.cameraHelper;      
     });
@@ -210,9 +209,9 @@ class Controls{
   GetARButton(){
     return this.arButton;
   }
-  Update(){
+  Update(t){
 
-    if(this.ActiveObjects.length > 0){
+    if(this.ActiveObjects.length > 0 && this.interactivityEnabled){
       this.FindIntersection();
     }
     if(this.currentControls == "VR"){
@@ -221,7 +220,7 @@ class Controls{
 
     if(this.currentControls == "Desktop"){
       this[this.currentControls].instance.enabled = this.enabled;
-      this[this.currentControls].instance.update();
+      this[this.currentControls].instance.update(t);
     }
   }
   GetPosition(){
@@ -251,8 +250,7 @@ class Controls{
         this.cameraHelper.rotation.z = 0;
       break;
       default:
-        this[this.currentControls].instance.target.set(x,y,z);
-        this[this.currentControls].instance.update();
+        this[this.currentControls].SetTarget(x,y,z);
       break;
     }
   }

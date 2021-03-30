@@ -1,4 +1,5 @@
-import { Euler, Vector3 } from 'three';
+import { Euler, Object3D, Quaternion, Vector3, Matrix4 } from 'three';
+import { Utils } from './Utils';
 
 class StaticControls {
   minPolarAngle = 0;
@@ -14,11 +15,15 @@ class StaticControls {
   threshold = .05;
   speed = 0.001;
 
+  rotationMatrix = new Matrix4();
+  targetQuaternion = new Quaternion();
+  
   constructor(camera,domElement){
 
     this.camera = camera;
     this.domElement = domElement;
     this.mousedown = false;
+
 
     this.bind();
   }
@@ -26,18 +31,33 @@ class StaticControls {
   bind = ()=>{
     this.domElement.ownerDocument.addEventListener( 'mousemove', this.onMouseMove, false );
     this.domElement.ownerDocument.addEventListener( 'mousedown', this.onMouseDown, false );
-    this.domElement.ownerDocument.addEventListener( 'mouseup', this.onMouseUp, false );  
+    window.addEventListener( 'mouseup', this.onMouseUp, false );  
   }
 
   unbind = ()=>{
     this.domElement.ownerDocument.removeEventListener( 'mousemove', this.onMouseMove, false );
     this.domElement.ownerDocument.removeEventListener( 'mousedown', this.onMouseDown, false );
-    this.domElement.ownerDocument.removeEventListener( 'mouseup', this.onMouseUp, false );
+    window.removeEventListener( 'mouseup', this.onMouseUp, false );
   }
 
-  update = ()=>{
+  update = (t)=>{
+    if( typeof(t) === "undefined" ){return;}
+    
+    var angle  = this.targetQuaternion.angleTo(this.camera.quaternion);
 
-    if((Math.abs(this.movement.x) + Math.abs(this.movement.y)) < this.threshold){return;}
+
+    if(((Math.abs(this.movement.x) + Math.abs(this.movement.y)) < this.threshold) && angle > 0.0001 ) 
+      { 
+        
+      // const delta = t.getDelta();
+
+      // this.rotationMatrix.lookAt( this.camera.position, this.target, this.camera.up );
+      // this.targetQuaternion.setFromRotationMatrix( this.rotationMatrix );
+
+      // this.camera.quaternion.rotateTowards( this.targetQuaternion, delta  * .1 );
+      
+      return;
+    }
 
     var euler = new Euler( 0, 0, 0, 'YXZ' );
       
@@ -55,8 +75,10 @@ class StaticControls {
   }
 
   onMouseDown = (event) =>{
-
-
+    if(event.target.classList.contains("sprungmarke")){
+      return;
+    }
+    
     this.mousedown = true;
   }
   onMouseUp = (event) =>{
@@ -64,6 +86,9 @@ class StaticControls {
   }
 
   onMouseMove = (event) =>{
+
+
+
     if(!this.mousedown || !this.enabled) {return;}
     
       var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;

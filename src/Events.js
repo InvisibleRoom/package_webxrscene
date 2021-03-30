@@ -28,19 +28,23 @@ class Events{
   }
 
   addEventListener(eventName, callback){
+    
+    if(this.events.hasOwnProperty(eventName)){
+      
+      if(this.events[eventName].callbacks.length > 0){
+        if(this.events[eventName].callbacks.indexOf(callback) != -1){
+          console.log("duplicate " , this.events[eventName].callbacks.indexOf(callback), callback);
+          return false;
+        }
+      }
+    }
     this.events[eventName].registerCallback(callback);
   }
 
   removeEventListener(eventName, callback){
-    
-    console.log("remove" , eventName, callback);
-
     if(this.events.hasOwnProperty(eventName)){
       this.events[eventName].callbacks = this.events[eventName].callbacks.filter(c => c != callback);
     }
-
-
-
   }
 }
 
