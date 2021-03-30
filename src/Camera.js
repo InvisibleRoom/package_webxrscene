@@ -16,6 +16,18 @@ class Camera {
     
   }
 
+  SetActiveCamera = (camera) =>{
+    console.log(camera);
+
+
+    this.instance = camera;
+
+
+    console.warn("=> ToDo WebXRScene: SetActiveCamera! Change Camera in Camera and Controls");
+
+    this.context.Controls.SetActiveCamera(this.instance);
+  }
+
   AddEvents = ()=>{
     this.context.Events.addEventListener("OnAnimationLoop",this.update);
     

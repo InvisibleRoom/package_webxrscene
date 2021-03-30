@@ -137,6 +137,10 @@ class Controls{
     }
   }
 
+  SetActiveCamera = (camera)=>{
+    console.log("SetActiveCamera " , camera);
+  }
+
   SetupDesktop(settings){
     
     if(this.context.Camera.instance.parent.name == "cameraHelper"){
@@ -177,9 +181,6 @@ class Controls{
     this.vr_controller.controllers.forEach((controller)=>{
       controller.parent = this.cameraHelper;
     });
-
-
-
   }
 
   SetupAR(){

@@ -21,10 +21,7 @@ class SceneController{
       this.scenes[sceneName] = new THREE.Scene();
       this.scenes[sceneName].name = sceneName;
     }
-
-
-    console.log("scene" , this.scenes[sceneName]);
-
+    
     this.scenes[sceneName].add(model);
   }
 
@@ -42,6 +39,17 @@ class SceneController{
 
     this.context.Scene = this.scenes[sceneName];
     this.activeScene = this.scenes[sceneName].name;
+
+    let newActiveCamera = null;
+    this.scenes[sceneName].traverse(obj => {
+      if(obj.type === "PerspectiveCamera"){
+        newActiveCamera = obj;
+      }
+    });
+
+    if(newActiveCamera != null){
+      this.context.Camera.SetActiveCamera(newActiveCamera);
+    }
   }
 }
 
