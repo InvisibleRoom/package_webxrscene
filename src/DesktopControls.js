@@ -39,6 +39,11 @@ class DesktopControls {
     this.orbit.update();
   }
 
+  SetActiveCamera = (camera) =>{
+    this.orbit.object = camera;
+    this.static.object = camera;
+  }
+
 
   
 }

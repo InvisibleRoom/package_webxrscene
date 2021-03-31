@@ -20,7 +20,7 @@ class StaticControls {
   
   constructor(camera,domElement){
 
-    this.camera = camera;
+    this.object = camera;
     this.domElement = domElement;
     this.mousedown = false;
 
@@ -43,7 +43,9 @@ class StaticControls {
   update = (t)=>{
     if( typeof(t) === "undefined" ){return;}
     
-    var angle  = this.targetQuaternion.angleTo(this.camera.quaternion);
+    var angle  = this.targetQuaternion.angleTo(this.object.quaternion);
+
+    console.log("update static Controls", this.object);
 
 
     if(((Math.abs(this.movement.x) + Math.abs(this.movement.y)) < this.threshold) && angle > 0.0001 ) 
@@ -61,14 +63,14 @@ class StaticControls {
 
     var euler = new Euler( 0, 0, 0, 'YXZ' );
       
-    euler.setFromQuaternion( this.camera.quaternion );
+    euler.setFromQuaternion( this.object.quaternion );
   
     euler.y -= this.movement.x * this.speed;
     euler.x -= this.movement.y * this.speed;
   
     euler.x = Math.max( this.PI_2 - this.maxPolarAngle, Math.min( this.PI_2 - this.minPolarAngle, euler.x ) );
 
-    this.camera.quaternion.setFromEuler( euler );
+    this.object.quaternion.setFromEuler( euler );
 
     this.movement.x *= this.damping;
     this.movement.y *= this.damping;

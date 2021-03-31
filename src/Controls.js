@@ -132,12 +132,21 @@ class Controls{
     }
   }
   ChangeToStatic = ()=>{
+
+    console.trace("%c Change TO Static ", "background:red;");
+
     if(this.currentControls == "Desktop"){
       this.Desktop.ChangeToStatic();
     }
   }
 
-  SetActiveCamera = (camera)=>{
+  SetActiveCamera = (camera) => {
+
+    console.log()
+
+    this.Desktop.SetActiveCamera(camera);
+
+
     console.log("SetActiveCamera " , camera);
   }
 

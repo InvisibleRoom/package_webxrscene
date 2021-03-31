@@ -44,6 +44,7 @@ class SceneController{
     this.scenes[sceneName].traverse(obj => {
       if(obj.type === "PerspectiveCamera"){
         newActiveCamera = obj;
+        newActiveCamera.name = "Camera for Scene "+sceneName;
       }
     });
 
