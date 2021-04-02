@@ -59,24 +59,24 @@ class Renderer {
     this.instance.setClearColor(0xcccccc,0);
 
     //http://filmicworlds.com/blog/filmic-tonemapping-operators/
-    /*THREE.ShaderChunk.tonemapping_pars_fragment = THREE.ShaderChunk.tonemapping_pars_fragment.replace(
-      'vec3 CustomToneMapping( vec3 color ) { return color; }',
-      `
-      float A = 0.25;
-      float B = 0.50;
-      float C = 0.10;
-      float D = 0.20;
-      float E = 0.02;
-      float F = 0.30;
-      float W = 11.2;
+//     THREE.ShaderChunk.tonemapping_pars_fragment = THREE.ShaderChunk.tonemapping_pars_fragment.replace(
+//       'vec3 CustomToneMapping( vec3 color ) { return color; }',
+//       `
+//       float A = 0.25;
+//       float B = 0.50;
+//       float C = 0.10;
+//       float D = 0.20;
+//       float E = 0.02;
+//       float F = 0.30;
+//       float W = 11.2;
 
-vec3 Uncharted2Helper(vec3 x) { return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;}			
-      float toneMappingWhitePoint = 1.6;
-      vec3 CustomToneMapping( vec3 color ) {
-        color *= toneMappingExposure;
-        return saturate( Uncharted2Helper( color ) / Uncharted2Helper( vec3( toneMappingWhitePoint ) ) );
-      }`
-    );*/
+// vec3 Uncharted2Helper(vec3 x) { return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;}			
+//       float toneMappingWhitePoint = 1.6;
+//       vec3 CustomToneMapping( vec3 color ) {
+//         color *= toneMappingExposure;
+//         return saturate( Uncharted2Helper( color ) / Uncharted2Helper( vec3( toneMappingWhitePoint ) ) );
+//       }`
+//     );
 
 
 
@@ -128,9 +128,7 @@ vec3 Uncharted2Helper(vec3 x) { return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;}
     this.renderPass = new RenderPass( this.context.Scene, this.context.Camera.instance );
   
 
-
     //Init Composer
-
     this.postprocessing.composer = new EffectComposer( this.instance,this.renderTarget );
     this.postprocessing.composer.addPass( this.renderPass );
 
@@ -138,11 +136,11 @@ vec3 Uncharted2Helper(vec3 x) { return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;}
    
    
     //Bloom
-    this.postprocessing.bloomPass = new UnrealBloomPass( new Vector2(512,512), .94,.9,.5 );
-    this.postprocessing.bloomPass.threshold = .95;
-    this.postprocessing.bloomPass.strength = 2.9;
-    this.postprocessing.bloomPass.radius = .2;
-    this.postprocessing.bloomPass.exposure = 2.0;
+    // this.postprocessing.bloomPass = new UnrealBloomPass( new Vector2(512,512), .94,.9,.5 );
+    // this.postprocessing.bloomPass.threshold = .95;
+    // this.postprocessing.bloomPass.strength = 2.9;
+    // this.postprocessing.bloomPass.radius = .2;
+    // this.postprocessing.bloomPass.exposure = 2.0;
 // 
     // 
     //this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
@@ -192,6 +190,26 @@ vec3 Uncharted2Helper(vec3 x) { return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;}
     if(typeof(cb)!="undefined"){
       cb();
     }
+  }
+
+  SetActiveCamera = (camera) =>{
+    console.log("this.postprocessing", camera, this.postprocessing, this.renderPass);
+
+
+    this.renderPass.scene = this.context.Scene;
+    this.renderPass.camera = camera;
+
+    Object.keys(this.postprocessing).map((postEffect)=>{
+      if(this.postprocessing[postEffect].hasOwnProperty("camera")){
+        this.postprocessing[postEffect].camera = camera;
+      }
+      
+      
+      if(this.postprocessing[postEffect].hasOwnProperty("scene")){
+        this.postprocessing[postEffect].scene = this.context.Scene;
+      }
+    });    
+
   }
 
   AnimationLoop = () => {

@@ -2,6 +2,7 @@ var exports = {"__esModule": true};
 
 import * as THREE from 'three';
 import { Renderer } from "./Renderer.js";
+import { CSSRenderer } from "./CSSRenderer.js";
 import { Update } from './Update.js';
 import { Loader } from './Loader.js';
 import { CustomTextureLoader } from './CustomTextureLoader.js';
@@ -20,11 +21,15 @@ class webXRScene{
 
     this.Mixer = new AnimationMixer();
     this.Renderer = new Renderer(elementID,this);
+    
+    //CSS Rendering
+    this.CSSScene = new THREE.Scene();
+    this.CSSRenderer = new CSSRenderer(elementID,this);
+    
     this.Loader = new Loader(this);
     this.CustomTextureLoader = new CustomTextureLoader(this);
     this.Update = new Update(this);
     this.Scene = null; // wird durch den SceneController gesetzt => vorerst
-
     this.SceneController = new SceneController(this);
 
     //this.Scene = new SceneController(this);
@@ -39,7 +44,7 @@ class webXRScene{
 
     this.Controls = new Controls(this);
 
-    //this.Stats  = new StatClass(this);
+    this.Stats  = new StatClass(this);
 
     this.Events.dispatchEvent("OnMount");
   }
