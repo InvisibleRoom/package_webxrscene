@@ -11,6 +11,7 @@ import { Camera } from './Camera.js';
 import { Controls } from './Controls.js';
 import {AnimationMixer} from 'three';
 import {SceneController} from './SceneController.js';
+import {CSSSceneController} from './CSSSceneController.js';
 import StatClass from './StatClass';
 
 class webXRScene{
@@ -23,14 +24,16 @@ class webXRScene{
     this.Renderer = new Renderer(elementID,this);
     
     //CSS Rendering
-    this.CSSScene = new THREE.Scene();
+    this.CSSScene = null;
     this.CSSRenderer = new CSSRenderer(elementID,this);
     
     this.Loader = new Loader(this);
     this.CustomTextureLoader = new CustomTextureLoader(this);
     this.Update = new Update(this);
+    
     this.Scene = null; // wird durch den SceneController gesetzt => vorerst
     this.SceneController = new SceneController(this);
+    this.CSSSceneController = new CSSSceneController(this);
 
     //this.Scene = new SceneController(this);
     //this.xr.SwitchScene(this.currentRoom)

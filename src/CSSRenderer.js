@@ -7,11 +7,18 @@ class CSSRenderer {
   constructor(id = "app", context){
     this.context = context;
     this.clock = new THREE.Clock();
+
+    this.scaleFactor = 100;
     
     this.instance = new CSS3DRenderer();
+    this.dpr = window.devicePixelRatio ? window.devicePixelRatio : 1;
     this.size = new THREE.Vector2(window.innerWidth, window.innerHeight);
 
     this.instance.setSize(this.size.x,this.size.y);
+
+    this.instance.domElement.style.width = window.innerWidth + "px";    
+    this.instance.domElement.style.height = window.innerHeight + "px";
+
     this.instance.domElement.classList.add("css-renderer");
     //this.instance.setAnimationLoop(this.AnimationLoop);
 
@@ -32,6 +39,7 @@ class CSSRenderer {
 
     this.context.Events.addEventListener("OnAnimationLoop", this.AnimationLoop);
     window.addEventListener("resize", this.Resize);
+
   }
 
   SetActiveCamera = (camera) =>{
@@ -46,14 +54,21 @@ class CSSRenderer {
     }
     
     this.instance.render(this.context.CSSScene, this.context.Camera.instance);
+     
   
   }
 
   Resize = () =>{
 
     var size = this.domElement.getBoundingClientRect();
-    this.size = new Vector2(size.width, size.height);
+    this.size = new THREE.Vector2(size.width, size.height );
     this.instance.setSize(this.size.x,this.size.y);
+
+    this.instance.domElement.style.width = window.innerWidth + "px";    
+    this.instance.domElement.style.height = window.innerHeight + "px";
+
+    console.log(this.instance.domElement.style.perspective);
+    //this.instance.domElement.style.perspective =parseFloat(this.instance.domElement.style.perspective) * this.dpr;
 
     this.context.Camera.instance.aspect = this.size.x / this.size.y;
     this.context.Camera.instance.updateProjectionMatrix();

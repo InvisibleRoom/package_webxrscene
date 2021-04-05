@@ -196,8 +196,10 @@ class Renderer {
     console.log("this.postprocessing", camera, this.postprocessing, this.renderPass);
 
 
-    this.renderPass.scene = this.context.Scene;
-    this.renderPass.camera = camera;
+    if(this.postprocessing.enabled){
+      this.renderPass.scene = this.context.Scene;
+      this.renderPass.camera = camera;
+    }
 
     Object.keys(this.postprocessing).map((postEffect)=>{
       if(this.postprocessing[postEffect].hasOwnProperty("camera")){
