@@ -45,10 +45,12 @@ class ARButton {
 				console.log("Session Start ",);
 				this.renderer.Resize();
 				this.session = session;
+
 				const gl = this.renderer.instance.getContext();
 				try {
 					await gl.makeXRCompatible();
 					console.log("GL")
+					this.renderer.Resize();
 				} catch (err) {
 					console.log("GL error ", err)
 				}
@@ -67,15 +69,17 @@ class ARButton {
 				session.requestReferenceSpace('local').then((space) => {
 					this.referenceSpace = space
 					console.log("Session requestReferenceSpace local ")
+
 					session.requestReferenceSpace('viewer').then((viewerspace) => {
 						this.viewerspace = viewerspace;
-						console.log("Session requestReferenceSpace viewer")
+						console.log("Session requestReferenceSpace viewer",this.viewerspace)
 						session.requestHitTestSource({ space: this.viewerspace }).then((source) => {
 							this.hitTestSource = source;
 							console.log("SET SOURCE ", this.hitTestSource)
 							this.renderer.instance.xr.setSession(session);
 						});
 					});
+					
 				});
 
 				session.addEventListener("select", clicked);
