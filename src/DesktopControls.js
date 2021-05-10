@@ -1,5 +1,4 @@
 
-import { Vector3 } from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import {StaticControls} from './StaticControls';
 
@@ -12,6 +11,8 @@ class DesktopControls {
     this.static.enabled = false;
     
     this.instance = this.orbit;
+
+
     // this.instance.enableZoom = true;
 		// this.instance.enablePan = false;
 		// this.instance.enableDamping = true;

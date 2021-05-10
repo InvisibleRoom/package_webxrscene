@@ -44,7 +44,7 @@ class Controls{
 
     /** VR AR DOM ELEMENTS - Buttons */
     this.vrButton = VRButton.createButton(this.context.Renderer.instance,this.context);
-    this.arButton = ARButton.createButton(this.context.Renderer.instance,this.context);
+    this.arButton = new ARButton(this.context.Renderer,this.context);
 
     this.SetupVR = this.SetupVR.bind(this);
     this.SetupAR = this.SetupAR.bind(this);
@@ -219,7 +219,7 @@ class Controls{
     }
 
     if(this.currentControls == "Desktop"){
-      this[this.currentControls].instance.enabled = this.enabled;
+      //this[this.currentControls].instance.enabled = this.enabled;
       this[this.currentControls].instance.update(t);
     }
   }
