@@ -220,6 +220,11 @@ vec3 Uncharted2Helper(vec3 x) { return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;}
 
     this.context.Camera.instance.aspect = this.size.x / this.size.y;
     this.context.Camera.instance.updateProjectionMatrix();
+
+    this.instance.domElement.style.width = this.size.x + "px";
+    this.instance.domElement.style.height = this.size.y + "px";
+
+
     if(this.postprocessing.enabled){
       this.renderTarget.setSize(this.size.x,this.size.y);
       this.motionBlurRenderTarget.setSize(this.size.x,this.size.y);

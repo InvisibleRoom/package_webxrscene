@@ -66,7 +66,7 @@ class ARButton {
 				this.hitTestSource = null;
 
 				console.log("Session init ")
-				session.requestReferenceSpace('local').then((space) => {
+				session.requestReferenceSpace('local-floor').then((space) => {
 					this.referenceSpace = space
 					console.log("Session requestReferenceSpace local ")
 
