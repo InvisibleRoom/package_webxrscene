@@ -35,26 +35,23 @@ class CSSRenderer {
     this.instance.domElement.style.bottom = "0";
     this.instance.domElement.style.zIndex = "9999";
     this.instance.domElement.style.pointerEvents = "none";
-    this.instance.domElement.style.border = "1px solid red";
-
+    
     this.context.Events.addEventListener("OnAnimationLoop", this.AnimationLoop);
     window.addEventListener("resize", this.Resize);
 
   }
 
   SetActiveCamera = (camera) =>{
-    console.log("this.postprocessing", camera, this.postprocessing, this.renderPass);
+    //console.log("this.postprocessing", camera, this.postprocessing, this.renderPass);
   }
 
   AnimationLoop = () => {
-    
 
     if(this.size.x === 0 || this.size.y === 0){
       this.Resize();
     }
     
-    this.instance.render(this.context.CSSScene, this.context.Camera.instance);
-     
+    this.instance.render(this.context.CSSSceneController.activeScene, this.context.Camera.instance);
   
   }
 
@@ -67,7 +64,6 @@ class CSSRenderer {
     this.instance.domElement.style.width = window.innerWidth + "px";    
     this.instance.domElement.style.height = window.innerHeight + "px";
 
-    console.log(this.instance.domElement.style.perspective);
     //this.instance.domElement.style.perspective =parseFloat(this.instance.domElement.style.perspective) * this.dpr;
 
     this.context.Camera.instance.aspect = this.size.x / this.size.y;

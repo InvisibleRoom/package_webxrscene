@@ -9,20 +9,58 @@ import {webXRScene}from "./index.js";
 import { Clock, Vector2, Vector3 } from "three";
 import { LoadingManager } from "three";
 
-import { BokehShader, BokehDepthShader } from 'three/examples/jsm/shaders/BokehShader2.js';
+//import { BloomEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
+
+//import * as Nodes from 'three/examples/jsm/nodes/Nodes.js';
 
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass.js';
-import { SavePass } from 'three/examples/jsm/postprocessing/SavePass.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import motionBlurShader from './MotionBlur';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
-import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
-import { BlendShader } from 'three/examples/jsm/shaders/BlendShader';
+
+import { LUTPass } from 'three/examples/jsm/postprocessing/LUTPass.js';
+import { LUTCubeLoader } from 'three/examples/jsm/loaders/LUTCubeLoader.js';
+
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
-import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
-import { DoFShader } from './DoFShader.js';
+
+
+//import { BokehShader, BokehDepthShader } from 'three/examples/jsm/shaders/BokehShader2.js';
+
+// import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+// import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass.js';
+// import { SavePass } from 'three/examples/jsm/postprocessing/SavePass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+// import motionBlurShader from './MotionBlur';
+// import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+// import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
+// import { BlendShader } from 'three/examples/jsm/shaders/BlendShader';
+// import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
+// import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
+// import { DoFShader } from './DoFShader.js';
+
+import lut1 from './luts/Bourbon 64.CUBE';
+import lut2 from './luts/Remy 24.CUBE';
+import lut3 from './luts/Cubicle 99.CUBE';
+import lut4 from './luts/Chemical 168.CUBE';
+import lut5 from './luts/Clayton 33.CUBE';
+import lut6 from './luts/Emulation.CUBE';
+import lut7 from './luts/roadrunner.CUBE';
+import lut8 from './luts/luminous.CUBE';
+import lut9 from './luts/WarmTeal.CUBE';
+import lut10 from './luts/Optima.CUBE';
+
+const luts = {
+  'Chemical': lut2,
+	'Clayton': lut3,
+	'Cubicle': lut4,
+	'Remy': lut5,
+  'Bourbon': lut1,
+  'RoadRunner': lut7,
+  'Luminous': lut8,
+  'WarmTeal': lut9,
+  'Optima': lut10,
+  'Emulation' : lut6,
+}
 
 class Renderer {
   
@@ -30,12 +68,13 @@ class Renderer {
     this.context = context;
     this.clock = new THREE.Clock();
     this.postprocessing = {
-      enabled : false,
+      enabled : true,
       initialized : false
     };
     this.context.Events.registerEvent('OnAnimationLoop');
     
     this.instance = new THREE.WebGLRenderer({
+      powerPreference: "high-performance",
       alpha : true,
       antialias: true,
       transparent : true,
@@ -45,40 +84,18 @@ class Renderer {
       // stencil: false,
       //depth: false
     });
-    this.instance.physicallyCorrectLights = true;
+    //this.instance.physicallyCorrectLights = true;
     this.size = new Vector2(window.innerWidth, window.innerHeight);
+    this.dpr = window.devicePixelRatio ? window.devicePixelRatio : 1;
     
     this.instance.shadowMap.enabled = true;
     this.instance.shadowMap.autoUpdate = false;
     this.instance.shadowMap.type = THREE.PCFSoftShadowMap;
-
-    //this.instance.toneMapping = THREE.CustomToneMapping;//THREE.ReinhardToneMapping;
+    this.instance.toneMapping = THREE.ACESFilmicToneMapping;//CineonToneMapping;//ACESFilmicToneMapping; //
     this.instance.outputEncoding = THREE.sRGBEncoding;
     this.instance.gammaFactor = 1;
     this.instance.colorManagement = true;
     this.instance.setClearColor(0xcccccc,0);
-
-    //http://filmicworlds.com/blog/filmic-tonemapping-operators/
-//     THREE.ShaderChunk.tonemapping_pars_fragment = THREE.ShaderChunk.tonemapping_pars_fragment.replace(
-//       'vec3 CustomToneMapping( vec3 color ) { return color; }',
-//       `
-//       float A = 0.25;
-//       float B = 0.50;
-//       float C = 0.10;
-//       float D = 0.20;
-//       float E = 0.02;
-//       float F = 0.30;
-//       float W = 11.2;
-
-// vec3 Uncharted2Helper(vec3 x) { return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;}			
-//       float toneMappingWhitePoint = 1.6;
-//       vec3 CustomToneMapping( vec3 color ) {
-//         color *= toneMappingExposure;
-//         return saturate( Uncharted2Helper( color ) / Uncharted2Helper( vec3( toneMappingWhitePoint ) ) );
-//       }`
-//     );
-
-
 
     
     this.instance.setSize(this.size.x,this.size.y);
@@ -102,82 +119,78 @@ class Renderer {
     this.effects = true;
 
 
-    this.renderTarget = new THREE.WebGLRenderTarget( this.size.x ,this.size.y, 
-      { 
-      minFilter: THREE.LinearFilter, 
-      magFilter: THREE.LinearFilter, 
-      format: THREE.RGBAFormat, 
-      stencilBuffer: true
-    });
-    this.renderTarget.depthBuffer = true
-    this.renderTarget.depthTexture = new THREE.DepthTexture();
+    console.log("%c Postprocessing enabled ", "background:#f00; color:#fff;");
 
-    this.motionBlurRenderTarget = new THREE.WebGLRenderTarget(
-      this.size.x,
-      this.size.y,
-      {
-        minFilter: THREE.LinearFilter,
-        magFilter: THREE.LinearFilter,
-        format: THREE.RGBAFormat,
-        stencilBuffer: false
-      }
-    )
-
-
-
-    this.renderPass = new RenderPass( this.context.Scene, this.context.Camera.instance );
-  
-
-    //Init Composer
-    this.postprocessing.composer = new EffectComposer( this.instance,this.renderTarget );
-    this.postprocessing.composer.addPass( this.renderPass );
-
+    this.postprocessing.composer = new EffectComposer( this.instance  );
     
-   
-   
-    //Bloom
-    // this.postprocessing.bloomPass = new UnrealBloomPass( new Vector2(512,512), .94,.9,.5 );
-    // this.postprocessing.bloomPass.threshold = .95;
-    // this.postprocessing.bloomPass.strength = 2.9;
-    // this.postprocessing.bloomPass.radius = .2;
-    // this.postprocessing.bloomPass.exposure = 2.0;
-// 
-    // 
-    //this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
-
-   
-    //Bokeh
     
+    /** RenderPass*/
+    this.postprocessing.RenderPass = new RenderPass( this.context.Scene, this.context.Camera.instance );
+    
+    /** FXAA */
+    this.postprocessing.fxaaPass = new ShaderPass( FXAAShader );
+    
+    this.postprocessing.fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( this.size.x * this.dpr );
+    this.postprocessing.fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( this.size.y * this.dpr );
+    
+    /** Bokeh */
     this.postprocessing.bokehPass = new BokehPass( this.context.Scene , this.context.Camera.instance, {
-      focus: .62,
-      aperture: .09,
-      maxblur: 0.02,
-
+      focus: 37,
+      aperture: .0001,
+      maxblur: 0.004,
+      
       width: this.size.x,
       height: this.size.y
     });
     
-
-
-    this.postprocessing.savePass = new SavePass( new THREE.WebGLRenderTarget( this.size.x,this.size.y, {
-			minFilter: THREE.LinearFilter,
-			magFilter: THREE.LinearFilter,
-			stencilBuffer: false
-    }));
+    // this.postprocessing.renderScene = new RenderPass( this.context.Scene, this.context.Camera.instance  );
     
-    this.postprocessing.blendPass = new ShaderPass( BlendShader, 'tDiffuse1' );
-		this.postprocessing.blendPass.uniforms[ 'tDiffuse2' ].value = this.postprocessing.savePass.renderTarget.texture;
-		this.postprocessing.blendPass.uniforms[ 'mixRatio' ].value = 0.95;
-
-    this.postprocessing.outputPass = new ShaderPass( CopyShader );
-		//outputPass.renderToScreen = true;
-
-
-		// this.postprocessing.composer.addPass( this.postprocessing.blendPass );
-		// this.postprocessing.composer.addPass( this.postprocessing.savePass );
-    // this.postprocessing.composer.addPass( this.postprocessing.outputPass );
-    // 
+    /** Bloom */
+		this.postprocessing.bloomPass = new UnrealBloomPass( new THREE.Vector2( this.size.x ,this.size.y ), 1.5, 0.4, 0.85 );
+    this.postprocessing.bloomPass.threshold = 0.95;
+    this.postprocessing.bloomPass.strength = .15;
+    this.postprocessing.bloomPass.radius = .2;
+    
+    
+    
+    /** LUTs */
+    this.postprocessing.lutPass = new LUTPass();
+    this.lutMap = {
+      'Chemical': null,
+      'Clayton': null,
+      'Cubicle': null,
+      'Remy': null,
+      'Bourbon': null,
+      'RoadRunner': null,
+      'Luminous': null,
+      'WarmTeal': null,
+      'Optima': null,
+      'Emulation' : null,
+    }
+    
+    Object.keys(luts).map((lMap)=>{
+      
+      new LUTCubeLoader().load( luts[lMap] , ( result ) => {
+        
+        this.lutMap[ lMap ] = result.texture;
+        
+        this.postprocessing.lutPass.lut = result.texture;
+      });
+    })
+    
+    
+    
+    this.postprocessing.lutPass.enabled = true;
+		this.postprocessing.lutPass.intensity = 1;
+    
+    
+    this.postprocessing.composer.addPass( this.postprocessing.RenderPass );
+    this.postprocessing.composer.addPass( this.postprocessing.fxaaPass );
+		this.postprocessing.composer.addPass( this.postprocessing.lutPass );
+    this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
     this.postprocessing.composer.addPass( this.postprocessing.bokehPass );
+
+
 
 
     this.postprocessing.initialized = true;
@@ -193,25 +206,7 @@ class Renderer {
   }
 
   SetActiveCamera = (camera) =>{
-    console.log("this.postprocessing", camera, this.postprocessing, this.renderPass);
-
-
-    if(this.postprocessing.enabled){
-      this.renderPass.scene = this.context.Scene;
-      this.renderPass.camera = camera;
-    }
-
-    Object.keys(this.postprocessing).map((postEffect)=>{
-      if(this.postprocessing[postEffect].hasOwnProperty("camera")){
-        this.postprocessing[postEffect].camera = camera;
-      }
-      
-      
-      if(this.postprocessing[postEffect].hasOwnProperty("scene")){
-        this.postprocessing[postEffect].scene = this.context.Scene;
-      }
-    });    
-
+    console.log("%c this.postprocessing", "background:red;color:#fff;");
   }
 
   AnimationLoop = () => {
@@ -221,28 +216,59 @@ class Renderer {
       this.Resize();
     }
 
-    this.context.Mixer.update(0.1);
+    //console.log(this.postprocessing.composer.passes);
+    // this.context.Mixer.update(0.1);
     if(this.postprocessing.enabled){
       if(!this.postprocessing.initialized){
         this.InitComposer();
+        return;
       }
-      this.postprocessing.composer.render(.1);
+
+
+      //console.log(this.postprocessing.composer.passes);
+      this.postprocessing.composer.passes.map((pass)=>{
+        if(pass.hasOwnProperty("scene")){
+          pass.scene = this.context.Scene;
+        }
+        if(pass.hasOwnProperty("camera")){
+          pass.scene = this.context.Camera.instance;
+        }
+      });
+      
+
+      this.postprocessing.composer.passes[0].scene = this.context.Scene;
+      this.postprocessing.composer.passes[0].camera = this.context.Camera.instance;
+      
+      this.postprocessing.composer.passes[3].scene = this.context.Scene;
+      this.postprocessing.composer.passes[3].camera = this.context.Camera.instance;
+      
+      this.postprocessing.composer.passes[4].scene = this.context.Scene;
+      this.postprocessing.composer.passes[4].camera = this.context.Camera.instance;
+
+      //console.log(this.postprocessing.composer.passes[0]);
+      this.postprocessing.composer.render();
+
     }else{
       this.instance.render(this.context.Scene, this.context.Camera.instance);
     }
+    
   }
 
   Resize = () =>{
 
     var size = this.domElement.getBoundingClientRect();
     this.size = new Vector2(size.width, size.height);
+    this.dpr = window.devicePixelRatio ? window.devicePixelRatio : 1;
     this.instance.setSize(this.size.x,this.size.y);
 
     this.context.Camera.instance.aspect = this.size.x / this.size.y;
     this.context.Camera.instance.updateProjectionMatrix();
+    
+    
     if(this.postprocessing.enabled){
-      this.renderTarget.setSize(this.size.x,this.size.y);
-      this.motionBlurRenderTarget.setSize(this.size.x,this.size.y);
+
+      this.postprocessing.composer.setSize( this.size.x , this.size.y );
+      
     }
 
   }

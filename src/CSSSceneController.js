@@ -3,57 +3,62 @@ import * as THREE from 'three';
 class CSSSceneController{
   constructor(context){
     this.context = context;
-    this.activeScene = "default";
+    
+    // this.scenes = {
+    //   default : new THREE.Scene()
+    // };
 
-    this.scenes = {
-      default : new THREE.Scene()
-    };
-
-    this.scenes.default.name = this.activeScene;
+    this.sceneModels = {
+      default : []
+    }
+    this.activeScene = new THREE.Scene();
+    this.activeScene.name = "default";
+    //this.scenes.default.name = "default";
 
     //set default Scene
     this.SetActiveScene("default");
   }
 
   AddToScene = (sceneName = "default", model) =>{
-    
-    if(!this.scenes.hasOwnProperty(sceneName)){
-      this.scenes[sceneName] = new THREE.Scene();
-      this.scenes[sceneName].name = sceneName;
+
+    if(!this.sceneModels.hasOwnProperty(sceneName)){
+      
+      console.log("create new scene");
+      // this.scenes[sceneName] = new THREE.Scene();
+      // this.scenes[sceneName].name = sceneName;
+
+      this.sceneModels[sceneName] = [];
     }
+    
+    
+    model.userData.scene = sceneName;
     model.scale.divideScalar(this.context.CSSRenderer.scaleFactor);
-    this.scenes[sceneName].add(model);
+    this.sceneModels[sceneName].push(model);
+
+    this.activeScene.add(model);
   }
 
   SetActiveScene = (sceneName) => {
+    
+    if(this.activeScene.name != sceneName){
 
-    console.log(`%c change Active CSSScene ${sceneName}`,  "background:tomato;color:#fff;");
+      // while(this.activeScene.children.length > 0){ 
+      //   this.activeScene.remove(this.activeScene.children[0]); 
+      // }
 
-    if(!this.scenes.hasOwnProperty(sceneName)){
-      console.warn(`Scene with Name:"${sceneName}" does not exist`);
-      return false;
+      this.activeScene.children.map(child => {
+        if(child.userData.scene == sceneName){
+          child.visible = true;
+        }else{
+          child.visible = false;
+        }
+      })
+      
     }
+    this.activeScene.name = sceneName;
 
-
-    if(this.currentScene === sceneName){
-      console.warn(`Scene with Name:"${sceneName}" is already current Scene`);
-      return false;
-    }
-
-    this.context.CSSScene = this.scenes[sceneName];
-    this.activeScene = this.scenes[sceneName].name;
-
-    // let newActiveCamera = null;
-    // this.scenes[sceneName].traverse(obj => {
-    //   if(obj.type === "PerspectiveCamera"){
-    //     newActiveCamera = obj;
-    //     newActiveCamera.name = "Camera for Scene "+sceneName;
-    //   }
-    // });
-
-    // if(newActiveCamera != null){
-    //   this.context.Camera.SetActiveCamera(newActiveCamera);
-    // }
+   // this.sceneModels[sceneName].map(child => this.activeScene.add(child));
+    
   }
 }
 
