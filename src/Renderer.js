@@ -55,11 +55,11 @@ const luts = {
 	'Cubicle': lut4,
 	'Remy': lut5,
   'Bourbon': lut1,
-  'RoadRunner': lut7,
   'Luminous': lut8,
   'WarmTeal': lut9,
   'Optima': lut10,
   'Emulation' : lut6,
+  'RoadRunner': lut7,
 }
 
 class Renderer {
@@ -91,9 +91,9 @@ class Renderer {
     this.instance.shadowMap.enabled = true;
     this.instance.shadowMap.autoUpdate = false;
     this.instance.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.instance.toneMapping = THREE.ACESFilmicToneMapping;//CineonToneMapping;//ACESFilmicToneMapping; //
+    //this.instance.toneMapping = THREE.CineonToneMapping;//ACESFilmicToneMapping;//CineonToneMapping;//ACESFilmicToneMapping; //
     this.instance.outputEncoding = THREE.sRGBEncoding;
-    this.instance.gammaFactor = 1;
+    //this.instance.gammaFactor = 1;
     this.instance.colorManagement = true;
     this.instance.setClearColor(0xcccccc,0);
 
@@ -186,7 +186,7 @@ class Renderer {
     
     this.postprocessing.composer.addPass( this.postprocessing.RenderPass );
     this.postprocessing.composer.addPass( this.postprocessing.fxaaPass );
-		this.postprocessing.composer.addPass( this.postprocessing.lutPass );
+		//this.postprocessing.composer.addPass( this.postprocessing.lutPass );
     this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
     this.postprocessing.composer.addPass( this.postprocessing.bokehPass );
 
@@ -239,11 +239,11 @@ class Renderer {
       this.postprocessing.composer.passes[0].scene = this.context.Scene;
       this.postprocessing.composer.passes[0].camera = this.context.Camera.instance;
       
+      this.postprocessing.composer.passes[2].scene = this.context.Scene;
+      this.postprocessing.composer.passes[2].camera = this.context.Camera.instance;
+      
       this.postprocessing.composer.passes[3].scene = this.context.Scene;
       this.postprocessing.composer.passes[3].camera = this.context.Camera.instance;
-      
-      this.postprocessing.composer.passes[4].scene = this.context.Scene;
-      this.postprocessing.composer.passes[4].camera = this.context.Camera.instance;
 
       //console.log(this.postprocessing.composer.passes[0]);
       this.postprocessing.composer.render();
