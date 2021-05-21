@@ -84,15 +84,17 @@ class Renderer {
       // stencil: false,
       //depth: false
     });
-    //this.instance.physicallyCorrectLights = true;
+    this.instance.physicallyCorrectLights = true;
     this.size = new Vector2(window.innerWidth, window.innerHeight);
     this.dpr = window.devicePixelRatio ? window.devicePixelRatio : 1;
     
     this.instance.shadowMap.enabled = true;
     this.instance.shadowMap.autoUpdate = false;
     this.instance.shadowMap.type = THREE.PCFSoftShadowMap;
-    //this.instance.toneMapping = THREE.CineonToneMapping;//ACESFilmicToneMapping;//CineonToneMapping;//ACESFilmicToneMapping; //
-    this.instance.outputEncoding = THREE.sRGBEncoding;
+    this.instance.toneMapping = THREE.LinearToneMapping;
+    this.instance.toneMappingExposure = .6;
+    this.instance.outputEncoding = THREE.LinearEncoding;
+    //this.instance.gammaOutput = true;
     //this.instance.gammaFactor = 1;
     this.instance.colorManagement = true;
     this.instance.setClearColor(0xcccccc,0);
