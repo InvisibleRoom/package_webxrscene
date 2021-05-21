@@ -91,8 +91,8 @@ class Renderer {
     this.instance.shadowMap.enabled = true;
     this.instance.shadowMap.autoUpdate = false;
     this.instance.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.instance.toneMapping = THREE.LinearToneMapping;
-    this.instance.toneMappingExposure = .6;
+    this.instance.toneMapping = THREE.ReinhardToneMapping;
+    this.instance.toneMappingExposure = 3.5;
     this.instance.outputEncoding = THREE.LinearEncoding;
     //this.instance.gammaOutput = true;
     //this.instance.gammaFactor = 1;
