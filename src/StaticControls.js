@@ -18,11 +18,15 @@ class StaticControls {
   rotationMatrix = new Matrix4();
   targetQuaternion = new Quaternion();
   
-  constructor(camera,domElement){
+  constructor(camera,domElement, context = null){
 
     this.object = camera;
     this.domElement = domElement;
     this.mousedown = false;
+    this.context = context;
+
+    this.camPos = new Vector3().copy(this.object.position);
+    this.camShift = new Vector3();
 
 
     this.bind();
@@ -43,21 +47,29 @@ class StaticControls {
   update = (t)=>{
     if( typeof(t) === "undefined" ){return;}
     
+    var clock = t.getDelta();
+    this.camShift.set(
+    	Math.cos(clock + (Math.PI * 0.5)),
+      Math.sin(clock),
+      Math.cos(clock + (Math.PI * 0.5))
+    ).multiplyScalar(0.2);
+    this.object.position.addVectors(this.camPos, this.camShift);
+
+   // console.log(this.context);
+    this.context.Controls.Desktop.orbit.update();
+    //controls.update();
+
+
+    return;
+
+
     var angle  = this.targetQuaternion.angleTo(this.object.quaternion);
 
     console.log("update static Controls", this.object);
 
 
     if(((Math.abs(this.movement.x) + Math.abs(this.movement.y)) < this.threshold) && angle > 0.0001 ) 
-      { 
-        
-      // const delta = t.getDelta();
-
-      // this.rotationMatrix.lookAt( this.camera.position, this.target, this.camera.up );
-      // this.targetQuaternion.setFromRotationMatrix( this.rotationMatrix );
-
-      // this.camera.quaternion.rotateTowards( this.targetQuaternion, delta  * .1 );
-      
+    { 
       return;
     }
 
@@ -91,7 +103,7 @@ class StaticControls {
 
 
 
-    if(!this.mousedown || !this.enabled) {return;}
+    if(!this.enabled) {return;} //!this.mousedown || 
     
       var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
       var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
@@ -104,6 +116,13 @@ class StaticControls {
       
   }
   
+  SetActive(boolean){
+    this.enabled = boolean;
+    
+    if(this.enabled){
+      this.camPos = this.object.position.clone();
+    }
+  }
 }
 
 export {StaticControls};

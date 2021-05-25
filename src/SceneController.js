@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {PMREMGenerator} from 'three';
 
 class SceneController{
   constructor(context){
@@ -20,9 +21,30 @@ class SceneController{
     if(!this.scenes.hasOwnProperty(sceneName)){
       this.scenes[sceneName] = new THREE.Scene();
       this.scenes[sceneName].name = sceneName;
+      
+      this.scenes[sceneName].reflectiveObjects = [];
     }
+
+    model.traverse(child =>{
+      if(child.type == "Mesh" || child.type =="SkinnedMesh"){
+            
+        if(child.material.hasOwnProperty("metalness")){
+          
+          if(child.material.metalness > 0){
+            this.scenes[sceneName].reflectiveObjects.push(child);
+            child.material.envMap = this.scenes[sceneName].environment;
+          }
+        }
+
+      }
+    })
     
     this.scenes[sceneName].add(model);
+  }
+  AddSkyToScene = (sceneName = "default", sky)=>{
+    
+    this.scenes[sceneName].sky = sky;
+    this.scenes[sceneName].environment = sky.skyTexture;
   }
 
   SetActiveScene = (sceneName) => {

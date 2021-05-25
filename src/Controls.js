@@ -21,7 +21,7 @@ class Controls{
     this.touchend = this.touchend.bind(this);
 
     this.size = this.getClientBox();
-    this.Desktop = new DesktopControls(context.Camera.instance,context.Renderer.instance.domElement),
+    this.Desktop = new DesktopControls(context.Camera.instance,context.Renderer.instance.domElement, this.context),
     
     this.Update = this.Update.bind(this);
     this.SetPosition = this.SetPosition.bind(this);
@@ -133,7 +133,7 @@ class Controls{
   }
   ChangeToStatic = ()=>{
 
-    console.trace("%c Change TO Static ", "background:red;");
+    console.log("%c Change TO Static ", "background:#eee;");
 
     if(this.currentControls == "Desktop"){
       this.Desktop.ChangeToStatic();

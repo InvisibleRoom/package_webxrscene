@@ -5,10 +5,10 @@ import {StaticControls} from './StaticControls';
 
 class DesktopControls {
   
-  constructor(camera,domElement){
-    
+  constructor(camera,domElement, context = null){
+    this.context = context;
     this.orbit = new OrbitControls(camera,domElement);
-    this.static = new StaticControls(camera,domElement);
+    this.static = new StaticControls(camera,domElement, context);
     this.static.enabled = false;
     
     this.instance = this.orbit;
@@ -22,12 +22,12 @@ class DesktopControls {
   ChangeToStatic = () =>{
 
     this.instance = this.static;
-    this.static.enabled = true;
+    this.static.SetActive(true);
     this.orbit.enabled = false;
   }
   ChangeToDefault = () =>{
     this.instance = this.orbit;
-    this.static.enabled = false;
+    this.static.SetActive(false);
     this.orbit.enabled = true;
   }
 

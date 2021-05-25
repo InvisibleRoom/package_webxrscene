@@ -97,7 +97,7 @@ class Renderer {
     //this.instance.gammaOutput = true;
     //this.instance.gammaFactor = 1;
     this.instance.colorManagement = true;
-    this.instance.setClearColor(0xcccccc,0);
+    this.instance.setClearColor(0xffffff,0);
 
     
     this.instance.setSize(this.size.x,this.size.y);
@@ -137,8 +137,8 @@ class Renderer {
     
     /** Bokeh */
     this.postprocessing.bokehPass = new BokehPass( this.context.Scene , this.context.Camera.instance, {
+      aperture: 0,
       focus: 37,
-      aperture: .0001,
       maxblur: 0.004,
       
       width: this.size.x,
