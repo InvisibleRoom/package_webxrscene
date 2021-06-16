@@ -57,10 +57,14 @@ class Loader {
       function OnLoad(opt){
 
         if(opt.name === name){
+
           this.context.Events.removeEventListener("OnProgress", progress);
           this.context.Events.removeEventListener("OnLoad", OnLoad);
+          
         }
       }
+
+      OnLoad = OnLoad.bind(this);
 
       this.context.Events.addEventListener("OnLoad",OnLoad);
 
