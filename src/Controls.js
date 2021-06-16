@@ -96,22 +96,33 @@ class Controls{
 
     this.selectState = false;
 
-    window.addEventListener( 'mousemove',this.mousemove,false);
-    window.addEventListener( 'mousedown', this.mousedown,false);
-    window.addEventListener( 'mouseup', this.mouseup,false);
-    window.addEventListener( 'touchstart', this.touchstart);
-    window.addEventListener( 'touchend', this.touchend);
+    this.context.Renderer.instance.domElement.parentNode.addEventListener( 'mousemove',this.mousemove);
+    this.context.Renderer.instance.domElement.parentNode.addEventListener( 'mousedown', this.mousedown);
+    this.context.Renderer.instance.domElement.parentNode.addEventListener( 'mouseup', this.mouseup);
+    this.context.Renderer.instance.domElement.parentNode.addEventListener( 'touchstart', this.touchstart);
+    this.context.Renderer.instance.domElement.parentNode.addEventListener( 'touchend', this.touchend);
   }
   getClientBox(){
-    var size = this.context.Renderer.instance.domElement.getBoundingClientRect();
+
+    var size = {
+      width : this.context.Renderer.instance.domElement.width,
+      height : this.context.Renderer.instance.domElement.height,
+      x : 0,
+      y : 0
+    };
     return size;
   }
   GetCurrentXRMode(){
     return this.currentControls;
   }
-  mousedown(){ this.selectState = true; }
-  mouseup(){ this.selectState = false; }
+  mousedown = () => { console.log("mousedown" , this); this.selectState = true; }
+  mouseup = () => { console.log("mouseup");  this.selectState = false; }
   mousemove(e){
+
+    if(this.size.width === 0 || this.size.height === 0){
+      this.getClientBox();
+    }
+
     this.mouse.x = ( e.clientX / this.size.width ) * 2 - 1;
     this.mouse.y = - ( e.clientY / this.size.height ) * 2 + 1;
   }
@@ -129,6 +140,8 @@ class Controls{
   ChangeToDefault = ()=>{
     if(this.currentControls == "Desktop"){
       this.Desktop.ChangeToDefault();
+
+      this.getClientBox();
     }
   }
   ChangeToStatic = ()=>{
@@ -137,15 +150,14 @@ class Controls{
 
     if(this.currentControls == "Desktop"){
       this.Desktop.ChangeToStatic();
+      this.getClientBox();
     }
   }
 
   SetActiveCamera = (camera) => {
 
-    console.log()
-
     this.Desktop.SetActiveCamera(camera);
-
+    this.getClientBox();
 
     console.log("SetActiveCamera " , camera);
   }
@@ -163,6 +175,7 @@ class Controls{
       this[this.currentControls].instance.update();
     }
     this.context.Renderer.instance.setClearColor(0xffffff,0);
+    this.getClientBox();
   }
 
   SetupVR(settings){
@@ -190,6 +203,8 @@ class Controls{
     this.vr_controller.controllers.forEach((controller)=>{
       controller.parent = this.cameraHelper;
     });
+
+    this.getClientBox();
   }
 
   SetupAR(){
@@ -210,6 +225,8 @@ class Controls{
     this.vr_controller.controllers.forEach((controller)=>{
       controller.parent = this.cameraHelper;
     });
+
+    this.getClientBox();
   }
 
   GetVRButton(){
@@ -304,7 +321,7 @@ class Controls{
     if(this.currentControls == "Desktop"){
       if ( this.mouse.x !== null && this.mouse.y !== null ) {
         console.log(this.mouse);
-        return this.mouse
+        return this.mouse;
       }
     }
   }
@@ -352,12 +369,16 @@ class Controls{
         intersect = this.Raycast();
       }
     }
-    
 
+    if(intersect){
+      console.log("intersect" , intersect.object);
+    }
 
     //TODO: Not only for UI elements
     if ( intersect && intersect.object.isClickEnabled ) {
 
+
+      console.log("intersect select state",this, this.selectState)
       if ( this.selectState ) {
         // Component.setState internally call component.set with the options you defined in component.setupState
         intersect.object.setState( 'selected' );
@@ -372,9 +393,9 @@ class Controls{
     //Deselect every activeObject that is not the current intersect object
       this.ActiveObjects.forEach( (obj)=> {
 
-        if ( (!intersect || obj !== intersect.object) && obj.isUI ) {
+        if ( (!intersect || obj !== intersect.object) && (obj.isUI || obj.isClickEnabled) ) {
           // Component.setState internally call component.set with the options you defined in component.setupState
-          obj.setState( 'idle' );
+          obj.setState( 'idle' , obj);
           this.context.Events.dispatchEvent("ui-idle", null); 
         };
       });
