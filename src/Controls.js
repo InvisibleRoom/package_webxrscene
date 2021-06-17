@@ -96,9 +96,9 @@ class Controls{
 
     this.selectState = false;
 
-    this.context.Renderer.instance.domElement.parentNode.addEventListener( 'mousemove',this.mousemove);
-    this.context.Renderer.instance.domElement.parentNode.addEventListener( 'mousedown', this.mousedown);
-    this.context.Renderer.instance.domElement.parentNode.addEventListener( 'mouseup', this.mouseup);
+    this.context.Renderer.instance.domElement.parentNode.addEventListener( 'pointermove',this.mousemove);
+    this.context.Renderer.instance.domElement.parentNode.addEventListener( 'pointerdown', this.mousedown);
+    this.context.Renderer.instance.domElement.parentNode.addEventListener( 'pointerup', this.mouseup);
     this.context.Renderer.instance.domElement.parentNode.addEventListener( 'touchstart', this.touchstart);
     this.context.Renderer.instance.domElement.parentNode.addEventListener( 'touchend', this.touchend);
   }
@@ -370,15 +370,9 @@ class Controls{
       }
     }
 
-    if(intersect){
-      console.log("intersect" , intersect.object);
-    }
-
     //TODO: Not only for UI elements
     if ( intersect && intersect.object.isClickEnabled ) {
 
-
-      console.log("intersect select state",this, this.selectState)
       if ( this.selectState ) {
         // Component.setState internally call component.set with the options you defined in component.setupState
         intersect.object.setState( 'selected' );
