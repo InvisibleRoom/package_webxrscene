@@ -30,7 +30,6 @@ class CSSSceneController{
       this.sceneModels[sceneName] = [];
     }
     
-    
     model.userData.scene = sceneName;
     model.scale.divideScalar(this.context.CSSRenderer.scaleFactor);
     this.sceneModels[sceneName].push(model);
