@@ -48,6 +48,9 @@ class SceneController{
   }
 
   SetActiveScene = (sceneName) => {
+
+    console.log("SetActiveScene " , sceneName);
+
     if(!this.scenes.hasOwnProperty(sceneName)){
       console.warn(`Scene with Name:"${sceneName}" does not exist`);
       return false;
@@ -62,6 +65,13 @@ class SceneController{
     this.context.Scene = this.scenes[sceneName];
     this.activeScene = this.scenes[sceneName].name;
 
+
+    if(this.context.hasOwnProperty("Controls")){
+      console.log(this.context);
+      this.context.Controls.ChangeScene(sceneName);
+
+    }
+
     let newActiveCamera = null;
     this.scenes[sceneName].traverse(obj => {
       if(obj.type === "PerspectiveCamera"){
@@ -70,9 +80,9 @@ class SceneController{
       }
     });
 
-    if(newActiveCamera != null){
-      this.context.Camera.SetActiveCamera(newActiveCamera);
-    }
+    // if(newActiveCamera != null){
+    //   //this.context.Camera.SetActiveCamera(newActiveCamera, sceneName);
+    // }
   }
 }
 

@@ -5,8 +5,12 @@ import { VRButton } from './VRButton.js';
 import { ARButton } from './ARButton.js';
 import { Vector3 } from 'three';
 
+//import {Handy} from './HandTracking/Handy';
+
 class Controls{
   constructor(context){
+
+    window.THREE = THREE;
     this.enabled = true;
     this.interactivityEnabled = true;
     this.context = context;
@@ -31,6 +35,7 @@ class Controls{
 
     this.cameraHelper = new THREE.Group();
     this.cameraHelper.name = "cameraHelper";
+    this.context.Scene.add(this.cameraHelper);
 
 
     //array of active elements in scene
@@ -157,13 +162,21 @@ class Controls{
       this.getClientBox();
     }
   }
+  ChangeScene = (sceneName)=>{
 
-  SetActiveCamera = (camera) => {
+    console.log("Change Scene => Controls " , sceneName, this.context , this.context.Scene);
+    this.context.Scene.attach(this.cameraHelper);
+
+  }
+  SetActiveCamera = (camera, sceneName) => {
 
     this.Desktop.SetActiveCamera(camera);
+
     this.getClientBox();
 
-    console.log("SetActiveCamera " , camera);
+    
+
+
   }
 
   SetupDesktop(settings){
@@ -185,8 +198,12 @@ class Controls{
   SetupVR(settings){
     
     var vrCamera = this.context.Renderer.instance.xr.getCamera(this.context.Camera.instance);
-    this.cameraHelper.add(this.context.Camera.instance);
+    //this.cameraHelper.add(vrCamera);
     var _position = vrCamera.position.clone();
+    this.cameraHelper.position.set(_position.x,_position.y,_position.z);
+    this.cameraHelper.attach(this.context.Camera.instance);
+
+
 
     this.Desktop.SetEnabled(false);
     //vrCamera.position.set(0,1.7,0);
@@ -196,10 +213,10 @@ class Controls{
     this.context.Renderer.instance.setClearColor(0xffffff,1);
   
     this.vr_controller.controllerGrips.forEach((controller)=>{
-      controller.parent = this.cameraHelper;      
+      this.cameraHelper.attach(controller);
     });
     this.vr_controller.controllers.forEach((controller)=>{
-      controller.parent = this.cameraHelper;
+      this.cameraHelper.attach(controller);
     });
 
     this.getClientBox();
@@ -209,15 +226,16 @@ class Controls{
 
     this.cameraHelper.add(this.context.Camera.instance);
     var _position = this.context.Camera.instance.position.clone();
-    this.context.Camera.instance.position.set(0,0,0);
-    this.cameraHelper.position.set(_position.x,_position.y,_position.z);
+    // this.context.Camera.instance.position.set(0,0,0);
+    // this.cameraHelper.position.set(_position.x,_position.y,_position.z);
     this.context.Renderer.instance.setClearColor(0xffffff,0);
 
     this.vr_controller.controllerGrips.forEach((controller)=>{
-      controller.parent = this.cameraHelper;      
+
+      this.cameraHelper.attach(controller)
     });
     this.vr_controller.controllers.forEach((controller)=>{
-      controller.parent = this.cameraHelper;
+      this.cameraHelper.attach(controller);
     });
 
     this.getClientBox();
@@ -237,6 +255,9 @@ class Controls{
     }
     if(this.currentControls == "VR"){
       //this.vr_controller.Update();
+
+      //Handy.update();
+      
     }
 
     if(this.currentControls == "Desktop"){

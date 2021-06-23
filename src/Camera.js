@@ -16,7 +16,7 @@ class Camera {
     
   }
 
-  SetActiveCamera = (camera) =>{
+  SetActiveCamera = (camera, sceneName) =>{
     console.log(camera);
 
 
@@ -24,9 +24,9 @@ class Camera {
 
 
     console.warn("=> ToDo WebXRScene: SetActiveCamera! Change Camera in Camera and Controls");
-    this.context.Controls.SetActiveCamera(this.instance);
+    this.context.Controls.SetActiveCamera(this.instance, sceneName);
 
-    this.context.Renderer.SetActiveCamera(this.instance);
+    this.context.Renderer.SetActiveCamera(this.instance, sceneName);
 
   }
 

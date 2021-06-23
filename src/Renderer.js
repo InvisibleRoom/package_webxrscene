@@ -68,7 +68,7 @@ class Renderer {
     this.context = context;
     this.clock = new THREE.Clock();
     this.postprocessing = {
-      enabled : false,
+      enabled : true,
       initialized : false
     };
     this.context.Events.registerEvent('OnAnimationLoop');
