@@ -168,7 +168,8 @@ var CustomTrackballControls = function ( object, domElement ) {
         _eye.copy( _this.object.position ).sub( _this.target );
 
         eyeDirection.copy( _eye ).normalize();
-        objectUpDirection.copy( _this.object.up ).normalize();
+        //objectUpDirection.copy( _this.object.up ).normalize();
+        objectUpDirection.copy( new THREE.Vector3(0,1,0) ).normalize();
         objectSidewaysDirection.crossVectors( objectUpDirection, eyeDirection ).normalize();
 
         objectUpDirection.setLength( _moveCurr.y - _movePrev.y );
@@ -398,7 +399,7 @@ var CustomTrackballControls = function ( object, domElement ) {
     if ( _this.enabled === false ) return;
 
     event.preventDefault();
-    event.stopPropagation();
+    //event.stopPropagation();
 
     if ( _state === STATE.NONE ) {
 
@@ -438,7 +439,7 @@ var CustomTrackballControls = function ( object, domElement ) {
     if ( _this.enabled === false ) return;
 
     event.preventDefault();
-    event.stopPropagation();
+    //event.stopPropagation();
 
     if ( _state === STATE.ROTATE && ! _this.noRotate ) {
 
@@ -462,7 +463,7 @@ var CustomTrackballControls = function ( object, domElement ) {
     if ( _this.enabled === false ) return;
 
     event.preventDefault();
-    event.stopPropagation();
+    //event.stopPropagation();
 
     //_state = STATE.NONE;
 
@@ -477,7 +478,7 @@ var CustomTrackballControls = function ( object, domElement ) {
     if ( _this.enabled === false ) return;
 
     event.preventDefault();
-    event.stopPropagation();
+    //event.stopPropagation();
 
     switch ( event.deltaMode ) {
 
@@ -538,7 +539,7 @@ var CustomTrackballControls = function ( object, domElement ) {
     if ( _this.enabled === false ) return;
 
     event.preventDefault();
-    event.stopPropagation();
+    //Propagation();
 
     switch ( event.touches.length ) {
 
@@ -595,7 +596,7 @@ var CustomTrackballControls = function ( object, domElement ) {
 
     this.domElement.removeEventListener( 'contextmenu', contextmenu, false );
     this.domElement.removeEventListener( 'mousedown', mousedown, false );
-    this.domElement.removeEventListener( 'wheel', mousewheel, false );
+    //this.domElement.removeEventListener( 'wheel', mousewheel, false );
 
     this.domElement.removeEventListener( 'touchstart', touchstart, false );
     this.domElement.removeEventListener( 'touchend', touchend, false );
@@ -611,7 +612,7 @@ var CustomTrackballControls = function ( object, domElement ) {
 
   this.domElement.addEventListener( 'contextmenu', contextmenu, false );
   this.domElement.addEventListener( 'mousedown', mousedown, false );
-  this.domElement.addEventListener( 'wheel', mousewheel, false );
+  ///this.domElement.addEventListener( 'wheel', mousewheel, false );
 
   this.domElement.addEventListener( 'touchstart', touchstart, false );
   this.domElement.addEventListener( 'touchend', touchend, false );

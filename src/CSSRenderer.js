@@ -51,8 +51,7 @@ class CSSRenderer {
       this.Resize();
     }
     
-    this.instance.render(this.context.CSSSceneController.activeScene, this.context.Camera.instance);
-  
+    this.instance.render(this.context.CSSSceneController.activeScene, this.context.Camera.instance);  
   }
 
   Resize = () =>{
