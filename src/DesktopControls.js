@@ -44,7 +44,11 @@ class DesktopControls {
     this.static.object = camera;
   }
 
-
+  SetEnabled = (boolean)=>{
+    this.orbit.enabled = boolean;
+    this.static.enabled = boolean;
+    this.static.controls.enabled = boolean;
+  }
   
 }
 

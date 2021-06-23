@@ -7,8 +7,18 @@ var VRButton = {
 
 			var currentSession = null;
 
-			function onSessionStarted( session ) {
+			const onSessionStarted = async (session) => {
 				session.addEventListener( 'end', onSessionEnded );
+
+        const gl = renderer.getContext();
+				try {
+					await gl.makeXRCompatible();
+					console.log("GL")
+					//context.Renderer.Resize();
+				} catch (err) {
+					console.log("GL error ", err)
+				}
+
 
 				renderer.xr.setSession( session );
 				button.textContent = 'EXIT VR';

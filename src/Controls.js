@@ -29,6 +29,10 @@ class Controls{
     this.GetTarget = this.GetTarget.bind(this);
     this.GetCameraPosition = this.GetCameraPosition.bind(this);
 
+    this.cameraHelper = new THREE.Group();
+    this.cameraHelper.name = "cameraHelper";
+
+
     //array of active elements in scene
     this.ActiveObjects = [];
     this.raycaster = new THREE.Raycaster();
@@ -179,20 +183,14 @@ class Controls{
   }
 
   SetupVR(settings){
-
-
-    if(typeof(this.cameraHelper) == "undefined"){
-      this.cameraHelper = new THREE.Group();
-      this.cameraHelper.name = "cameraHelper";
-      this.cameraHelper.position.set(0,0,0);
-
-    }
     
     var vrCamera = this.context.Renderer.instance.xr.getCamera(this.context.Camera.instance);
     this.cameraHelper.add(this.context.Camera.instance);
     var _position = vrCamera.position.clone();
-    vrCamera.position.set(0,1.7,0);
-    this.cameraHelper.position.set(_position.x,_position.y,_position.z);
+
+    this.Desktop.SetEnabled(false);
+    //vrCamera.position.set(0,1.7,0);
+    //this.cameraHelper.position.set(_position.x,_position.y,_position.z);
 
     this.context.Renderer.instance.autoClear = true;
     this.context.Renderer.instance.setClearColor(0xffffff,1);
@@ -209,10 +207,6 @@ class Controls{
 
   SetupAR(){
 
-    if(typeof(this.cameraHelper) == "undefined"){
-      this.cameraHelper = new THREE.Object3D();
-      this.cameraHelper.name = "cameraHelper";
-    }
     this.cameraHelper.add(this.context.Camera.instance);
     var _position = this.context.Camera.instance.position.clone();
     this.context.Camera.instance.position.set(0,0,0);
