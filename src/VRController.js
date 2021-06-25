@@ -99,7 +99,11 @@ class VRController {
       controller.add( ray, point );
       controller.ray = ray;
       controller.point = point;
-
+      controller.userData.noClip = true;
+      
+      controller.children.map((child)=>{
+        child.userData.noClip = true;
+      })
     });
 
     this.controllerGrips.forEach( (controllerGrip)=> {

@@ -9,8 +9,11 @@ class VRHands {
 
   constructor(context){
     this.visible = true;
+    this.initialized = false;
     this.context = context;
     this.context.Events.registerEvent("HandPoseChanged");
+
+    
     
     const	handModelFactory = new XRHandModelFactory();
 
@@ -27,8 +30,7 @@ class VRHands {
 
         hand = this.context.Renderer.instance.xr.getHand( i );
 
-        console.log("Controls", hand , this.context);
-        this.context.Controls.cameraHelper.add( hand );
+        
 
         hand.models = [
 
@@ -40,7 +42,7 @@ class VRHands {
         hand.isDefaultColor = true
 
         //  This is what makes detecting hand poses easy!
-
+        this.context.Controls.cameraHelper.attach( hand );
         Handy.makeHandy( hand );
 
 
@@ -49,12 +51,12 @@ class VRHands {
           hand.handedness = event.data.handedness;
 
           console.log("%c Hand is connected",  "background:#ff9800;font-weight:700;");
-          console.log(hand.models);
+          //console.log(hand.models);
           
 
           hand.models.forEach( function( model ){
 
-            hand.add( model )
+            hand.attach( model )
             model.visible = false
           })	
           hand.models[ hand.modelIndex ].visible = true
@@ -69,9 +71,23 @@ class VRHands {
 
         hand.displayFrame.visible = this.visible;
 
+        
 
-        return hand
-      })
+        return hand;
+      });
+
+
+      this.context.Events.addEventListener("OnAnimationLoop", this.Animate);
+  }
+
+  Animate = (t)=>{
+    //console.log("update hands");
+
+    if(this.context.Controls.GetCurrentXRMode() == "VR" && this.initialized){
+      //console.log("VR is enabled => update handy");
+
+      Handy.update();
+    }
   }
 }
 

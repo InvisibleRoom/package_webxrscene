@@ -164,7 +164,6 @@ class Controls{
   }
   ChangeScene = (sceneName)=>{
 
-    console.log("Change Scene => Controls " , sceneName, this.context , this.context.Scene);
     this.context.Scene.attach(this.cameraHelper);
 
   }
@@ -173,9 +172,6 @@ class Controls{
     this.Desktop.SetActiveCamera(camera);
 
     this.getClientBox();
-
-    
-
 
   }
 
@@ -203,8 +199,6 @@ class Controls{
     this.cameraHelper.position.set(_position.x,_position.y,_position.z);
     this.cameraHelper.attach(this.context.Camera.instance);
 
-
-
     this.Desktop.SetEnabled(false);
     //vrCamera.position.set(0,1.7,0);
     //this.cameraHelper.position.set(_position.x,_position.y,_position.z);
@@ -213,11 +207,15 @@ class Controls{
     this.context.Renderer.instance.setClearColor(0xffffff,1);
   
     this.vr_controller.controllerGrips.forEach((controller)=>{
+      controller.userData.noClip = true;
       this.cameraHelper.attach(controller);
     });
     this.vr_controller.controllers.forEach((controller)=>{
+      controller.userData.noClip = true;
       this.cameraHelper.attach(controller);
     });
+
+    
 
     this.getClientBox();
   }
@@ -230,13 +228,13 @@ class Controls{
     // this.cameraHelper.position.set(_position.x,_position.y,_position.z);
     this.context.Renderer.instance.setClearColor(0xffffff,0);
 
-    this.vr_controller.controllerGrips.forEach((controller)=>{
-
-      this.cameraHelper.attach(controller)
-    });
-    this.vr_controller.controllers.forEach((controller)=>{
-      this.cameraHelper.attach(controller);
-    });
+    // this.vr_controller.controllerGrips.forEach((controller)=>{
+// 
+      // this.cameraHelper.attach(controller)
+    // });
+    // this.vr_controller.controllers.forEach((controller)=>{
+      // this.cameraHelper.attach(controller);
+    // });
 
     this.getClientBox();
   }

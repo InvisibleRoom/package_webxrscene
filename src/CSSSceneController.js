@@ -23,7 +23,6 @@ class CSSSceneController{
 
     if(!this.sceneModels.hasOwnProperty(sceneName)){
       
-      console.log("create new scene");
       // this.scenes[sceneName] = new THREE.Scene();
       // this.scenes[sceneName].name = sceneName;
 

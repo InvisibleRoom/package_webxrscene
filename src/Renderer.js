@@ -30,6 +30,9 @@ import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass.js';
 // import { SavePass } from 'three/examples/jsm/postprocessing/SavePass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+
+import {GammaCorrectionShader} from './GammaCorrectionShader';
+
 // import motionBlurShader from './MotionBlur';
 // import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 // import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
@@ -96,6 +99,8 @@ class Renderer {
     this.instance.toneMapping = THREE.ReinhardToneMapping;
     this.instance.toneMappingExposure = 3.5;
     this.instance.outputEncoding = THREE.LinearEncoding;
+    
+    //MASK
     this.instance.localClippingEnabled = true;
     //this.instance.gammaOutput = true;
     //this.instance.gammaFactor = 1;
@@ -157,7 +162,7 @@ class Renderer {
       radius : .05
     }
 
-		this.postprocessing.bloomPass = new UnrealBloomPass( new THREE.Vector2( this.size.x ,this.size.y ), bloomSettings.strength, bloomSettings.radius, bloomSettings.threshold );
+	//	this.postprocessing.bloomPass = new UnrealBloomPass( new THREE.Vector2( this.size.x ,this.size.y ), bloomSettings.strength, bloomSettings.radius, bloomSettings.threshold );
     
     
     /** LUTs */
@@ -194,8 +199,12 @@ class Renderer {
     this.postprocessing.composer.addPass( this.postprocessing.RenderPass );
     this.postprocessing.composer.addPass( this.postprocessing.fxaaPass );
 		//this.postprocessing.composer.addPass( this.postprocessing.lutPass );
-    this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
+    //this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
     this.postprocessing.composer.addPass( this.postprocessing.bokehPass );
+
+
+    this.postprocessing.gammaCorrectionPass = new ShaderPass( GammaCorrectionShader );
+    this.postprocessing.composer.addPass( this.postprocessing.gammaCorrectionPass );
 
 
 
@@ -261,12 +270,13 @@ class Renderer {
       // this.postprocessing.composer.passes[3].scene = this.context.Scene;
       // this.postprocessing.composer.passes[3].camera = this.context.Camera.instance;
       
-      
+      //console.log("animationLoop " , this.context.Scene,this.context.Scene.name, this.context.Camera.instance);
 
       //console.log(this.postprocessing.composer.passes[0]);
       this.postprocessing.composer.render();
 
     }else{
+      
       this.instance.render(this.context.Scene, this.context.Camera.instance);
     }
     
