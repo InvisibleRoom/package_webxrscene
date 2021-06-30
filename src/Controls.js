@@ -5,8 +5,6 @@ import { VRButton } from './VRButton.js';
 import { ARButton } from './ARButton.js';
 import { Vector3 } from 'three';
 
-//import {Handy} from './HandTracking/Handy';
-
 class Controls{
   constructor(context){
 
@@ -252,10 +250,7 @@ class Controls{
       this.FindIntersection();
     }
     if(this.currentControls == "VR"){
-      //this.vr_controller.Update();
-
-      //Handy.update();
-      
+      //this.vr_controller.Update();      
     }
 
     if(this.currentControls == "Desktop"){
@@ -267,14 +262,6 @@ class Controls{
     return this.context.Camera.instance.position;
   }
 
-  SetVRStaticPositionRotation(pos,rot){
-    this.cameraHelper.position.set(pos.x,pos.y,pos.z);
-
-    this.cameraHelper.lookAt(new THREE.Vector3(rot.x,rot.y,rot.z));
-        this.cameraHelper.rotation.x = 0;
-        this.cameraHelper.rotation.z = 0;
-  }
-
   SetPosition (x,y,z){
 
     switch (this.currentControls) {
@@ -282,7 +269,7 @@ class Controls{
         this.context.Camera.instance.position.set(x,y,z);
       break;
       case "VR":
-        //this.cameraHelper.position.set(x,y,z);
+        this.cameraHelper.position.set(x,y,z);
       break;
     
       default:

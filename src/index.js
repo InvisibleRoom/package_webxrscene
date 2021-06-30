@@ -13,8 +13,6 @@ import {AnimationMixer} from 'three';
 import {SceneController} from './SceneController.js';
 import {CSSSceneController} from './CSSSceneController.js';
 
-import {VRHands} from './HandTracking/VRHands';
-
 import StatClass from './StatClass';
 
 class webXRScene{
@@ -52,7 +50,7 @@ class webXRScene{
 
     this.Stats  = new StatClass(this);
 
-    this.VRHandController = new VRHands(this);
+    //this.VRHandController = new VRHands(this);
 
     this.Events.dispatchEvent("OnMount");
   }
