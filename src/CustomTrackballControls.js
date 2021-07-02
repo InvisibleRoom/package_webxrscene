@@ -467,8 +467,8 @@ var CustomTrackballControls = function ( object, domElement ) {
 
     //_state = STATE.NONE;
 
-    //document.removeEventListener( 'mousemove', mousemove );
-    //document.removeEventListener( 'mouseup', mouseup );
+    document.removeEventListener( 'pointermove', mousemove );
+    document.removeEventListener( 'pointerup', mouseup );
     _this.dispatchEvent( endEvent );
 
   }
@@ -595,15 +595,15 @@ var CustomTrackballControls = function ( object, domElement ) {
   this.dispose = function() {
 
     this.domElement.removeEventListener( 'contextmenu', contextmenu, false );
-    this.domElement.removeEventListener( 'mousedown', mousedown, false );
+    this.domElement.removeEventListener( 'pointerdown', mousedown, false );
     //this.domElement.removeEventListener( 'wheel', mousewheel, false );
 
     this.domElement.removeEventListener( 'touchstart', touchstart, false );
     this.domElement.removeEventListener( 'touchend', touchend, false );
     this.domElement.removeEventListener( 'touchmove', touchmove, false );
 
-    document.removeEventListener( 'mousemove', mousemove, false );
-    document.removeEventListener( 'mouseup', mouseup, false );
+    document.removeEventListener( 'pointermove', mousemove, false );
+    document.removeEventListener( 'pointerup', mouseup, false );
 
     window.removeEventListener( 'keydown', keydown, false );
     window.removeEventListener( 'keyup', keyup, false );
@@ -611,7 +611,7 @@ var CustomTrackballControls = function ( object, domElement ) {
   };
 
   this.domElement.addEventListener( 'contextmenu', contextmenu, false );
-  this.domElement.addEventListener( 'mousedown', mousedown, false );
+  this.domElement.addEventListener( 'pointerdown', mousedown, false );
   ///this.domElement.addEventListener( 'wheel', mousewheel, false );
 
   this.domElement.addEventListener( 'touchstart', touchstart, false );
@@ -626,8 +626,8 @@ var CustomTrackballControls = function ( object, domElement ) {
   // force an update at start
   this.update();
 
-  document.addEventListener( 'mousemove', mousemove, false );
-  document.addEventListener( 'mouseup', mouseup, false );
+  document.addEventListener( 'pointermove', mousemove, false );
+  document.addEventListener( 'pointerup', mouseup, false );
 };
 
 CustomTrackballControls.prototype = Object.create( THREE.EventDispatcher.prototype );

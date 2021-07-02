@@ -25,9 +25,12 @@ class CustomTextureLoader {
     
     return new Promise((resolve,reject)=>{
       let promises = stack.stack.map((s,index)=>{
-        return this.load(Object.assign(s,{
-          progress : stack.progress
-        }));
+        return this.load(s.url).then(texture =>{
+          return {
+            name : s.name,
+            texture : texture,
+          }
+        });
       });
       Promise.all(promises).then((el)=>{
         let library = {};

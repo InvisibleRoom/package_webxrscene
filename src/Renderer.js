@@ -81,12 +81,12 @@ class Renderer {
       alpha : true,
       antialias: true,
       transparent : true,
-      //autoClear: false,
       //logarithmicDepthBuffer: false
       powerPreference: "high-performance",
       //ONly for screenshots
       //preserveDrawingBuffer : true
-      // stencil: false,
+      // autoClear: false,
+      // stencil: true,
       //depth: false
     });
     this.instance.physicallyCorrectLights = true;
@@ -96,7 +96,7 @@ class Renderer {
     this.instance.shadowMap.enabled = true;
     this.instance.shadowMap.autoUpdate = false;
     this.instance.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.instance.toneMapping = THREE.ReinhardToneMapping;
+    this.instance.toneMapping = THREE.ReinhardToneMapping;//THREE.CineonToneMapping;//
     this.instance.toneMappingExposure = 3.5;
     this.instance.outputEncoding = THREE.LinearEncoding;
     
@@ -139,6 +139,7 @@ class Renderer {
     
     /** FXAA */
     this.postprocessing.fxaaPass = new ShaderPass( FXAAShader );
+    this.postprocessing.fxaaPass.renderToScreen = true;
     
     this.postprocessing.fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( this.size.x * this.dpr );
     this.postprocessing.fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( this.size.y * this.dpr );
@@ -197,15 +198,17 @@ class Renderer {
     
     
     this.postprocessing.composer.addPass( this.postprocessing.RenderPass );
-    this.postprocessing.composer.addPass( this.postprocessing.fxaaPass );
 		//this.postprocessing.composer.addPass( this.postprocessing.lutPass );
     //this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
-    this.postprocessing.composer.addPass( this.postprocessing.bokehPass );
-
-
+    
+    
+    this.postprocessing.composer.addPass( this.postprocessing.fxaaPass );
+    
+    
     this.postprocessing.gammaCorrectionPass = new ShaderPass( GammaCorrectionShader );
     this.postprocessing.composer.addPass( this.postprocessing.gammaCorrectionPass );
-
+    
+    this.postprocessing.composer.addPass( this.postprocessing.bokehPass );
 
 
 
@@ -240,7 +243,6 @@ class Renderer {
         return;
       }
 
-
       //console.log(this.postprocessing.composer.passes);
       this.postprocessing.composer.passes.map((pass)=>{
         if(pass.hasOwnProperty("scene")){
@@ -260,21 +262,10 @@ class Renderer {
         if(pass.hasOwnProperty("camera")){
           pass.camera = this.context.Camera.instance;
         }
-      })
-      // this.postprocessing.composer.passes[0].scene = this.context.Scene;
-      // this.postprocessing.composer.passes[0].camera = this.context.Camera.instance;
-      
-      // this.postprocessing.composer.passes[2].scene = this.context.Scene;
-      // this.postprocessing.composer.passes[2].camera = this.context.Camera.instance;
-      
-      // this.postprocessing.composer.passes[3].scene = this.context.Scene;
-      // this.postprocessing.composer.passes[3].camera = this.context.Camera.instance;
-      
-      //console.log("animationLoop " , this.context.Scene,this.context.Scene.name, this.context.Camera.instance);
+      });
 
-      //console.log(this.postprocessing.composer.passes[0]);
+      
       this.postprocessing.composer.render();
-
     }else{
       
       this.instance.render(this.context.Scene, this.context.Camera.instance);
@@ -294,9 +285,11 @@ class Renderer {
     
     
     if(this.postprocessing.enabled){
-
       this.postprocessing.composer.setSize( this.size.x , this.size.y );
       
+      this.postprocessing.fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( this.size.x * this.dpr );
+      this.postprocessing.fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( this.size.y * this.dpr );
+    
     }
 
   }

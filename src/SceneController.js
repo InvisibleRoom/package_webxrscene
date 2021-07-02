@@ -6,7 +6,7 @@ import {TransformControls} from 'three/examples/jsm/controls/TransformControls';
 class SceneController{
   constructor(context){
     this.context = context;
-
+    this.transformControlsEnabled = false;
     this.context.Events.registerEvent("ChangeScene");
     
     this.activeScene = "default";
@@ -96,7 +96,7 @@ class SceneController{
     this.activeScene = this.scenes[sceneName].name;
 
 
-    if(this.transformControls == null && this.context.hasOwnProperty("Camera") && this.context.hasOwnProperty("Renderer") ){
+    if(this.transformControls == null && this.context.hasOwnProperty("Camera") && this.context.hasOwnProperty("Renderer") && this.transformControlsEnabled ){
       console.log( this.context );
       this.transformControls = new TransformControls(this.context.Camera.instance, this.context.Renderer.instance.domElement);
       this.transformControls.addEventListener( 'dragging-changed', ( event ) => {

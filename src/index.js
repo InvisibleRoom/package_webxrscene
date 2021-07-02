@@ -9,9 +9,10 @@ import { CustomTextureLoader } from './CustomTextureLoader.js';
 import { Events } from './Events.js';
 import { Camera } from './Camera.js';
 import { Controls } from './Controls.js';
-import {AnimationMixer} from 'three';
+import {AnimationMixer, BoxGeometry, Mesh, MeshBasicMaterial} from 'three';
 import {SceneController} from './SceneController.js';
 import {CSSSceneController} from './CSSSceneController.js';
+import {CapsController} from './CapsController.js';
 
 import StatClass from './StatClass';
 
@@ -33,6 +34,8 @@ class webXRScene{
     this.Update = new Update(this);
     
     this.Scene = null; // wird durch den SceneController gesetzt => vorerst
+    this.CapsScene = new CapsController(); 
+
     this.SceneController = new SceneController(this);
     this.CSSSceneController = new CSSSceneController(this);
 

@@ -39,6 +39,10 @@ class Controls{
     //array of active elements in scene
     this.ActiveObjects = [];
     this.raycaster = new THREE.Raycaster();
+    
+    this.rayCastHelper = new THREE.ArrowHelper( new Vector3(0,0,1), new Vector3(0,0,0), 100, Math.random() * 0xff0000 );
+    this.context.Scene.add( this.rayCastHelper );
+
     this.SetupMouse();
     this.selectState = false;
 
@@ -103,11 +107,11 @@ class Controls{
 
     this.selectState = false;
 
-    this.context.Renderer.instance.domElement.parentNode.addEventListener( 'pointermove',this.mousemove);
-    this.context.Renderer.instance.domElement.parentNode.addEventListener( 'pointerdown', this.mousedown);
-    this.context.Renderer.instance.domElement.parentNode.addEventListener( 'pointerup', this.mouseup);
-    this.context.Renderer.instance.domElement.parentNode.addEventListener( 'touchstart', this.touchstart);
-    this.context.Renderer.instance.domElement.parentNode.addEventListener( 'touchend', this.touchend);
+    this.context.Renderer.instance.domElement.addEventListener( 'pointermove',this.mousemove);
+    this.context.Renderer.instance.domElement.addEventListener( 'pointerdown', this.mousedown);
+    this.context.Renderer.instance.domElement.addEventListener( 'pointerup', this.mouseup);
+    this.context.Renderer.instance.domElement.addEventListener( 'touchstart', this.touchstart);
+    this.context.Renderer.instance.domElement.addEventListener( 'touchend', this.touchend);
   }
   getClientBox(){
 
@@ -125,7 +129,7 @@ class Controls{
   mousedown = () => { console.log("mousedown" , this); this.selectState = true; }
   mouseup = () => { console.log("mouseup");  this.selectState = false; }
   mousemove(e){
-
+    
     if(this.size.width === 0 || this.size.height === 0){
       this.getClientBox();
     }
@@ -162,12 +166,16 @@ class Controls{
   }
   ChangeScene = (sceneName)=>{
 
+    console.log(`%c Change Scene => Controls: ${sceneName}`, "background:red;color:#fff");
     this.context.Scene.attach(this.cameraHelper);
+    this.context.Scene.attach( this.rayCastHelper );
 
   }
   SetActiveCamera = (camera, sceneName) => {
 
     this.Desktop.SetActiveCamera(camera);
+
+    
 
     this.getClientBox();
 
@@ -206,11 +214,11 @@ class Controls{
   
     this.vr_controller.controllerGrips.forEach((controller)=>{
       controller.userData.noClip = true;
-      this.cameraHelper.attach(controller);
+      this.cameraHelper.add(controller);
     });
     this.vr_controller.controllers.forEach((controller)=>{
       controller.userData.noClip = true;
-      this.cameraHelper.attach(controller);
+      this.cameraHelper.add(controller);
     });
 
     
@@ -249,9 +257,9 @@ class Controls{
     if(this.ActiveObjects.length > 0 && this.interactivityEnabled){
       this.FindIntersection();
     }
-    if(this.currentControls == "VR"){
-      //this.vr_controller.Update();      
-    }
+    // if(this.currentControls == "VR"){
+    //   this.vr_controller.Update();      
+    // }
 
     if(this.currentControls == "Desktop"){
       this[this.currentControls].instance.enabled = this.enabled;
@@ -364,10 +372,17 @@ class Controls{
     let intersect;
     if(this.currentControls == "VR"){
       this.vr_controller.SetFromController( 0, this.raycaster.ray );
-
+ 
       intersect = this.Raycast();
-      // Position the little white dot at the end of the controller pointing ray
+      //Position the little white dot at the end of the controller pointing ray
       if ( intersect ) this.vr_controller.SetPointerAt( 0, intersect.point );
+      
+      // if ( this.mouse.x !== null && this.mouse.y !== null ) {
+
+      //   this.raycaster.setFromCamera(this.mouse, this.context.Camera.instance );
+      //   intersect = this.Raycast();
+      // }
+
     }
 
     if(this.currentControls == "Desktop"){
