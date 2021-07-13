@@ -611,7 +611,7 @@ var CustomTrackballControls = function ( object, domElement ) {
   };
 
   this.domElement.addEventListener( 'contextmenu', contextmenu, false );
-  this.domElement.addEventListener( 'pointerdown', mousedown, false );
+  this.domElement.addEventListener( 'pointerdown', mousedown , false);
   ///this.domElement.addEventListener( 'wheel', mousewheel, false );
 
   this.domElement.addEventListener( 'touchstart', touchstart, false );

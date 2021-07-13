@@ -134,7 +134,7 @@ class Controls{
       this.getClientBox();
     }
 
-    this.mouse.x = ( e.clientX / this.size.width ) * 2 - 1;
+    this.mouse.x = ( e.clientX / this.size.width  ) * 2 - 1;
     this.mouse.y = - ( e.clientY / this.size.height ) * 2 + 1;
   }
   touchstart(e){
@@ -376,18 +376,12 @@ class Controls{
       intersect = this.Raycast();
       //Position the little white dot at the end of the controller pointing ray
       if ( intersect ) this.vr_controller.SetPointerAt( 0, intersect.point );
-      
-      // if ( this.mouse.x !== null && this.mouse.y !== null ) {
-
-      //   this.raycaster.setFromCamera(this.mouse, this.context.Camera.instance );
-      //   intersect = this.Raycast();
-      // }
 
     }
 
-    if(this.currentControls == "Desktop"){
+    if(this.currentControls == "Desktop"|| this.currentControls == "VR"){
       if ( this.mouse.x !== null && this.mouse.y !== null ) {
-
+        
         this.raycaster.setFromCamera(this.mouse, this.context.Camera.instance );
         intersect = this.Raycast();
       }

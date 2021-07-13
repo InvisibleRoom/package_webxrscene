@@ -84,7 +84,7 @@ class Renderer {
       //logarithmicDepthBuffer: false
       powerPreference: "high-performance",
       //ONly for screenshots
-      //preserveDrawingBuffer : true
+      preserveDrawingBuffer : true
       // autoClear: false,
       // stencil: true,
       //depth: false
