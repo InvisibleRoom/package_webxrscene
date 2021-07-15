@@ -153,6 +153,8 @@ class SceneController{
     // if(newActiveCamera != null){
     //   //this.context.Camera.SetActiveCamera(newActiveCamera, sceneName);
     // }
+
+    this.context.Renderer.instance.shadowMap.needsUpdate = true;
   }
 }
 

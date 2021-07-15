@@ -21,6 +21,7 @@ class StaticControls {
     this.context = context;
 
     this.controls = new CustomTrackballControls( camera );
+    //this.controls.enabled = false;
 
     this.controls.rotateSpeed = .1;
     this.controls.zoomSpeed = 0;
@@ -36,7 +37,7 @@ class StaticControls {
   
   SetActive(boolean){
     this.enabled = boolean;
-
+    this.controls.enabled = boolean;
     var t = this.context.Controls.Desktop.orbit.target.clone();
     this.controls.target.set(t.x,t.y,t.z);
     this.controls.update();
