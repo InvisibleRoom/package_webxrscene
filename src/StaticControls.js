@@ -27,7 +27,7 @@ class StaticControls {
       this.controls.enabled = false;
     }
 
-    this.controls.rotateSpeed = .1;
+    this.controls.rotateSpeed = .01;
     this.controls.zoomSpeed = 0;
     this.controls.panSpeed = 0;
 

@@ -22,16 +22,16 @@ var CustomTrackballControls = function ( object, domElement ) {
 
   this.screen = { left: 0, top: 0, width: 0, height: 0 };
 
-  this.rotateSpeed = .2;
+  this.rotateSpeed = .02;
   this.zoomSpeed = 1.2;
-  this.panSpeed = 0.1;
+  this.panSpeed = 0.01;
 
   this.noRotate = false;
   this.noZoom = false;
   this.noPan = false;
 
   this.staticMoving = false;
-  this.dynamicDampingFactor = 0.9;
+  this.dynamicDampingFactor = 0.09;
 
   this.minDistance = 0;
   this.maxDistance = Infinity;
