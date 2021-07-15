@@ -21,7 +21,7 @@ class StaticControls {
     this.context = context;
 
     this.controls = new CustomTrackballControls( camera );
-    this.controls.enabled = false;
+    //this.controls.enabled = false;
 
     this.controls.rotateSpeed = .1;
     this.controls.zoomSpeed = 0;
