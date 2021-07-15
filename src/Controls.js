@@ -347,6 +347,9 @@ class Controls{
   Raycast() {
 
     return this.ActiveObjects.reduce( (closestIntersection, obj)=> {
+      if (!obj.isClickEnabled) {
+        return closestIntersection
+      }
 
       const intersection = this.raycaster.intersectObject( obj, true );
 
