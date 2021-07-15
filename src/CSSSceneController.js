@@ -56,7 +56,8 @@ class CSSSceneController{
     this.activeScene.name = sceneName;
 
    // this.sceneModels[sceneName].map(child => this.activeScene.add(child));
-    
+    console.log(this.context, "resize");
+    this.context.CSSRenderer.Resize();
   }
 }
 

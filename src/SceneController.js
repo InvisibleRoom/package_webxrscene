@@ -61,7 +61,7 @@ class SceneController{
             
         if(child.material.hasOwnProperty("metalness")){
           
-          if(child.material.metalness > 0){
+          if(child.material.hasOwnProperty("envMap")){
             this.scenes[sceneName].reflectiveObjects.push(child);
             child.material.envMap = this.scenes[sceneName].environment;
           }
