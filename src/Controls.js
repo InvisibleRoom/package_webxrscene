@@ -126,8 +126,8 @@ class Controls{
   GetCurrentXRMode(){
     return this.currentControls;
   }
-  mousedown = () => { console.log("mousedown" , this); this.selectState = true; }
-  mouseup = () => { console.log("mouseup");  this.selectState = false; }
+  mousedown = () => { this.selectState = true; }
+  mouseup = () => { this.selectState = false; }
   mousemove(e){
     
     if(this.size.width === 0 || this.size.height === 0){
