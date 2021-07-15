@@ -79,8 +79,6 @@ class SceneController{
 
   SetActiveScene = (sceneName) => {
 
-    console.log("SetActiveScene " , sceneName);
-
     if(!this.scenes.hasOwnProperty(sceneName)){
       console.warn(`Scene with Name:"${sceneName}" does not exist`);
       return false;
@@ -97,7 +95,6 @@ class SceneController{
 
 
     if(this.transformControls == null && this.context.hasOwnProperty("Camera") && this.context.hasOwnProperty("Renderer") && this.transformControlsEnabled ){
-      console.log( this.context );
       this.transformControls = new TransformControls(this.context.Camera.instance, this.context.Renderer.instance.domElement);
       this.transformControls.addEventListener( 'dragging-changed', ( event ) => {
 
@@ -105,11 +102,10 @@ class SceneController{
         this.context.Controls.Desktop.orbit.enabled = !event.value;
         this.context.Controls.currentControls = event.value ? "custom" : "Desktop";
 
-        console.log(this.context.Controls.Desktop.orbit.enabled) ;
+        
       });
 
       window.addEventListener("keydown", (event)=>{
-        console.log(event.key);
         switch(event.key){
           case "g": // W
             this.transformControls.setMode( "translate" );
@@ -126,12 +122,12 @@ class SceneController{
     if(this.transformControls != null){
       this.context.Scene.attach(this.transformControls);
       this.transformControls.attach( this.sceneGroups[sceneName] );
-      console.log(this.transformControls);
+      
     }
 
 
     if(this.context.hasOwnProperty("Controls")){
-      console.log("change active Scene");
+      
       this.context.Controls.ChangeScene(sceneName);
 
     }

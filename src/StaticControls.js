@@ -37,7 +37,7 @@ class StaticControls {
   
   SetActive(boolean){
     this.enabled = boolean;
-    this.controls.enabled = boolean;
+    //this.controls.enabled = boolean;
     var t = this.context.Controls.Desktop.orbit.target.clone();
     this.controls.target.set(t.x,t.y,t.z);
     this.controls.update();

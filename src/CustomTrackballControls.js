@@ -6,6 +6,7 @@
  */
 
 import * as THREE from 'three';
+import { Vector3 } from 'three';
 
 var CustomTrackballControls = function ( object, domElement ) {
 
@@ -30,7 +31,7 @@ var CustomTrackballControls = function ( object, domElement ) {
   this.noPan = false;
 
   this.staticMoving = false;
-  this.dynamicDampingFactor = 0.2;
+  this.dynamicDampingFactor = 0.3;
 
   this.minDistance = 0;
   this.maxDistance = Infinity;
@@ -333,6 +334,8 @@ var CustomTrackballControls = function ( object, domElement ) {
 
     }
 
+    _this.object.up.copy(new Vector3(0,1,0));
+
   };
 
   this.reset = function () {
@@ -467,8 +470,8 @@ var CustomTrackballControls = function ( object, domElement ) {
 
     //_state = STATE.NONE;
 
-    document.removeEventListener( 'pointermove', mousemove );
-    document.removeEventListener( 'pointerup', mouseup );
+    document.removeEventListener( 'mousemove', mousemove );
+    document.removeEventListener( 'mouseup', mouseup );
     _this.dispatchEvent( endEvent );
 
   }
@@ -598,9 +601,9 @@ var CustomTrackballControls = function ( object, domElement ) {
     this.domElement.removeEventListener( 'pointerdown', mousedown, false );
     //this.domElement.removeEventListener( 'wheel', mousewheel, false );
 
-    this.domElement.removeEventListener( 'touchstart', touchstart, false );
-    this.domElement.removeEventListener( 'touchend', touchend, false );
-    this.domElement.removeEventListener( 'touchmove', touchmove, false );
+    // this.domElement.removeEventListener( 'touchstart', touchstart, false );
+    // this.domElement.removeEventListener( 'touchend', touchend, false );
+    // this.domElement.removeEventListener( 'touchmove', touchmove, false );
 
     document.removeEventListener( 'pointermove', mousemove, false );
     document.removeEventListener( 'pointerup', mouseup, false );
@@ -611,12 +614,12 @@ var CustomTrackballControls = function ( object, domElement ) {
   };
 
   this.domElement.addEventListener( 'contextmenu', contextmenu, false );
-  this.domElement.addEventListener( 'pointerdown', mousedown , false);
+  this.domElement.addEventListener( 'pointerdown', mousedown , false );
   ///this.domElement.addEventListener( 'wheel', mousewheel, false );
 
-  this.domElement.addEventListener( 'touchstart', touchstart, false );
-  this.domElement.addEventListener( 'touchend', touchend, false );
-  this.domElement.addEventListener( 'touchmove', touchmove, false );
+  // this.domElement.addEventListener( 'touchstart', touchstart, {passive: false} );
+  // this.domElement.addEventListener( 'touchend', touchend, {passive: false} );
+  // this.domElement.addEventListener( 'touchmove', touchmove, {passive: false} );
 
   window.addEventListener( 'keydown', keydown, false );
   window.addEventListener( 'keyup', keyup, false );

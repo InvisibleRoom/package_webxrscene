@@ -129,7 +129,7 @@ class Renderer {
     this.effects = true;
 
 
-    console.log("%c Postprocessing enabled ", "background:#2196f3; color:#fff;");
+    //console.log("%c Postprocessing enabled ", "background:#2196f3; color:#fff;");
 
     this.postprocessing.composer = new EffectComposer( this.instance  );
     
