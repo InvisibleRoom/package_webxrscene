@@ -2,6 +2,7 @@ import { Euler, Object3D, Quaternion, Vector3, Matrix4, Vector2 } from 'three';
 import { Utils } from './Utils';
 
 import CustomTrackballControls from './CustomTrackballControls';
+import mainConfig from '../../../main.config';
 
 class StaticControls {
   
@@ -21,7 +22,10 @@ class StaticControls {
     this.context = context;
 
     this.controls = new CustomTrackballControls( camera );
-    //this.controls.enabled = false;
+
+    if(mainConfig.development){
+      this.controls.enabled = false;
+    }
 
     this.controls.rotateSpeed = .1;
     this.controls.zoomSpeed = 0;
