@@ -2,11 +2,12 @@ import * as THREE from 'three';
 import {PMREMGenerator} from 'three';
 
 import {TransformControls} from 'three/examples/jsm/controls/TransformControls';
+import mainConfig from '../../../main.config';
 
 class SceneController{
   constructor(context){
     this.context = context;
-    this.transformControlsEnabled = false;
+    this.transformControlsEnabled = mainConfig.transformControls;
     this.context.Events.registerEvent("ChangeScene");
     
     this.activeScene = "default";
@@ -20,7 +21,7 @@ class SceneController{
     }
 
     this.sceneTarget = {
-      default : new THREE.Mesh(new THREE.BoxGeometry(1,1,1), new THREE.MeshNormalMaterial())
+      default : new THREE.Mesh(new THREE.BoxGeometry(0,0,0), new THREE.MeshNormalMaterial())
     }
 
     window._sceneGroup = this.sceneGroups;
@@ -48,7 +49,7 @@ class SceneController{
       this.scenes[sceneName].attach(this.sceneGroups[sceneName]);
 
 
-      this.sceneTarget[sceneName] = new THREE.Mesh(new THREE.BoxGeometry(1,1,1), new THREE.MeshNormalMaterial());
+      this.sceneTarget[sceneName] = new THREE.Mesh(new THREE.BoxGeometry(0,0,0), new THREE.MeshNormalMaterial());
       this.sceneTarget[sceneName].position.set(0, 0, 20);
       this.sceneTarget[sceneName].userData.noClip = true;
       this.sceneGroups[sceneName].attach(this.sceneTarget[sceneName]);

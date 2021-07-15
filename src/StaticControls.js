@@ -23,7 +23,7 @@ class StaticControls {
 
     this.controls = new CustomTrackballControls( camera );
 
-    if(mainConfig.development){
+    if(!mainConfig.changeControlsToStatic){
       this.controls.enabled = false;
     }
 

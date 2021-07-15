@@ -40,9 +40,6 @@ class Controls{
     this.ActiveObjects = [];
     this.raycaster = new THREE.Raycaster();
     
-    this.rayCastHelper = new THREE.ArrowHelper( new Vector3(0,0,1), new Vector3(0,0,0), 100, Math.random() * 0xff0000 );
-    this.context.Scene.add( this.rayCastHelper );
-
     this.SetupMouse();
     this.selectState = false;
 
@@ -168,8 +165,7 @@ class Controls{
 
     console.log(`%c Change Scene => Controls: ${sceneName}`, "background:red;color:#fff");
     this.context.Scene.attach(this.cameraHelper);
-    this.context.Scene.attach( this.rayCastHelper );
-
+    
   }
   SetActiveCamera = (camera, sceneName) => {
 
