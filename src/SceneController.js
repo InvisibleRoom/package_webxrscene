@@ -34,6 +34,11 @@ class SceneController{
     //set default Scene
     this.SetActiveScene("default");
   }
+  RemoveFromScene = (sceneName = "default", model)=>{
+    if(this.scenes.hasOwnProperty(sceneName)){
+      this.scenes[sceneName].remove(model)
+    }
+  }
 
   AddToScene = (sceneName = "default", model) =>{
     
