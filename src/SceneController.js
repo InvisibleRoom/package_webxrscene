@@ -35,8 +35,9 @@ class SceneController{
     this.SetActiveScene("default");
   }
   RemoveFromScene = (sceneName = "default", model)=>{
-    if(this.scenes.hasOwnProperty(sceneName)){
-      this.scenes[sceneName].remove(model)
+
+    if(this.sceneGroups.hasOwnProperty(sceneName)){
+      this.sceneGroups[sceneName].remove(model)
     }
   }
 
