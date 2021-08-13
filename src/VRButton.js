@@ -1,16 +1,16 @@
 var VRButton = {
 
-	createButton: function ( renderer, context ) {
+	createButton: function (renderer, context) {
 
 
-		function showEnterVR( /*device*/ ) {
+		function showEnterVR( /*device*/) {
 
 			var currentSession = null;
 
 			const onSessionStarted = async (session) => {
-				session.addEventListener( 'end', onSessionEnded );
+				session.addEventListener('end', onSessionEnded);
 
-        const gl = renderer.getContext();
+				const gl = renderer.getContext();
 				try {
 					await gl.makeXRCompatible();
 					console.log("GL")
@@ -20,33 +20,33 @@ var VRButton = {
 				}
 
 
-				renderer.xr.setSession( session );
+				renderer.xr.setSession(session);
 				button.textContent = 'EXIT VR';
 
 				currentSession = session;
 
-				context.Events.dispatchEvent("OnChangeXRView",  {xrMode : "VR",previousXRMode : context.Controls.GetCurrentXRMode(), session: session});
+				context.Events.dispatchEvent("OnChangeXRView", { xrMode: "VR", previousXRMode: context.Controls.GetCurrentXRMode(), session: session });
 
 			}
 
-			function onSessionEnded( /*event*/ ) {
+			function onSessionEnded( /*event*/) {
 
-				currentSession.removeEventListener( 'end', onSessionEnded );
+				currentSession.removeEventListener('end', onSessionEnded);
 
-				button.textContent = 'ENTER VR';
+				button.textContent = 'In VR starten';
 
 				currentSession = null;
-				
-				context.Events.dispatchEvent("OnChangeXRView",  {xrMode : "Desktop",previousXRMode : "VR",session: null});
+
+				context.Events.dispatchEvent("OnChangeXRView", { xrMode: "Desktop", previousXRMode: "VR", session: null });
 			}
 
 
-			button.textContent = 'ENTER VR';
+			button.textContent = 'In VR starten';
 
 
 			button.onclick = function () {
 
-				if ( currentSession === null ) {
+				if (currentSession === null) {
 
 					// WebXR's requestReferenceSpace only works if the corresponding feature
 					// was requested at session creation time. For simplicity, just ask for
@@ -55,10 +55,10 @@ var VRButton = {
 					// ('local' is always available for immersive sessions and doesn't need to
 					// be requested separately.)
 
-					var sessionInit = { 
-						optionalFeatures: [ 'local-floor',"local" ]
+					var sessionInit = {
+						optionalFeatures: ['local-floor', "local"]
 					};
-					navigator.xr.requestSession( 'immersive-vr', sessionInit ).then( onSessionStarted );
+					navigator.xr.requestSession('immersive-vr', sessionInit).then(onSessionStarted);
 
 				} else {
 
@@ -82,27 +82,38 @@ var VRButton = {
 
 			button.textContent = 'VR nicht unterstützt';
 
+			console.log("VR BUTTON ", button, document.getElementById("VRButton").parentNode)
+
+			var btnDOM = document.getElementById("VRButton")
+			if (btnDOM != null) {
+				if (btnDOM.parentNode != null) {
+					var parent = btnDOM.parentNode;
+					parent.parentNode.removeChild(parent);
+				}
+			}
+			button = null;
+
 		}
 
-		if ( 'xr' in navigator ) {
+		if ('xr' in navigator) {
 
-			var button = document.createElement( 'button' );
+			var button = document.createElement('button');
 			button.id = 'VRButton';
-			navigator.xr.isSessionSupported( 'immersive-vr' ).then( function ( supported ) {
+			navigator.xr.isSessionSupported('immersive-vr').then(function (supported) {
 
 				supported ? showEnterVR() : showWebXRNotFound();
 
-			} );
+			});
 
 			return button;
 
 		} else {
 
-			var message = document.createElement( 'a' );
+			var message = document.createElement('a');
 
-			if ( window.isSecureContext === false ) {
+			if (window.isSecureContext === false) {
 
-				message.href = document.location.href.replace( /^http:/, 'https:' );
+				message.href = document.location.href.replace(/^http:/, 'https:');
 				message.innerHTML = 'WEBXR NEEDS HTTPS'; // TODO Improve message
 
 			} else {
