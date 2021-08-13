@@ -82,8 +82,6 @@ var VRButton = {
 
 			button.textContent = 'VR nicht unterstützt';
 
-			console.log("VR BUTTON ", button, document.getElementById("VRButton").parentNode)
-
 			var btnDOM = document.getElementById("VRButton")
 			if (btnDOM != null) {
 				if (btnDOM.parentNode != null) {
