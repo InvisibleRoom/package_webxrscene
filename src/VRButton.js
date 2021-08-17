@@ -82,15 +82,10 @@ var VRButton = {
 
 			button.textContent = 'VR nicht unterstützt';
 
-			var btnDOM = document.getElementById("VRButton")
-			if (btnDOM != null) {
-				if (btnDOM.parentNode != null) {
-					var parent = btnDOM.parentNode;
-					parent.parentNode.removeChild(parent);
-				}
+  		if (button.parentNode != null) {
+	  		button.parentNode.removeChild(button);
 			}
 			button = null;
-
 		}
 
 		if ('xr' in navigator) {
