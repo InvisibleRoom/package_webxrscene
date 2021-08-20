@@ -81,11 +81,7 @@ var VRButton = {
 			disableButton();
 
 			button.textContent = 'VR nicht unterstützt';
-
-  		if (button.parentNode != null) {
-	  		button.parentNode.removeChild(button);
-			}
-			button = null;
+      
 		}
 
 		if ('xr' in navigator) {
@@ -95,6 +91,12 @@ var VRButton = {
 			navigator.xr.isSessionSupported('immersive-vr').then(function (supported) {
 
 				supported ? showEnterVR() : showWebXRNotFound();
+
+        if(!supported){
+          if (button.parentNode != null) {
+            button.parentNode.removeChild(button);
+          }
+        }
 
 			});
 
