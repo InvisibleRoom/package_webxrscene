@@ -10,5 +10,5 @@ export default interface IWorld {
   sceneController: ISceneController;
   controls : IControls | null;
   animationLoop: IAnimationLoop
-};
+}
  

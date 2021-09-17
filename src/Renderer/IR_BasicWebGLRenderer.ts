@@ -1,4 +1,4 @@
-import { WebGLRenderer } from 'three';
+import { sRGBEncoding, WebGLRenderer } from 'three';
 import IRenderer from './IRenderer';
 
 export default class IR_BasicWebGLRenderer implements IRenderer{
@@ -13,6 +13,11 @@ export default class IR_BasicWebGLRenderer implements IRenderer{
     this.instance.domElement.style.bottom = "0";
     this.instance.domElement.style.zIndex = "0";
     this.instance.autoClear = false;
+
+    this.instance.outputEncoding = sRGBEncoding;
+		this.instance.shadowMap.enabled = true;
+
+    this.instance.xr.enabled = true;
 
     this.instance.setClearColor( 0x000000, 0 );
 
