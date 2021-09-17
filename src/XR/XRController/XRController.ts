@@ -1,31 +1,31 @@
 import IWorld from "../../World/IWorld";
 import {XRControllerModelFactory} from "three/examples/jsm/webxr/XRControllerModelFactory";
 import { AdditiveBlending, BufferGeometry, Float32BufferAttribute, Group, Line, LineBasicMaterial, Matrix4, Mesh, MeshBasicMaterial, Object3D, Ray, Raycaster, RingGeometry } from "three";
+import IActiveObject from "../../ActiveObject/IActiveObject";
 
 class XRController{
   world:IWorld
   
   controllerModelFactory:XRControllerModelFactory = new XRControllerModelFactory();
 
-  readonly activeObjects:Object3D[] = []
-
+  readonly activeObjects:IActiveObject[] = []
 
   constructor(world:IWorld){
     this.world = world;
   }
 
-  AddInteractiveObject(obj:Object3D){
+  AddInteractiveObject(obj:IActiveObject){
     this.activeObjects.push(obj);
   }
   
-  RemoveInteractiveObject(obj:Object3D){
+  RemoveInteractiveObject(obj:IActiveObject){
     const index = this.activeObjects.indexOf(obj);
     if(index != -1){
       this.activeObjects.splice(index,1);
     }
   }
 
-  GetController = (index:number, OnSelectStart:(index:number,event:any)=>void | null,OnSelectEnd:(index:number, event:any)=>void | null,OnHover?:(index:number, event:any)=>void | null) =>{
+  GetController = (index:number, OnSelectStart?:(index:number,event:any)=>void | null,OnSelectEnd?:(index:number, event:any)=>void | null,OnHover?:(index:number, event:any)=>void | null) =>{
     const controller = this.world.renderer.instance.xr.getController( index );
           controller.name = "ControllerGroup-" + index;
 
@@ -36,27 +36,84 @@ class XRController{
       controller.userData.matrix.identity().extractRotation(controller.matrixWorld);
       controller.userData.raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
       controller.userData.raycaster.ray.direction.set(0,0,-1).applyMatrix4(controller.userData.matrix);
-      controller.userData.intersections = [];
+      //controller.userData.intersections = [];
 
-      controller.userData.intersections = controller.userData.raycaster.intersectObjects(this.activeObjects);
+      //Check hover out
+      const intersections = controller.userData.raycaster.intersectObjects(this.activeObjects.map((el)=>el.object));
 
-      OnHover ? OnHover(index, {
-        type: "hover",
-        data: null,
-        target: controller
-      }) : null;
+      // OnHoverEnd
+      if(Array.isArray(controller.userData.intersections)){
+        controller.userData.intersections.map(lastIntersectionObject => {
+
+          const intersectionObject = intersections.find((intersectionObject:any) => intersectionObject.object == lastIntersectionObject.object);
+
+          if(typeof(intersectionObject) == "undefined"){
+            const searchedItem = this.activeObjects.find(el => el.object == lastIntersectionObject.object)
+            
+            searchedItem?searchedItem.OnHoverEnd(index, {
+              type: "hoverend",
+              data: null,
+              target: controller
+            }):null;
+          }
+        })
+      }
+
+      controller.userData.intersections = intersections;
+
+      intersections.map((el:any) => {
+        const searchedObject = this.activeObjects.find(activeObj => activeObj.object == el.object);
+        if(typeof(searchedObject) != "undefined"){
+          searchedObject.OnHover(index , {
+            type: "hover",
+            data: null,
+            target: controller
+          });
+        }
+      })
+
+      if(controller.userData.intersections.length > 0){
+        OnHover ? OnHover(index, {
+          type: "hover",
+          data: null,
+          target: controller
+        }) : null;
+      }
     });
           
           controller.addEventListener( 'selectstart', (event)=>{
             controller.userData.isSelecting = true;
-            
-            console.log(event);
+            const filteredObjects = this.activeObjects.filter((activeObj:any)=>{
+              const findActiveObject = controller.userData.intersections.find((el:any) => el.object == activeObj.object);
+              
+              return typeof(findActiveObject) != "undefined";
+            });
+
+            if(filteredObjects.length > 0){
+              filteredObjects.map((activeObject:IActiveObject) => {
+                activeObject.selected.controller[index.toString()] = true;
+                activeObject.OnSelectStart(index, event)
+              });
+            }
+
             OnSelectStart ? OnSelectStart(index, event) : null;
           });
+
+
           controller.addEventListener( 'selectend', (event)=>{
             controller.userData.isSelecting = false;
+            
+            this.activeObjects.filter((activeObj)=>{
+              return activeObj.selected.controller[index.toString()];
+            }).map((activeObj)=>{
+              activeObj.selected.controller[index.toString()] = false;
+              activeObj.OnSelectEnd(index, event);
+            });
+
             OnSelectEnd ? OnSelectEnd(index, event) : null;
           });
+
+
           controller.addEventListener( 'connected', ( event ) => {
             controller.add( this.buildController(index, event.data ) );
           });
