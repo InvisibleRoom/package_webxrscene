@@ -39,16 +39,16 @@ class XRController{
       //controller.userData.intersections = [];
 
       //Check hover out
-      const intersections = controller.userData.raycaster.intersectObjects(this.activeObjects.map((el)=>el.object));
+      const intersections = controller.userData.raycaster.intersectObjects(this.activeObjects.filter(el=> el.object.visible).map((el)=> el.object).filter(el => el != null) );
 
       // OnHoverEnd
       if(Array.isArray(controller.userData.intersections)){
-        controller.userData.intersections.map(lastIntersectionObject => {
+        controller.userData.intersections.filter((el:any) => el.object.visible).map(lastIntersectionObject => {
 
-          const intersectionObject = intersections.find((intersectionObject:any) => intersectionObject.object == lastIntersectionObject.object);
+          const intersectionObject = intersections.filter((el:any) => el.object.visible).find((intersectionObject:any) => intersectionObject.object == lastIntersectionObject.object);
 
           if(typeof(intersectionObject) == "undefined"){
-            const searchedItem = this.activeObjects.find(el => el.object == lastIntersectionObject.object)
+            const searchedItem = this.activeObjects.find(el => (el.object == lastIntersectionObject.object && el.object.visible))
             
             searchedItem?searchedItem.OnHoverEnd(index, {
               type: "hoverend",
@@ -61,9 +61,9 @@ class XRController{
 
       controller.userData.intersections = intersections;
 
-      intersections.map((el:any) => {
-        const searchedObject = this.activeObjects.find(activeObj => activeObj.object == el.object);
-        if(typeof(searchedObject) != "undefined"){
+      intersections.filter((el:any) => el.object.visible).map((el:any) => {
+        const searchedObject = this.activeObjects.find(activeObj => (activeObj.object == el.object && activeObj.object.visible));
+        if(typeof(searchedObject) != "undefined" && searchedObject.object.visible){
           searchedObject.OnHover(index , {
             type: "hover",
             data: null,
@@ -72,7 +72,7 @@ class XRController{
         }
       })
 
-      if(controller.userData.intersections.length > 0){
+      if(controller.userData.intersections.filter((el:any) => el.object.visible).length > 0){
         OnHover ? OnHover(index, {
           type: "hover",
           data: null,
