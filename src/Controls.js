@@ -1,14 +1,12 @@
-import * as THREE from 'three';
 import { DesktopControls } from './DesktopControls';
 import { VRController } from './VRController';
 import { VRButton } from './VRButton.js';
 import { ARButton } from './ARButton.js';
-import { Vector3 } from 'three';
+import { Raycaster,Group ,Vector2,Vector3} from 'three';
 
 class Controls {
   constructor(context) {
 
-    window.THREE = THREE;
     this.enabled = true;
     this.interactivityEnabled = true;
     this.context = context;
@@ -31,7 +29,7 @@ class Controls {
     this.GetTarget = this.GetTarget.bind(this);
     this.GetCameraPosition = this.GetCameraPosition.bind(this);
 
-    this.cameraHelper = new THREE.Group();
+    this.cameraHelper = new Group();
     this.cameraHelper.name = "cameraHelper";
     this.context.Scene.add(this.cameraHelper);
     this.isClickEnabled = true;
@@ -39,7 +37,7 @@ class Controls {
 
     //array of active elements in scene
     this.ActiveObjects = [];
-    this.raycaster = new THREE.Raycaster();
+    this.raycaster = new Raycaster();
 
     this.SetupMouse();
     this.selectState = false;
@@ -103,7 +101,7 @@ class Controls {
   }
 
   SetupMouse(settings) {
-    this.mouse = new THREE.Vector2();
+    this.mouse = new Vector2();
     this.mouse.x = null;
     this.mouse.y = null;
 
@@ -289,7 +287,7 @@ class Controls {
 
     switch (this.currentControls) {
       case "VR":
-        this.cameraHelper.lookAt(new THREE.Vector3(x, y, z));
+        this.cameraHelper.lookAt(new Vector3(x, y, z));
         this.cameraHelper.rotation.x = 0;
         this.cameraHelper.rotation.z = 0;
         break;

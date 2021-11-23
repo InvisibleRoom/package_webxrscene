@@ -3,7 +3,6 @@ import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
 import {AnimationMixer} from 'three';
 import Promise from 'promise-polyfill';
 import {Events} from './Events';
-import * as THREE from 'three';
 
 class Loader {
   constructor(context){

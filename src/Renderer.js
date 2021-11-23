@@ -1,4 +1,3 @@
-import * as THREE from 'three';
 //import TWEEN from '@tweenjs/tween.js';
 
 import {Events} from './Events';
@@ -6,8 +5,7 @@ import { Camera } from './Camera.js';
 import { DesktopControls } from './DesktopControls.js';
 import { Loader } from './Loader.js';
 import {webXRScene}from "./index.js";
-import { Clock, Vector2, Vector3 } from "three";
-import { LoadingManager } from "three";
+import { LoadingManager, WebGLRenderer, Clock, Vector2, Vector3 ,ShaderChunk,CustomToneMapping, PCFSoftShadowMap, CineonToneMapping, ReinhardToneMapping, LinearEncoding,sRGBEncoding,LinearToneMapping} from "three/build/three.module";
 
 //import { BloomEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
 
@@ -32,6 +30,7 @@ import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
 import {GammaCorrectionShader} from './GammaCorrectionShader';
+import mainConfig from '../../../main.config';
 
 // import motionBlurShader from './MotionBlur';
 // import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
@@ -69,22 +68,22 @@ class Renderer {
   
   constructor(id = "app", context){
     this.context = context;
-    this.clock = new THREE.Clock();
+    this.clock = new Clock();
     this.postprocessing = {
       enabled : true,
       initialized : false
     };
     this.context.Events.registerEvent('OnAnimationLoop');
     
-    this.instance = new THREE.WebGLRenderer({
+    this.instance = new WebGLRenderer({
       powerPreference: "high-performance",
       alpha : true,
       antialias: true,
       transparent : true,
-      //logarithmicDepthBuffer: false
+      logarithmicDepthBuffer: true,
       powerPreference: "high-performance",
       //ONly for screenshots
-      preserveDrawingBuffer : true
+      preserveDrawingBuffer : mainConfig.development
       // autoClear: false,
       // stencil: true,
       //depth: false
@@ -95,15 +94,29 @@ class Renderer {
     
     this.instance.shadowMap.enabled = true;
     this.instance.shadowMap.autoUpdate = false;
-    this.instance.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.instance.toneMapping = THREE.ReinhardToneMapping;//THREE.CineonToneMapping;//
-    this.instance.toneMappingExposure = 3.5;
-    this.instance.outputEncoding = THREE.LinearEncoding;
+    this.instance.shadowMap.type = PCFSoftShadowMap;
+    this.instance.toneMapping = ReinhardToneMapping;//CustomToneMapping;//ReinhardToneMapping;//LinearToneMapping;//THREE.
+    this.instance.toneMappingExposure = 1;
+    this.instance.outputEncoding = sRGBEncoding;
+
+// Set CustomToneMapping to Uncharted2
+				// source: http://filmicworlds.com/blog/filmic-tonemapping-operators/
+    ShaderChunk.tonemapping_pars_fragment = ShaderChunk.tonemapping_pars_fragment.replace(
+      'vec3 CustomToneMapping( vec3 color ) { return color; }',
+      `#define Uncharted2Helper( x ) max( ( ( x * ( 0.15 * x + 0.10 * 0.50 ) + 0.20 * 0.02 ) / ( x * ( 0.15 * x + 0.50 ) + 0.20 * 0.30 ) ) - 0.02 / 0.30, vec3( 0.0 ) )
+      float toneMappingWhitePoint = 1.0;
+      vec3 CustomToneMapping( vec3 color ) {
+        color *= toneMappingExposure;
+        return saturate( Uncharted2Helper( color ) / Uncharted2Helper( vec3( toneMappingWhitePoint ) ) );
+      }`
+    );
     
     //MASK
     this.instance.localClippingEnabled = true;
-    //this.instance.gammaOutput = true;
-    //this.instance.gammaFactor = 1;
+    
+    this.instance.gammaOutput = true;
+    this.instance.gammaFactor = 2.2;
+    
     this.instance.colorManagement = true;
     this.instance.setClearColor(0xffffff,0);
 
@@ -202,14 +215,14 @@ class Renderer {
     //this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
     
     
-    this.postprocessing.composer.addPass( this.postprocessing.fxaaPass );
     
     
     this.postprocessing.gammaCorrectionPass = new ShaderPass( GammaCorrectionShader );
     this.postprocessing.composer.addPass( this.postprocessing.gammaCorrectionPass );
     
     this.postprocessing.composer.addPass( this.postprocessing.bokehPass );
-
+    
+    this.postprocessing.composer.addPass( this.postprocessing.fxaaPass );
 
 
     this.postprocessing.initialized = true;

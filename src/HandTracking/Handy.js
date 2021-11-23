@@ -21,7 +21,7 @@
 
 import { poses as posesLeft  } from './Handy-poses-left.js'
 import { poses as posesRight } from './Handy-poses-right.js'
-import * as THREE from 'three'
+import {Vector3, Object3D, MathUtils,BoxBufferGeometry, MeshBasicMaterial } from 'three'
 import { SurfaceText } from './SurfaceText.js'
 
 
@@ -142,7 +142,7 @@ const Handy = {
 	//  so let’s just create it once
 	//  and reference it from here on.
 
-	VECTOR3_ZERO: new THREE.Vector3(),
+	VECTOR3_ZERO: new Vector3(),
 
 
 	//  Here’s the data goods;
@@ -246,7 +246,7 @@ const Handy = {
 		//  SurfaceText returns a THREE.Mesh
 		//  with additional methods like print().
 
-		obj.displayFrameAnchor = new THREE.Object3D()
+		obj.displayFrameAnchor = new Object3D()
 		obj.add( obj.displayFrameAnchor )
 		obj.displayFrame = new SurfaceText({
 
@@ -441,7 +441,7 @@ Object.assign( Handy.protos, {
 			fingerTip.quaternion &&
 			fingerProximal.quaternion ){
 
-			return THREE.MathUtils.radToDeg( 
+			return MathUtils.radToDeg( 
 
 				fingerProximal.quaternion.angleTo( fingerTip.quaternion )
 			)
@@ -672,16 +672,16 @@ Object.assign( Handy.protos, {
 
 		const
 		hand  = this,
-		handRoot = new THREE.Object3D(),
+		handRoot = new Object3D(),
 		size = 0.02
 
 		pose.jointPositions
 		.forEach( function( position ){
 
-			const box = new THREE.Mesh(
+			const box = new Mesh(
 
-				new THREE.BoxBufferGeometry( size, size, size ),
-				new THREE.MeshBasicMaterial()
+				new BoxBufferGeometry( size, size, size ),
+				new MeshBasicMaterial()
 			)
 			box.position.fromArray( position ).multiplyScalar( 0.001 )
 			if( matrix !== undefined ){

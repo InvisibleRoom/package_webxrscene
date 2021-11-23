@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import {Mesh,SpriteMaterial,Sprite,CanvasTexture, Raycaster,MeshBasicMaterial ,BoxBufferGeometry,Matrix4} from 'three';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
 
 class VRController {
@@ -7,21 +7,21 @@ class VRController {
     this.context = context;
     this.controllers = [];
     this.controllerGrips = [];
-    this.raycaster = new THREE.Raycaster();
+    this.raycaster = new Raycaster();
 
     this.controllerModelFactory = new XRControllerModelFactory();
 
     /**LineHelper */
-    this.material = new THREE.MeshBasicMaterial( {
+    this.material = new MeshBasicMaterial( {
       color: 0xffffff,
-      alphaMap: new THREE.CanvasTexture( this.GetRayTexture() ),
+      alphaMap: new CanvasTexture( this.GetRayTexture() ),
       transparent: true
     });
 
-    this.geometry = new THREE.BoxBufferGeometry( 0.004, 0.004, 0.35 );    
+    this.geometry = new BoxBufferGeometry( 0.004, 0.004, 0.35 );    
     this.geometry.translate( 0, 0, -0.15 );
 
-    this.dummyMatrix = new THREE.Matrix4();
+    this.dummyMatrix = new Matrix4();
 
     this.uvAttribute = this.geometry.attributes.uv;
     for ( var i = 0; i < this.uvAttribute.count; i ++ ) {
@@ -54,20 +54,20 @@ class VRController {
 	    this.uvAttribute.setXY( i, u, v );
 			
 	  };
-    this.linesHelper = new THREE.Mesh( this.geometry, this.material );
+    this.linesHelper = new Mesh( this.geometry, this.material );
     this.linesHelper.renderOrder = Infinity;
 
     /////////////////
     // Point helper
     /////////////////
 
-    this.spriteMaterial = new THREE.SpriteMaterial({
-      map: new THREE.CanvasTexture( this.GetPointerTexture() ),
+    this.spriteMaterial = new SpriteMaterial({
+      map: new CanvasTexture( this.GetPointerTexture() ),
       sizeAttenuation: false,
       depthTest: false
     });
 
-    this.pointer = new THREE.Sprite( this.spriteMaterial );
+    this.pointer = new Sprite( this.spriteMaterial );
 
     this.pointer.scale.set(0.015, 0.015, 1)
     this.pointer.renderOrder = Infinity;

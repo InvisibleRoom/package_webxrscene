@@ -1,5 +1,5 @@
-import * as THREE from 'three';
-import {PMREMGenerator} from 'three';
+
+import {PMREMGenerator , Scene, Group, Mesh, BoxGeometry, MeshNormalMaterial} from 'three';
 
 import {TransformControls} from 'three/examples/jsm/controls/TransformControls';
 import mainConfig from '../../../main.config';
@@ -13,15 +13,15 @@ class SceneController{
     this.activeScene = "default";
 
     this.scenes = {
-      default : new THREE.Scene()
+      default : new Scene()
     };
 
     this.sceneGroups = {
-      default : new THREE.Group()
+      default : new Group()
     }
 
     this.sceneTarget = {
-      default : new THREE.Mesh(new THREE.BoxGeometry(0,0,0), new THREE.MeshNormalMaterial())
+      default : new Mesh(new BoxGeometry(0,0,0), new MeshNormalMaterial())
     }
 
     window._sceneGroup = this.sceneGroups;
@@ -44,18 +44,18 @@ class SceneController{
   AddToScene = (sceneName = "default", model) =>{
     
     if(!this.scenes.hasOwnProperty(sceneName)){
-      this.scenes[sceneName] = new THREE.Scene();
+      this.scenes[sceneName] = new Scene();
       this.scenes[sceneName].name = sceneName;
       
       this.scenes[sceneName].reflectiveObjects = [];
 
-      this.sceneGroups[sceneName] = new THREE.Group();
+      this.sceneGroups[sceneName] = new Group();
       this.sceneGroups[sceneName].name = "sceneGroup-" + sceneName;
 
       this.scenes[sceneName].attach(this.sceneGroups[sceneName]);
 
 
-      this.sceneTarget[sceneName] = new THREE.Mesh(new THREE.BoxGeometry(0,0,0), new THREE.MeshNormalMaterial());
+      this.sceneTarget[sceneName] = new Mesh(new BoxGeometry(0,0,0), new MeshNormalMaterial());
       this.sceneTarget[sceneName].position.set(0, 0, 20);
       this.sceneTarget[sceneName].userData.noClip = true;
       this.sceneGroups[sceneName].attach(this.sceneTarget[sceneName]);

@@ -4,7 +4,7 @@
  * Depth of Field
  * - ported from
  */
-import {Vector2} from "three";
+import {Vector2} from "three/build/three.module";
 
 const DoFShader = {
 

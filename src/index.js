@@ -1,6 +1,5 @@
 var exports = {"__esModule": true};
 
-import * as THREE from 'three';
 import { Renderer } from "./Renderer.js";
 import { CSSRenderer } from "./CSSRenderer.js";
 import { Update } from './Update.js';

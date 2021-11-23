@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import {Vector2, Clock} from 'three';
 import {CSS3DRenderer} from 'three/examples/jsm/renderers/CSS3DRenderer';
 
 
@@ -6,13 +6,13 @@ class CSSRenderer {
   
   constructor(id = "app", context){
     this.context = context;
-    this.clock = new THREE.Clock();
+    this.clock = new Clock();
 
     this.scaleFactor = 100;
     
     this.instance = new CSS3DRenderer();
     this.dpr = window.devicePixelRatio ? window.devicePixelRatio : 1;
-    this.size = new THREE.Vector2(window.innerWidth, window.innerHeight);
+    this.size = new Vector2(window.innerWidth, window.innerHeight);
 
     this.instance.setSize(this.size.x,this.size.y);
 
@@ -57,7 +57,7 @@ class CSSRenderer {
   Resize = () =>{
 
     var size = this.domElement.getBoundingClientRect();
-    this.size = new THREE.Vector2(size.width, size.height );
+    this.size = new Vector2(size.width, size.height );
     this.instance.setSize(this.size.x,this.size.y);
 
     this.instance.domElement.style.width = window.innerWidth + "px";    

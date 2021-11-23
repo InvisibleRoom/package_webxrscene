@@ -2,7 +2,7 @@
 //  Copyright © 2017, 2018, 2020 Moar Technologies Corp. See LICENSE for details.
 
 
-import * as THREE from 'three'
+import {Texture, Mesh,DoubleSide, AdditiveBlending, PlaneGeometry, MeshBasicMaterial} from 'three'
 
 function SurfaceText( options ){
 
@@ -46,18 +46,18 @@ function SurfaceText( options ){
 	const context = canvas.getContext( '2d' )
 	Object.assign( context, options.style )
 
-	const texture = new THREE.Texture( canvas )
+	const texture = new Texture( canvas )
 	texture.needsUpdate = true
 
-	const mesh = new THREE.Mesh(
+	const mesh = new Mesh(
 	
-		new THREE.PlaneGeometry( options.virtual.width, options.virtual.height ),
-		new THREE.MeshBasicMaterial({
+		new PlaneGeometry( options.virtual.width, options.virtual.height ),
+		new MeshBasicMaterial({
 
 			map:         texture,
-			side:        THREE.DoubleSide,
+			side:        DoubleSide,
 			transparent: true,
-			blending:    THREE.AdditiveBlending,
+			blending:    AdditiveBlending,
 			alphaTest:   0.5
 		})
 	)

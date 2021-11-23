@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import {Scene} from 'three';
 
 class CSSSceneController{
   constructor(context){
@@ -11,7 +11,7 @@ class CSSSceneController{
     this.sceneModels = {
       default : []
     }
-    this.activeScene = new THREE.Scene();
+    this.activeScene = new Scene();
     this.activeScene.name = "default";
     //this.scenes.default.name = "default";
 

@@ -1,5 +1,5 @@
 
-import { Vector3 } from 'three';
+import { Vector3 } from 'three/build/three.module';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import {StaticControls} from './StaticControls';
 
