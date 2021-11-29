@@ -16,7 +16,6 @@ class Loader {
     this.dracoLoader = new DRACOLoader();
     this.dracoLoader.setDecoderPath("./gltf/");
     this.instance.setDRACOLoader( this.dracoLoader );
-    this.load = this.load.bind(this);
   }
 
 
@@ -24,77 +23,73 @@ class Loader {
     
     return new Promise((resolve,reject)=>{
 
-      let promises = stack.stack.map((s,index)=>{
-
-        s.progress = function(opt){
-          stack.progress(opt);
-        }
-
-        return this.load(s);
+      let promises = stack.stack.map((s)=>{
+        return this.load(s, stack.OnProgress).then((m)=>{
+          return m;
+        }).catch(error => console.log(error, s));
       });
 
 
       Promise.all(promises).then((el)=>{
 
         let library = {};
-        el.map((obj,index)=>{
+        el.map((obj)=>{
           library[obj.name] = obj;
         });
-        this.context.Events.dispatchEvent('OnLoadStack',library);
+
+        //this.context.Events.dispatchEvent('OnLoadStack',library);
         resolve(library);
-      }).catch(reject);
+      }).catch(error =>{
+        console.log(error);
+
+        reject(error);
+      });
     });
   }
-
-  load(arg){
+  
+  load = (arg, OnProgress) => {
     let {name, url,progress} = arg; 
 
-    if(typeof(progress) != "undefined"){
+    // const OnLoad = (opt) => {
 
-      this.context.Events.addEventListener("OnProgress", progress);
+    //   if(opt.name === name){
+        
+    //     console.log("opt" , opt);
+    //     this.context.Events.removeEventListener("OnProgress", progress);
+    //     this.context.Events.removeEventListener("OnLoad", this.OnLoad);
+        
+    //   }
+    // }
 
-      function OnLoad(opt){
+    // if(typeof(progress) != "undefined"){
+    //   console.log(progress);
+    //   this.context.Events.addEventListener("OnProgress", progress);
+    //   this.context.Events.addEventListener("OnLoad",OnLoad);
 
-        if(opt.name === name){
-
-          this.context.Events.removeEventListener("OnProgress", progress);
-          this.context.Events.removeEventListener("OnLoad", OnLoad);
-          
-        }
-      }
-
-      OnLoad = OnLoad.bind(this);
-
-      this.context.Events.addEventListener("OnLoad",OnLoad);
-
-    }
+    // }
 
     return new Promise((resolve,reject)=>{
+
       this.instance.load(url,(gltf)=>{
 
         gltf.name = name;
-        // gltf.mixer = new AnimationMixer(gltf.scene);
-
-        // gltf.actions = {};
-        // gltf.animations.map((anim,index)=>{
-        //   let clipAction = gltf.mixer.clipAction( anim );
-        //       clipAction.clampWhenFinished = true;
-        //       clipAction.loop = THREE.LoopOnce;
-        //       clipAction.name = anim.name;
-        //   gltf.actions[anim.name] = clipAction;
-
-        // });
-
-
-        // this.context.Events.addEventListener("OnAnimationLoop",()=>{
-        //   gltf.mixer.update(this.context.Renderer.clock.getDelta());
-        // })
-
+        
         resolve(gltf);
-        this.context.Events.dispatchEvent('OnLoad',{name: name, scene : gltf.scene});
       },(_step)=>{
-        this.context.Events.dispatchEvent('OnProgress',{isLoading:( _step.loaded / _step.total == 1 ? false : true), progress: _step.loaded / _step.total,name : name });
-      },reject);
+        const total = _step.total == Infinity ? 1  : _step.total; 
+        const percentage = _step.loaded / total;
+        console.log(total,percentage);
+        OnProgress({
+          name : name,
+          isLoading:( percentage == 1 ? false : true), 
+          progress: percentage
+        });
+        
+        
+      },(error)=>{
+        console.log(error);
+        reject(error);
+      });
     });
   }
 }

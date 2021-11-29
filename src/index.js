@@ -55,6 +55,9 @@ class webXRScene{
     //this.VRHandController = new VRHands(this);
 
     this.Events.dispatchEvent("OnMount");
+
+
+    this.Renderer.Resize();
   }
 }
 export default webXRScene;

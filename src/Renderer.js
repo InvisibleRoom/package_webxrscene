@@ -69,6 +69,7 @@ class Renderer {
   constructor(id = "app", context){
     this.context = context;
     this.clock = new Clock();
+    this.factor = .9;
     this.postprocessing = {
       enabled : true,
       initialized : false
@@ -112,14 +113,13 @@ class Renderer {
     );
     
     //MASK
-    this.instance.localClippingEnabled = true;
-    
-    this.instance.gammaOutput = true;
-    this.instance.gammaFactor = 2.2;
+   // this.instance.localClippingEnabled = true;
     
     this.instance.colorManagement = true;
+    //this.instance.gammaOutput = true;
+    //this.instance.gammaFactor = 1;//2.2;
+    
     this.instance.setClearColor(0xffffff,0);
-
     
     this.instance.setSize(this.size.x,this.size.y);
     this.instance.xr.enabled = true;
@@ -136,6 +136,7 @@ class Renderer {
     }
 
     window.addEventListener("resize", this.Resize);
+
   }
 
   InitComposer = () => {
@@ -289,9 +290,14 @@ class Renderer {
   Resize = () =>{
 
     var size = this.domElement.getBoundingClientRect();
+    
     this.size = new Vector2(size.width, size.height);
-    this.dpr = window.devicePixelRatio ? window.devicePixelRatio : 1;
+    this.size.x = this.size.x / this.factor;
+    this.size.y = this.size.y / this.factor;
+
+    this.dpr = 1;// window.devicePixelRatio ? window.devicePixelRatio : 1;
     this.instance.setSize(this.size.x,this.size.y);
+
 
     this.context.Camera.instance.aspect = this.size.x / this.size.y;
     this.context.Camera.instance.updateProjectionMatrix();
@@ -304,6 +310,11 @@ class Renderer {
       this.postprocessing.fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( this.size.y * this.dpr );
     
     }
+
+
+    this.instance.domElement.style.width = "100%!important";
+    this.instance.domElement.style.height = "100%!important";
+
 
   }
 
