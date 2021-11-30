@@ -36,6 +36,14 @@ class CSSSceneController{
     this.activeScene.add(model);
   }
 
+  RemoveAll = () =>{
+    console.log("REMOVE ALL CSS OBJS")
+    for( var i = this.activeScene.children.length - 1; i >= 0; i--) { 
+      obj = this.activeScene.children[i];
+      this.activeScene.remove(obj); 
+ }
+  }
+
   SetActiveScene = (sceneName) => {
     
     if(this.activeScene.name != sceneName){
