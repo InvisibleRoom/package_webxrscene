@@ -41,7 +41,6 @@ class CSSSceneController{
   }
 
   SetActiveScene = (sceneName) => {
-    console.log("SET CSS SCENE ACTIVE BEFORE ",this.activeScene.name,sceneName)
     if(this.activeScene.name != sceneName){
 
       // while(this.activeScene.children.length > 0){ 
@@ -49,7 +48,6 @@ class CSSSceneController{
       // }
 
       this.activeScene.children.map(child => {
-        console.log("SET CSS SCENE ACTIVE ",sceneName, child)
         if(child.userData.scene == sceneName){
           child.visible = true;
         }else{
