@@ -36,16 +36,12 @@ class CSSSceneController{
     this.activeScene.add(model);
   }
 
-  RemoveAll = () =>{
-    console.log("REMOVE ALL CSS OBJS")
-    for( var i = this.activeScene.children.length - 1; i >= 0; i--) { 
-      obj = this.activeScene.children[i];
-      this.activeScene.remove(obj); 
- }
+  RemoveObj = (mark) =>{
+    this.activeScene.remove(mark); 
   }
 
   SetActiveScene = (sceneName) => {
-    
+    console.log("SET CSS SCENE ACTIVE BEFORE ",this.activeScene.name,sceneName)
     if(this.activeScene.name != sceneName){
 
       // while(this.activeScene.children.length > 0){ 
@@ -53,6 +49,7 @@ class CSSSceneController{
       // }
 
       this.activeScene.children.map(child => {
+        console.log("SET CSS SCENE ACTIVE ",sceneName, child)
         if(child.userData.scene == sceneName){
           child.visible = true;
         }else{
