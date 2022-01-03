@@ -116,8 +116,8 @@ class Renderer {
    // this.instance.localClippingEnabled = true;
     
     this.instance.colorManagement = true;
-    this.instance.gammaOutput = true;
-    this.instance.gammaFactor = 2.2;//1;//
+    // this.instance.gammaOutput = true;
+    // this.instance.gammaFactor = 2.2;//1;//
     
     this.instance.setClearColor(0xffffff,0);
     
