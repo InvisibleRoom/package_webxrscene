@@ -295,6 +295,8 @@ class Controls {
         this[this.currentControls].SetTarget(x, y, z);
         break;
     }
+
+    this.context.Scene._target = new Vector3(x,y,z);
   }
 
   GetTarget() {

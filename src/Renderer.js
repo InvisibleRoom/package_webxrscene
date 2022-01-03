@@ -84,7 +84,7 @@ class Renderer {
       logarithmicDepthBuffer: true,
       powerPreference: "high-performance",
       //ONly for screenshots
-      preserveDrawingBuffer : mainConfig.development
+      //preserveDrawingBuffer : mainConfig.development
       // autoClear: false,
       // stencil: true,
       //depth: false
@@ -96,28 +96,28 @@ class Renderer {
     this.instance.shadowMap.enabled = true;
     this.instance.shadowMap.autoUpdate = false;
     this.instance.shadowMap.type = PCFSoftShadowMap;
-    this.instance.toneMapping = ReinhardToneMapping;//CustomToneMapping;//ReinhardToneMapping;//LinearToneMapping;//THREE.
+    this.instance.toneMapping = LinearToneMapping;// CustomToneMapping;// ReinhardToneMapping;//CustomToneMapping;//ReinhardToneMapping;//LinearToneMapping;//THREE.
     this.instance.toneMappingExposure = 1;
     this.instance.outputEncoding = sRGBEncoding;
 
 // Set CustomToneMapping to Uncharted2
 				// source: http://filmicworlds.com/blog/filmic-tonemapping-operators/
-    ShaderChunk.tonemapping_pars_fragment = ShaderChunk.tonemapping_pars_fragment.replace(
-      'vec3 CustomToneMapping( vec3 color ) { return color; }',
-      `#define Uncharted2Helper( x ) max( ( ( x * ( 0.15 * x + 0.10 * 0.50 ) + 0.20 * 0.02 ) / ( x * ( 0.15 * x + 0.50 ) + 0.20 * 0.30 ) ) - 0.02 / 0.30, vec3( 0.0 ) )
-      float toneMappingWhitePoint = 1.0;
-      vec3 CustomToneMapping( vec3 color ) {
-        color *= toneMappingExposure;
-        return saturate( Uncharted2Helper( color ) / Uncharted2Helper( vec3( toneMappingWhitePoint ) ) );
-      }`
-    );
+    // ShaderChunk.tonemapping_pars_fragment = ShaderChunk.tonemapping_pars_fragment.replace(
+    //   'vec3 CustomToneMapping( vec3 color ) { return color; }',
+    //   `#define Uncharted2Helper( x ) max( ( ( x * ( 0.15 * x + 0.10 * 0.50 ) + 0.20 * 0.02 ) / ( x * ( 0.15 * x + 0.50 ) + 0.20 * 0.30 ) ) - 0.02 / 0.30, vec3( 0.0 ) )
+    //   float toneMappingWhitePoint = 1.0;
+    //   vec3 CustomToneMapping( vec3 color ) {
+    //     color *= toneMappingExposure;
+    //     return saturate( Uncharted2Helper( color ) / Uncharted2Helper( vec3( toneMappingWhitePoint ) ) );
+    //   }`
+    // );
     
     //MASK
    // this.instance.localClippingEnabled = true;
     
     this.instance.colorManagement = true;
-    //this.instance.gammaOutput = true;
-    //this.instance.gammaFactor = 1;//2.2;
+    this.instance.gammaOutput = true;
+    this.instance.gammaFactor = 2.2;//1;//
     
     this.instance.setClearColor(0xffffff,0);
     
