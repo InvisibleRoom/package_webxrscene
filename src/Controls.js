@@ -112,15 +112,17 @@ class Controls {
     this.context.Renderer.instance.domElement.addEventListener('pointerup', this.mouseup);
     this.context.Renderer.instance.domElement.addEventListener('touchstart', this.touchstart);
     this.context.Renderer.instance.domElement.addEventListener('touchend', this.touchend);
+    this.context.Renderer.instance.domElement.addEventListener('resize', this.getClientBox);
   }
-  getClientBox() {
-
+  getClientBox = () => {
     var size = {
       width: this.context.Renderer.instance.domElement.width,
       height: this.context.Renderer.instance.domElement.height,
       x: 0,
       y: 0
     };
+
+    this.size = size;
     return size;
   }
   GetCurrentXRMode() {
@@ -166,7 +168,7 @@ class Controls {
   }
   ChangeScene = (sceneName) => {
 
-    console.log(`%c Change Scene => Controls: ${sceneName}`, "background:red;color:#fff");
+    console.log(`%c Change Scene => Controls: ${sceneName}`, "background:#673ab7;color:#fff");
     this.context.Scene.attach(this.cameraHelper);
 
   }
@@ -402,7 +404,7 @@ class Controls {
         // Component.setState internally call component.set with the options you defined in component.setupState
         intersect.object.setState('hovered');
         this.context.Events.dispatchEvent("ui-hovered", intersect.object);
-      };
+      }
     }
 
     //Deselect every activeObject that is not the current intersect object

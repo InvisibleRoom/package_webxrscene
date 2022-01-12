@@ -40,9 +40,6 @@ class Loader {
 
         this.context.Events.dispatchEvent('OnLoadStack',library);
         resolve(library);
-
-        console.log("Promise all OnLoadStack");
-
         return library;
       }).catch(error =>{
         console.log(error);

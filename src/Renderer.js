@@ -220,10 +220,11 @@ class Renderer {
     
     this.postprocessing.gammaCorrectionPass = new ShaderPass( GammaCorrectionShader );
     this.postprocessing.composer.addPass( this.postprocessing.gammaCorrectionPass );
-    
     this.postprocessing.composer.addPass( this.postprocessing.bokehPass );
     
     this.postprocessing.composer.addPass( this.postprocessing.fxaaPass );
+    
+    
 
 
     this.postprocessing.initialized = true;
