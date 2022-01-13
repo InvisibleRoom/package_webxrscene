@@ -1,4 +1,4 @@
-import {TextureLoader,PMREMGenerator,DefaultLoadingManager} from 'three';
+import {TextureLoader,PMREMGenerator,DefaultLoadingManager,LinearEncoding} from 'three';
 
 class CustomTextureLoader {
 
@@ -47,6 +47,8 @@ class CustomTextureLoader {
   load = (url) =>{
     return new Promise((resolve,reject)=>{
       this.instance.load(url,(texture)=>{
+
+        texture.encoding = LinearEncoding;
         resolve(texture);
         this.context.Events.dispatchEvent('OnTextureLoad',{name: name, texture : texture});
       },(_step)=>{
