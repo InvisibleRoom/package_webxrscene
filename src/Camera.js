@@ -17,9 +17,6 @@ class Camera {
   }
 
   SetActiveCamera = (camera, sceneName) =>{
-    console.log(camera);
-
-
     this.instance = camera;
 
 
