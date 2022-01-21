@@ -70,7 +70,7 @@ class Loader {
           progress: percentage
         });
       },(error)=>{
-        console.log(error);
+        console.log(error, name, url);
         reject(error);
       });
     });

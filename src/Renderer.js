@@ -82,9 +82,8 @@ class Renderer {
       antialias: true,
       transparent : true,
       logarithmicDepthBuffer: true,
-      powerPreference: "high-performance",
       //ONly for screenshots
-      //preserveDrawingBuffer : mainConfig.development
+      // preserveDrawingBuffer : mainConfig.development,
       // autoClear: false,
       // stencil: true,
       //depth: false
@@ -116,8 +115,8 @@ class Renderer {
    // this.instance.localClippingEnabled = true;
     
     this.instance.colorManagement = true;
-    this.instance.gammaOutput = true;
-    this.instance.gammaFactor = 2.2;//1;//
+    this.instance.outputEncoding = LinearEncoding;
+    this.instance.gammaFactor = 1;//2.2;//1;//
     
     this.instance.setClearColor(0xffffff,0);
     
@@ -177,7 +176,7 @@ class Renderer {
       radius : .05
     }
 
-	//	this.postprocessing.bloomPass = new UnrealBloomPass( new THREE.Vector2( this.size.x ,this.size.y ), bloomSettings.strength, bloomSettings.radius, bloomSettings.threshold );
+	  //this.postprocessing.bloomPass = new UnrealBloomPass( new THREE.Vector2( this.size.x ,this.size.y ), bloomSettings.strength, bloomSettings.radius, bloomSettings.threshold );
     
     
     /** LUTs */
@@ -213,7 +212,7 @@ class Renderer {
     
     this.postprocessing.composer.addPass( this.postprocessing.RenderPass );
 		//this.postprocessing.composer.addPass( this.postprocessing.lutPass );
-    //this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
+   // this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
     
     
     
@@ -284,6 +283,7 @@ class Renderer {
     }else{
       
       this.instance.render(this.context.Scene, this.context.Camera.instance);
+
     }
     
   }

@@ -107,12 +107,12 @@ class Controls {
 
     this.selectState = false;
 
-    this.context.Renderer.instance.domElement.addEventListener('pointermove', this.mousemove);
-    this.context.Renderer.instance.domElement.addEventListener('pointerdown', this.mousedown);
-    this.context.Renderer.instance.domElement.addEventListener('pointerup', this.mouseup);
-    this.context.Renderer.instance.domElement.addEventListener('touchstart', this.touchstart);
-    this.context.Renderer.instance.domElement.addEventListener('touchend', this.touchend);
-    this.context.Renderer.instance.domElement.addEventListener('resize', this.getClientBox);
+    this.context.Renderer.instance.domElement.addEventListener('pointermove', this.mousemove,false);
+    this.context.Renderer.instance.domElement.addEventListener('pointerdown', this.mousedown,false);
+    this.context.Renderer.instance.domElement.addEventListener('pointerup', this.mouseup,false);
+    this.context.Renderer.instance.domElement.addEventListener('touchstart', this.touchstart,false);
+    this.context.Renderer.instance.domElement.addEventListener('touchend', this.touchend,false);
+    this.context.Renderer.instance.domElement.addEventListener('resize', this.getClientBox,false);
   }
   getClientBox = () => {
     var size = {
