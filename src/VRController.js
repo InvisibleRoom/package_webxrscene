@@ -13,9 +13,10 @@ class VRController {
 
     /**LineHelper */
     this.material = new MeshBasicMaterial( {
-      color: 0xffffff,
-      alphaMap: new CanvasTexture( this.GetRayTexture() ),
-      transparent: true
+      color: 0xF38D2F,
+      map: new CanvasTexture( this.GetRayTexture() ),
+      // transparent: true,
+      // depthTest: false
     });
 
     this.geometry = new BoxBufferGeometry( 0.004, 0.004, 0.35 );    
@@ -62,9 +63,10 @@ class VRController {
     /////////////////
 
     this.spriteMaterial = new SpriteMaterial({
+      color:  0xF38D2F,
       map: new CanvasTexture( this.GetPointerTexture() ),
       sizeAttenuation: false,
-      depthTest: false
+      //depthTest: false
     });
 
     this.pointer = new Sprite( this.spriteMaterial );
@@ -100,9 +102,13 @@ class VRController {
       controller.ray = ray;
       controller.point = point;
       controller.userData.noClip = true;
+
+      var renderOrder = 1;
+      controller.renderOrder = renderOrder;
       
       controller.children.map((child)=>{
         child.userData.noClip = true;
+        child.renderOrder = renderOrder;
       })
     });
 

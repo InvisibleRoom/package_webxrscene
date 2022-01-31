@@ -32,7 +32,15 @@ class Controls {
     this.cameraHelper = new Group();
     this.cameraHelper.name = "cameraHelper";
     this.context.Scene.add(this.cameraHelper);
+
+    this.ui_cameraHelper = new Group();
+    this.ui_cameraHelper.name = "ui_cameraHelper";
+    this.context.SceneController.AddToScene('UI', this.ui_cameraHelper);
+
+    
     this.isClickEnabled = true;
+
+    this.gamepad = null;
 
 
     //array of active elements in scene
@@ -41,6 +49,9 @@ class Controls {
 
     this.SetupMouse();
     this.selectState = false;
+    
+    this.context.Events.registerEvent("gamepad");
+
 
     this.context.Events.registerEvent("mouse-down");
     this.context.Events.registerEvent("mouse-up");
@@ -79,7 +90,8 @@ class Controls {
     /**VR Controls */
     this.vr_controller = new VRController(this.context);
 
-    this.context.Scene.add(this.vr_controller.controllerGrips[0], this.vr_controller.controllers[0]);
+    this.context.SceneController.AddToScene('UI', this.vr_controller.controllerGrips[0]);
+    this.context.SceneController.AddToScene('UI', this.vr_controller.controllers[0]);
 
     this.vr_controller.controllers[0].addEventListener('selectstart', () => {
       this.selectState = true;
@@ -91,6 +103,18 @@ class Controls {
       this.selectState = false;
       this.context.Events.dispatchEvent("mouse-up", {});
     });
+
+
+    this.vr_controller.controllers[0].addEventListener( 'connected', (e) => {
+
+      //controller.gamepad = e.data.gamepad;
+
+      //console.log("gamepad" , e.data.gamepad)
+
+      this.gamepad = e.data.gamepad;
+    
+    });
+
 
     this.context.Events.addEventListener("OnAnimationLoop", this.Update);
 
@@ -204,6 +228,7 @@ class Controls {
     //this.cameraHelper.add(vrCamera);
     var _position = vrCamera.position.clone();
     this.cameraHelper.position.set(_position.x, _position.y, _position.z);
+    this.ui_cameraHelper.position.set(_position.x, _position.y, _position.z);
     this.cameraHelper.attach(this.context.Camera.instance);
 
     this.Desktop.SetEnabled(false);
@@ -255,6 +280,10 @@ class Controls {
   }
   Update(t) {
 
+    if(this.gamepad != null){
+      this.context.Events.dispatchEvent("gamepad", this.gamepad);
+    }
+
     if (this.ActiveObjects.length > 0 && this.interactivityEnabled && !this.clickDisabled) {
       this.FindIntersection();
     }
@@ -279,12 +308,31 @@ class Controls {
         break;
       case "VR":
         this.cameraHelper.position.set(x, y, z);
+        this.ui_cameraHelper.position.set(x, y, z);
         break;
 
       default:
         break;
     }
   }
+
+  TranslatePosition(x, y, z) {
+
+    switch (this.currentControls) {
+      case "Desktop":
+        this.context.Camera.instance.position.add(new Vector3(x, y, z));
+        break;
+      case "VR":
+        this.cameraHelper.position.add(new Vector3(x, y, z));
+        this.ui_cameraHelper.position.add(new Vector3(x, y, z));
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  
   SetTarget(x, y, z) {
 
     switch (this.currentControls) {
@@ -292,6 +340,10 @@ class Controls {
         this.cameraHelper.lookAt(new Vector3(x, y, z));
         this.cameraHelper.rotation.x = 0;
         this.cameraHelper.rotation.z = 0;
+        
+        this.ui_cameraHelper.lookAt(new Vector3(x, y, z));
+        this.ui_cameraHelper.rotation.x = 0;
+        this.ui_cameraHelper.rotation.z = 0;
         break;
       default:
         this[this.currentControls].SetTarget(x, y, z);
@@ -385,7 +437,7 @@ class Controls {
 
     }
 
-    if (this.currentControls == "Desktop" || this.currentControls == "VR") {
+    if (this.currentControls == "Desktop") {
       if (this.mouse.x !== null && this.mouse.y !== null) {
 
         this.raycaster.setFromCamera(this.mouse, this.context.Camera.instance);

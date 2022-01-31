@@ -13,24 +13,25 @@ class SceneController{
     this.activeScene = "default";
 
     this.scenes = {
-      default : new Scene()
+      default : new Scene(),
     };
 
     this.sceneGroups = {
-      default : new Group()
+      default : new Object3D(),
     }
 
     this.sceneTarget = {
-      default : new Mesh(new BoxGeometry(0,0,0), new MeshNormalMaterial())
+      default : new Mesh(new BoxGeometry(0,0,0), new MeshNormalMaterial()),
     }
 
     window._sceneGroup = this.sceneGroups;
     
     this.scenes.default.name = this.activeScene;
-
+    
     
     this.transformControls = null;
 
+    this.CreateScene("UI");
     this.CreateScene("TinyCity");
     
     //set default Scene
@@ -49,7 +50,7 @@ class SceneController{
     
     this.scenes[sceneName].reflectiveObjects = [];
 
-    this.sceneGroups[sceneName] = new Group();
+    this.sceneGroups[sceneName] = new Object3D();
     this.sceneGroups[sceneName].name = "sceneGroup-" + sceneName;
 
     this.scenes[sceneName].attach(this.sceneGroups[sceneName]);

@@ -74,6 +74,8 @@ class Renderer {
       enabled : true,
       initialized : false
     };
+
+    
     this.context.Events.registerEvent('OnAnimationLoop');
     
     this.instance = new WebGLRenderer({
@@ -120,15 +122,16 @@ class Renderer {
     
     this.instance.setClearColor(0xffffff,0);
     
-    this.instance.setSize(this.size.x,this.size.y);
-    this.instance.xr.enabled = true;
-    this.instance.setAnimationLoop(this.AnimationLoop);
 
     this.domElement = document.getElementById(id);
 
     if(typeof(this.domElement) == "undefined"){console.logwarn("couldn't find an element with id:"+id);}
 
     this.domElement.appendChild( this.instance.domElement );
+    this.instance.setSize(window.innerWidth, window.innerHeight);
+
+    this.instance.xr.enabled = true;
+    this.instance.setAnimationLoop(this.AnimationLoop);
     
     if(this.postprocessing.enabled){
       this.context.Events.addEventListener("OnMount",()=>this.InitComposer() );
@@ -282,7 +285,14 @@ class Renderer {
       this.postprocessing.composer.render();
     }else{
       
+      this.instance.autoClear = true;
       this.instance.render(this.context.Scene, this.context.Camera.instance);
+
+      if(this.context.SceneController != null && this.context.SceneController.scenes.UI != undefined){
+        this.instance.autoClear = false;
+        this.instance.clearDepth();
+        this.instance.render(this.context.SceneController.scenes.UI, this.context.Camera.instance);
+      }
 
     }
     
@@ -290,9 +300,11 @@ class Renderer {
 
   Resize = () =>{
 
+    if(this.context.Controls.GetCurrentXRMode() == "VR"){return;}
+    
     var size = this.domElement.getBoundingClientRect();
     
-    this.size = new Vector2(size.width, size.height);
+    this.size = new Vector2(window.innerWidth, window.innerHeight);
     this.size.x = this.size.x / this.factor;
     this.size.y = this.size.y / this.factor;
 
