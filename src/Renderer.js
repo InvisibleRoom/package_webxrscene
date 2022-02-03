@@ -288,10 +288,22 @@ class Renderer {
       this.instance.autoClear = true;
       this.instance.render(this.context.Scene, this.context.Camera.instance);
 
+      if(this.context.SceneController != null && this.context.SceneController.scenes.UI_3D != undefined){
+        this.instance.autoClear = false;
+        this.instance.clearDepth();
+        this.instance.render(this.context.SceneController.scenes.UI_3D, this.context.Camera.instance);
+      }
+      
       if(this.context.SceneController != null && this.context.SceneController.scenes.UI != undefined){
         this.instance.autoClear = false;
         this.instance.clearDepth();
         this.instance.render(this.context.SceneController.scenes.UI, this.context.Camera.instance);
+      }
+      
+      if(this.context.SceneController != null && this.context.SceneController.scenes.Controller != undefined){
+        this.instance.autoClear = false;
+        this.instance.clearDepth();
+        this.instance.render(this.context.SceneController.scenes.Controller, this.context.Camera.instance);
       }
 
     }

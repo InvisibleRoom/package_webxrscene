@@ -36,11 +36,20 @@ class Controls {
     this.ui_cameraHelper = new Group();
     this.ui_cameraHelper.name = "ui_cameraHelper";
     this.context.SceneController.AddToScene('UI', this.ui_cameraHelper);
+    
+    this.ui3D_cameraHelper = new Group();
+    this.ui3D_cameraHelper.name = "ui3D_cameraHelper";
+    this.context.SceneController.AddToScene('UI_3D', this.ui3D_cameraHelper);
+    
+    this.controller_cameraHelper = new Group();
+    this.controller_cameraHelper.name = "controller_cameraHelper";
+    this.context.SceneController.AddToScene('Controller', this.controller_cameraHelper);
 
     
     this.isClickEnabled = true;
 
     this.gamepad = null;
+    this.gamepad2 = null;
 
 
     //array of active elements in scene
@@ -49,8 +58,10 @@ class Controls {
 
     this.SetupMouse();
     this.selectState = false;
+    this.selectState2 = false;
     
     this.context.Events.registerEvent("gamepad");
+    this.context.Events.registerEvent("gamepad2");
 
 
     this.context.Events.registerEvent("mouse-down");
@@ -90,29 +101,40 @@ class Controls {
     /**VR Controls */
     this.vr_controller = new VRController(this.context);
 
-    this.context.SceneController.AddToScene('UI', this.vr_controller.controllerGrips[0]);
-    this.context.SceneController.AddToScene('UI', this.vr_controller.controllers[0]);
+    this.context.SceneController.AddToScene('Controller', this.vr_controller.controllerGrips[0]);
+    this.context.SceneController.AddToScene('Controller', this.vr_controller.controllers[0]);
+    
+    this.context.SceneController.AddToScene('Controller', this.vr_controller.controllerGrips[1]);
+    this.context.SceneController.AddToScene('Controller', this.vr_controller.controllers[1]);
 
+
+//CONTROLLER 1
     this.vr_controller.controllers[0].addEventListener('selectstart', () => {
       this.selectState = true;
-
       this.context.Events.dispatchEvent("mouse-down", {});
-
     });
+
     this.vr_controller.controllers[0].addEventListener('selectend', () => {
       this.selectState = false;
       this.context.Events.dispatchEvent("mouse-up", {});
     });
-
-
-    this.vr_controller.controllers[0].addEventListener( 'connected', (e) => {
-
-      //controller.gamepad = e.data.gamepad;
-
-      //console.log("gamepad" , e.data.gamepad)
-
-      this.gamepad = e.data.gamepad;
     
+    this.vr_controller.controllers[0].addEventListener( 'connected', (e) => {
+      this.gamepad = e.data.gamepad;    
+    });
+    
+//CONTROLLER 2
+    this.vr_controller.controllers[1].addEventListener('selectstart', () => {
+      this.selectState2 = true;
+      this.context.Events.dispatchEvent("mouse-down", {});
+    });
+
+    this.vr_controller.controllers[1].addEventListener('selectend', () => {
+      this.selectState2 = false;
+      this.context.Events.dispatchEvent("mouse-up", {});
+    });
+    this.vr_controller.controllers[1].addEventListener( 'connected', (e) => {
+      this.gamepad2 = e.data.gamepad;    
     });
 
 
@@ -229,6 +251,8 @@ class Controls {
     var _position = vrCamera.position.clone();
     this.cameraHelper.position.set(_position.x, _position.y, _position.z);
     this.ui_cameraHelper.position.set(_position.x, _position.y, _position.z);
+    this.ui3D_cameraHelper.position.set(_position.x, _position.y, _position.z);
+    this.controller_cameraHelper.position.set(_position.x, _position.y, _position.z);
     this.cameraHelper.attach(this.context.Camera.instance);
 
     this.Desktop.SetEnabled(false);
@@ -240,11 +264,11 @@ class Controls {
 
     this.vr_controller.controllerGrips.forEach((controller) => {
       controller.userData.noClip = true;
-      this.cameraHelper.add(controller);
+      this.controller_cameraHelper.add(controller);
     });
     this.vr_controller.controllers.forEach((controller) => {
       controller.userData.noClip = true;
-      this.cameraHelper.add(controller);
+      this.controller_cameraHelper.add(controller);
     });
 
 
@@ -283,6 +307,10 @@ class Controls {
     if(this.gamepad != null){
       this.context.Events.dispatchEvent("gamepad", this.gamepad);
     }
+    
+    if(this.gamepad2 != null){
+      this.context.Events.dispatchEvent("gamepad2", this.gamepad2);
+    }
 
     if (this.ActiveObjects.length > 0 && this.interactivityEnabled && !this.clickDisabled) {
       this.FindIntersection();
@@ -309,6 +337,8 @@ class Controls {
       case "VR":
         this.cameraHelper.position.set(x, y, z);
         this.ui_cameraHelper.position.set(x, y, z);
+        this.ui3D_cameraHelper.position.set(x, y, z);
+        this.controller_cameraHelper.position.set(x, y, z);
         break;
 
       default:
@@ -325,6 +355,37 @@ class Controls {
       case "VR":
         this.cameraHelper.position.add(new Vector3(x, y, z));
         this.ui_cameraHelper.position.add(new Vector3(x, y, z));
+        this.ui3D_cameraHelper.position.add(new Vector3(x, y, z));
+        this.controller_cameraHelper.position.add(new Vector3(x, y, z));
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  TranslateRotation(x, y, z) {
+
+    switch (this.currentControls) {
+      case "Desktop":
+        this.context.Camera.instance.rotation.x += x;
+        break;
+      case "VR":
+        this.cameraHelper.rotation.x += x;
+        this.cameraHelper.rotation.y += y;
+        this.cameraHelper.rotation.z += z;
+
+        this.ui_cameraHelper.rotation.x += x;
+        this.ui_cameraHelper.rotation.y += y;
+        this.ui_cameraHelper.rotation.z += z;
+
+        this.ui3D_cameraHelper.rotation.x += x;
+        this.ui3D_cameraHelper.rotation.y += y;
+        this.ui3D_cameraHelper.rotation.z += z;
+
+        this.controller_cameraHelper.rotation.x += x;
+        this.controller_cameraHelper.rotation.y += y;
+        this.controller_cameraHelper.rotation.z += z;
         break;
 
       default:
@@ -344,6 +405,14 @@ class Controls {
         this.ui_cameraHelper.lookAt(new Vector3(x, y, z));
         this.ui_cameraHelper.rotation.x = 0;
         this.ui_cameraHelper.rotation.z = 0;
+        
+        this.ui3D_cameraHelper.lookAt(new Vector3(x, y, z));
+        this.ui3D_cameraHelper.rotation.x = 0;
+        this.ui3D_cameraHelper.rotation.z = 0;
+        
+        this.controller_cameraHelper.lookAt(new Vector3(x, y, z));
+        this.controller_cameraHelper.rotation.x = 0;
+        this.controller_cameraHelper.rotation.z = 0;
         break;
       default:
         this[this.currentControls].SetTarget(x, y, z);
@@ -397,8 +466,9 @@ class Controls {
     }
   }
 
-  /**Interactive Objects */
 
+
+  /**Interactive Objects */
   Raycast() {
 
     return this.ActiveObjects.reduce((closestIntersection, obj) => {
@@ -428,12 +498,18 @@ class Controls {
   FindIntersection() {
     // Find closest intersecting object
     let intersect;
+    let intersect2;
+
     if (this.currentControls == "VR") {
       this.vr_controller.SetFromController(0, this.raycaster.ray);
-
       intersect = this.Raycast();
       //Position the little white dot at the end of the controller pointing ray
       if (intersect) this.vr_controller.SetPointerAt(0, intersect.point);
+      
+      this.vr_controller.SetFromController(1, this.raycaster.ray);
+      intersect2 = this.Raycast();
+      //Position the little white dot at the end of the controller pointing ray
+      if (intersect2) this.vr_controller.SetPointerAt(1, intersect2.point);
 
     }
 
@@ -445,24 +521,41 @@ class Controls {
       }
     }
 
-    //TODO: Not only for UI elements
-    if (intersect && intersect.object.isClickEnabled) {
+    //Intersect
+    if (intersect && intersect.object.isClickEnabled && intersect.object.visible) {
 
       if (this.selectState) {
         // Component.setState internally call component.set with the options you defined in component.setupState
         intersect.object.setState('selected');
         this.context.Events.dispatchEvent("ui-mouse-down", intersect.object);
+        console.log(intersect.object, intersect.object.name);
       } else {
         // Component.setState internally call component.set with the options you defined in component.setupState
         intersect.object.setState('hovered');
         this.context.Events.dispatchEvent("ui-hovered", intersect.object);
       }
     }
+    
+    //Intersect
+    if (intersect2 && intersect2.object.isClickEnabled && intersect2.object.visible) {
+
+      
+      if (this.selectState2) {
+        // Component.setState internally call component.set with the options you defined in component.setupState
+        intersect2.object.setState('selected');
+        this.context.Events.dispatchEvent("ui-mouse-down", intersect2.object);
+        console.log(intersect2.object , intersect2.object.name);
+      } else {
+        // Component.setState internally call component.set with the options you defined in component.setupState
+        intersect2.object.setState('hovered');
+        this.context.Events.dispatchEvent("ui-hovered", intersect2.object);
+      }
+    }
 
     //Deselect every activeObject that is not the current intersect object
     this.ActiveObjects.forEach((obj) => {
 
-      if ((!intersect || obj !== intersect.object) && (obj.isUI || obj.isClickEnabled)) {
+      if ((!intersect || obj !== intersect.object) && (!intersect2 || obj !== intersect2.object) && (obj.isUI || obj.isClickEnabled)) {
         // Component.setState internally call component.set with the options you defined in component.setupState
         obj.setState('idle', obj);
         this.context.Events.dispatchEvent("ui-idle", null);

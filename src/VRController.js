@@ -1,5 +1,8 @@
-import {Mesh,SpriteMaterial,Sprite,CanvasTexture, Raycaster,MeshBasicMaterial ,BoxBufferGeometry,Matrix4} from 'three';
+import {Mesh,SpriteMaterial,Sprite,CanvasTexture, Raycaster,MeshBasicMaterial,Geometry ,BoxBufferGeometry,Matrix4, Vector3, Color} from 'three';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
+
+import {MeshLine, MeshLineMaterial} from '../../Scene/meshline';
+
 
 class VRController {
 
@@ -10,53 +13,17 @@ class VRController {
     this.raycaster = new Raycaster();
 
     this.controllerModelFactory = new XRControllerModelFactory();
-
-    /**LineHelper */
-    this.material = new MeshBasicMaterial( {
-      color: 0xF38D2F,
-      map: new CanvasTexture( this.GetRayTexture() ),
-      // transparent: true,
-      // depthTest: false
-    });
-
-    this.geometry = new BoxBufferGeometry( 0.004, 0.004, 0.35 );    
-    this.geometry.translate( 0, 0, -0.15 );
-
     this.dummyMatrix = new Matrix4();
 
-    this.uvAttribute = this.geometry.attributes.uv;
-    for ( var i = 0; i < this.uvAttribute.count; i ++ ) {
-        
-        var u = this.uvAttribute.getX( i );
-        var v = this.uvAttribute.getY( i );
-          
-        [ u, v ] = (()=> {
-          switch ( i ) {
-            case 0 : return [ 1, 1 ]
-            case 1 : return [ 0, 0 ]
-            case 2 : return [ 1, 1 ]
-            case 3 : return [ 0, 0 ]
-            case 4 : return [ 0, 0 ]
-            case 5 : return [ 1, 1 ]
-            case 6 : return [ 0, 0 ]
-            case 7 : return [ 1, 1 ]
-            case 8 : return [ 0, 0 ]
-            case 9 : return [ 0, 0 ]
-            case 10 : return [ 1, 1 ]
-            case 11 : return [ 1, 1 ]
-            case 12 : return [ 1, 1 ]
-            case 13 : return [ 1, 1 ]
-            case 14 : return [ 0, 0 ]
-            case 15 : return [ 0, 0 ]
-            default : return [ 0, 0 ]
-          };
-        })();
-				
-	    this.uvAttribute.setXY( i, u, v );
-			
-	  };
-    this.linesHelper = new Mesh( this.geometry, this.material );
-    this.linesHelper.renderOrder = Infinity;
+
+    const lineMat = new MeshLineMaterial({
+      color: new Color(0xF38D2F),
+      lineWidth: .01,
+      sizeAttenuation :1,
+      useAlphaMap: 1,
+      alphaMap : new CanvasTexture( this.GetRayTexture() ),
+    });
+
 
     /////////////////
     // Point helper
@@ -94,22 +61,30 @@ class VRController {
     if ( this.controllerGrip2 ) this.controllerGrips.push( this.controllerGrip2 );
 
     this.controllers.forEach( (controller)=> {
-
-      const ray = this.linesHelper.clone();
+      
+      const rayLine = new MeshLine();
+      rayLine.setPoints([
+        new Vector3(0,0,0),
+        new Vector3(0,0,-1),
+      ]);
+      const ray = new Mesh( rayLine, lineMat );
+      
+      //const ray = this.linesHelper.clone();
       const point = this.pointer.clone();
 
       controller.add( ray, point );
       controller.ray = ray;
+      controller.line = rayLine;
       controller.point = point;
       controller.userData.noClip = true;
 
-      var renderOrder = 1;
-      controller.renderOrder = renderOrder;
+      // var renderOrder = 1;
+      // controller.renderOrder = renderOrder;
       
-      controller.children.map((child)=>{
-        child.userData.noClip = true;
-        child.renderOrder = renderOrder;
-      })
+      // controller.children.map((child)=>{
+      //   child.userData.noClip = true;
+      //   child.renderOrder = renderOrder;
+      // })
     });
 
     this.controllerGrips.forEach( (controllerGrip)=> {
@@ -143,6 +118,12 @@ class VRController {
 		controller.point.position.copy( localVec );
 		controller.point.visible = true;
 
+
+    var geometry = controller.ray.geometry.setFromPoints([
+      new Vector3(0,0,0),
+      vec,
+    ]);
+    controller.line.setGeometry(geometry);
 	}
 
   GetRayTexture() {
@@ -153,7 +134,7 @@ class VRController {
 
         var c = canvas.getContext("2d");
 
-    var gradient = c.createLinearGradient(0, 0, 64, 0);
+    var gradient = c.createLinearGradient(0, 0, 0, 64);
         gradient.addColorStop(0, "black");
         gradient.addColorStop(1, "white");
 

@@ -31,8 +31,10 @@ class SceneController{
     
     this.transformControls = null;
 
-    this.CreateScene("UI");
     this.CreateScene("TinyCity");
+    this.CreateScene("UI");
+    this.CreateScene("UI_3D");
+    this.CreateScene("Controller");
     
     //set default Scene
     this.SetActiveScene("default");
