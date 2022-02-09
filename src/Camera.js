@@ -1,7 +1,7 @@
 import {PerspectiveCamera,Vector2} from 'three';
 import StereoCamera from './StereoCamera';
 
-import { RenderPass } from "postprocessing";
+//import { RenderPass } from "postprocessing";
 
 class Camera {
   constructor(context){
@@ -12,14 +12,11 @@ class Camera {
     this.context.Events.addEventListener("OnMount",this.AddEvents);
     
     this.cameras = [];
-    this.renderPass = new RenderPass(this.context.Scene, this.instance);
+   // this.renderPass = new RenderPass(this.context.Scene, this.instance);
     
   }
 
   SetActiveCamera = (camera, sceneName) =>{
-    console.log(camera);
-
-
     this.instance = camera;
 
 

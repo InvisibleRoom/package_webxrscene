@@ -33,7 +33,6 @@ class Loader {
 
       Promise.all(promises).then((el)=>{
 
-        //console.log("Loader.js OnLoadStack " , el);
         let library = {};
         el.map((obj)=>{
           library[obj.name] = obj;
@@ -41,7 +40,6 @@ class Loader {
 
         this.context.Events.dispatchEvent('OnLoadStack',library);
         resolve(library);
-
         return library;
       }).catch(error =>{
         console.log(error);
@@ -61,7 +59,6 @@ class Loader {
 
         gltf.name = name;
         
-        //console.log("Loader.js load " , gltf);
         resolve(gltf);
 
       },(_step)=>{
@@ -73,7 +70,7 @@ class Loader {
           progress: percentage
         });
       },(error)=>{
-        console.log(error);
+        console.log(error, name, url);
         reject(error);
       });
     });

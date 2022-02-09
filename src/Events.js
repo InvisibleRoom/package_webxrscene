@@ -33,7 +33,7 @@ class Events{
       
       if(this.events[eventName].callbacks.length > 0){
         if(this.events[eventName].callbacks.indexOf(callback) != -1){
-          console.log("duplicate " , this.events[eventName].callbacks.indexOf(callback), callback);
+          //console.log("duplicate " , this.events[eventName].callbacks.indexOf(callback), callback);
           return false;
         }
       }

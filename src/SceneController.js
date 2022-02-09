@@ -1,5 +1,5 @@
 
-import {PMREMGenerator , Scene, Group, Mesh, BoxGeometry, MeshNormalMaterial} from 'three';
+import {PMREMGenerator , Scene, Group, Mesh, BoxGeometry, MeshNormalMaterial,Object3D} from 'three';
 
 import {TransformControls} from 'three/examples/jsm/controls/TransformControls';
 import mainConfig from '../../../main.config';
@@ -13,24 +13,29 @@ class SceneController{
     this.activeScene = "default";
 
     this.scenes = {
-      default : new Scene()
+      default : new Scene(),
     };
 
     this.sceneGroups = {
-      default : new Group()
+      default : new Object3D(),
     }
 
     this.sceneTarget = {
-      default : new Mesh(new BoxGeometry(0,0,0), new MeshNormalMaterial())
+      default : new Mesh(new BoxGeometry(0,0,0), new MeshNormalMaterial()),
     }
 
     window._sceneGroup = this.sceneGroups;
     
     this.scenes.default.name = this.activeScene;
-
+    
     
     this.transformControls = null;
 
+    this.CreateScene("TinyCity");
+    this.CreateScene("UI");
+    this.CreateScene("UI_3D");
+    this.CreateScene("Controller");
+    
     //set default Scene
     this.SetActiveScene("default");
   }
@@ -41,26 +46,27 @@ class SceneController{
     }
   }
 
+  CreateScene = (sceneName) => {
+    this.scenes[sceneName] = new Scene();
+    this.scenes[sceneName].name = sceneName;
+    
+    this.scenes[sceneName].reflectiveObjects = [];
+
+    this.sceneGroups[sceneName] = new Object3D();
+    this.sceneGroups[sceneName].name = "sceneGroup-" + sceneName;
+
+    this.scenes[sceneName].attach(this.sceneGroups[sceneName]);
+
+
+    this.sceneTarget[sceneName] = new Mesh(new BoxGeometry(0,0,0), new MeshNormalMaterial());
+    this.sceneTarget[sceneName].position.set(0, 0, 20);
+    this.sceneTarget[sceneName].userData.noClip = true;
+    this.sceneGroups[sceneName].attach(this.sceneTarget[sceneName]);
+  }
   AddToScene = (sceneName = "default", model) =>{
     
     if(!this.scenes.hasOwnProperty(sceneName)){
-      this.scenes[sceneName] = new Scene();
-      this.scenes[sceneName].name = sceneName;
-      
-      this.scenes[sceneName].reflectiveObjects = [];
-
-      this.sceneGroups[sceneName] = new Group();
-      this.sceneGroups[sceneName].name = "sceneGroup-" + sceneName;
-
-      this.scenes[sceneName].attach(this.sceneGroups[sceneName]);
-
-
-      this.sceneTarget[sceneName] = new Mesh(new BoxGeometry(0,0,0), new MeshNormalMaterial());
-      this.sceneTarget[sceneName].position.set(0, 0, 20);
-      this.sceneTarget[sceneName].userData.noClip = true;
-      this.sceneGroups[sceneName].attach(this.sceneTarget[sceneName]);
-
-
+      this.CreateScene(sceneName);
     }
 
     model.traverse(child =>{
@@ -69,7 +75,7 @@ class SceneController{
         if(child.material.hasOwnProperty("metalness")){
           
           if(child.material.hasOwnProperty("envMap")){
-            this.scenes[sceneName].reflectiveObjects.push(child);
+            //this.scenes[sceneName].reflectiveObjects.push(child);
             child.material.envMap = this.scenes[sceneName].environment;
           }
         }

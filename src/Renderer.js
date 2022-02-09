@@ -74,6 +74,8 @@ class Renderer {
       enabled : true,
       initialized : false
     };
+
+    
     this.context.Events.registerEvent('OnAnimationLoop');
     
     this.instance = new WebGLRenderer({
@@ -82,9 +84,8 @@ class Renderer {
       antialias: true,
       transparent : true,
       logarithmicDepthBuffer: true,
-      powerPreference: "high-performance",
       //ONly for screenshots
-      preserveDrawingBuffer : mainConfig.development
+      // preserveDrawingBuffer : mainConfig.development,
       // autoClear: false,
       // stencil: true,
       //depth: false
@@ -96,40 +97,41 @@ class Renderer {
     this.instance.shadowMap.enabled = true;
     this.instance.shadowMap.autoUpdate = false;
     this.instance.shadowMap.type = PCFSoftShadowMap;
-    this.instance.toneMapping = ReinhardToneMapping;//CustomToneMapping;//ReinhardToneMapping;//LinearToneMapping;//THREE.
+    this.instance.toneMapping = LinearToneMapping;// CustomToneMapping;// ReinhardToneMapping;//CustomToneMapping;//ReinhardToneMapping;//LinearToneMapping;//THREE.
     this.instance.toneMappingExposure = 1;
     this.instance.outputEncoding = sRGBEncoding;
 
 // Set CustomToneMapping to Uncharted2
 				// source: http://filmicworlds.com/blog/filmic-tonemapping-operators/
-    ShaderChunk.tonemapping_pars_fragment = ShaderChunk.tonemapping_pars_fragment.replace(
-      'vec3 CustomToneMapping( vec3 color ) { return color; }',
-      `#define Uncharted2Helper( x ) max( ( ( x * ( 0.15 * x + 0.10 * 0.50 ) + 0.20 * 0.02 ) / ( x * ( 0.15 * x + 0.50 ) + 0.20 * 0.30 ) ) - 0.02 / 0.30, vec3( 0.0 ) )
-      float toneMappingWhitePoint = 1.0;
-      vec3 CustomToneMapping( vec3 color ) {
-        color *= toneMappingExposure;
-        return saturate( Uncharted2Helper( color ) / Uncharted2Helper( vec3( toneMappingWhitePoint ) ) );
-      }`
-    );
+    // ShaderChunk.tonemapping_pars_fragment = ShaderChunk.tonemapping_pars_fragment.replace(
+    //   'vec3 CustomToneMapping( vec3 color ) { return color; }',
+    //   `#define Uncharted2Helper( x ) max( ( ( x * ( 0.15 * x + 0.10 * 0.50 ) + 0.20 * 0.02 ) / ( x * ( 0.15 * x + 0.50 ) + 0.20 * 0.30 ) ) - 0.02 / 0.30, vec3( 0.0 ) )
+    //   float toneMappingWhitePoint = 1.0;
+    //   vec3 CustomToneMapping( vec3 color ) {
+    //     color *= toneMappingExposure;
+    //     return saturate( Uncharted2Helper( color ) / Uncharted2Helper( vec3( toneMappingWhitePoint ) ) );
+    //   }`
+    // );
     
     //MASK
    // this.instance.localClippingEnabled = true;
     
     this.instance.colorManagement = true;
-    //this.instance.gammaOutput = true;
-    //this.instance.gammaFactor = 1;//2.2;
+    this.instance.outputEncoding = LinearEncoding;
+    this.instance.gammaFactor = 1;//2.2;//1;//
     
     this.instance.setClearColor(0xffffff,0);
     
-    this.instance.setSize(this.size.x,this.size.y);
-    this.instance.xr.enabled = true;
-    this.instance.setAnimationLoop(this.AnimationLoop);
 
     this.domElement = document.getElementById(id);
 
     if(typeof(this.domElement) == "undefined"){console.logwarn("couldn't find an element with id:"+id);}
 
     this.domElement.appendChild( this.instance.domElement );
+    this.instance.setSize(window.innerWidth, window.innerHeight);
+
+    this.instance.xr.enabled = true;
+    this.instance.setAnimationLoop(this.AnimationLoop);
     
     if(this.postprocessing.enabled){
       this.context.Events.addEventListener("OnMount",()=>this.InitComposer() );
@@ -177,7 +179,7 @@ class Renderer {
       radius : .05
     }
 
-	//	this.postprocessing.bloomPass = new UnrealBloomPass( new THREE.Vector2( this.size.x ,this.size.y ), bloomSettings.strength, bloomSettings.radius, bloomSettings.threshold );
+	  //this.postprocessing.bloomPass = new UnrealBloomPass( new THREE.Vector2( this.size.x ,this.size.y ), bloomSettings.strength, bloomSettings.radius, bloomSettings.threshold );
     
     
     /** LUTs */
@@ -213,17 +215,18 @@ class Renderer {
     
     this.postprocessing.composer.addPass( this.postprocessing.RenderPass );
 		//this.postprocessing.composer.addPass( this.postprocessing.lutPass );
-    //this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
+   // this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
     
     
     
     
     this.postprocessing.gammaCorrectionPass = new ShaderPass( GammaCorrectionShader );
     this.postprocessing.composer.addPass( this.postprocessing.gammaCorrectionPass );
-    
     this.postprocessing.composer.addPass( this.postprocessing.bokehPass );
     
     this.postprocessing.composer.addPass( this.postprocessing.fxaaPass );
+    
+    
 
 
     this.postprocessing.initialized = true;
@@ -282,16 +285,38 @@ class Renderer {
       this.postprocessing.composer.render();
     }else{
       
+      this.instance.autoClear = true;
       this.instance.render(this.context.Scene, this.context.Camera.instance);
+
+      if(this.context.SceneController != null && this.context.SceneController.scenes.UI_3D != undefined){
+        this.instance.autoClear = false;
+        this.instance.clearDepth();
+        this.instance.render(this.context.SceneController.scenes.UI_3D, this.context.Camera.instance);
+      }
+      
+      if(this.context.SceneController != null && this.context.SceneController.scenes.UI != undefined){
+        this.instance.autoClear = false;
+        this.instance.clearDepth();
+        this.instance.render(this.context.SceneController.scenes.UI, this.context.Camera.instance);
+      }
+      
+      if(this.context.SceneController != null && this.context.SceneController.scenes.Controller != undefined){
+        this.instance.autoClear = false;
+        this.instance.clearDepth();
+        this.instance.render(this.context.SceneController.scenes.Controller, this.context.Camera.instance);
+      }
+
     }
     
   }
 
   Resize = () =>{
 
+    if(this.context.Controls.GetCurrentXRMode() == "VR"){return;}
+    
     var size = this.domElement.getBoundingClientRect();
     
-    this.size = new Vector2(size.width, size.height);
+    this.size = new Vector2(window.innerWidth, window.innerHeight);
     this.size.x = this.size.x / this.factor;
     this.size.y = this.size.y / this.factor;
 

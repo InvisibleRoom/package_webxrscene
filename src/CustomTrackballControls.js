@@ -361,6 +361,7 @@ var CustomTrackballControls = function ( object, domElement ) {
   function keydown( event ) {
 
     if ( _this.enabled === false ) return;
+    if(typeof(event.target.classList) != "undefined" && event.target.classList.contains('no-prevention')){return;}
 
     window.removeEventListener( 'keydown', keydown );
 
@@ -399,6 +400,7 @@ var CustomTrackballControls = function ( object, domElement ) {
   function mousedown( event ) {
 
     if ( _this.enabled === false ) return;
+    if(typeof(event.target.classList) != "undefined" && event.target.classList.contains('no-prevention')){return;}
 
     event.preventDefault();
     //event.stopPropagation();
@@ -439,6 +441,10 @@ var CustomTrackballControls = function ( object, domElement ) {
 
 
     if ( _this.enabled === false ) return;
+
+    if(typeof(event.target.classList) != "undefined" && event.target.classList.contains('no-prevention')){return;}
+    //console.log(event.target.classList.contains('no-prevention'));
+
 
     event.preventDefault();
     //event.stopPropagation();

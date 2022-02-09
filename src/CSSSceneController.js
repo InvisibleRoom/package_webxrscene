@@ -42,7 +42,6 @@ class CSSSceneController{
 
   SetActiveScene = (sceneName) => {
     if(this.activeScene.name != sceneName){
-
       // while(this.activeScene.children.length > 0){ 
       //   this.activeScene.remove(this.activeScene.children[0]); 
       // }

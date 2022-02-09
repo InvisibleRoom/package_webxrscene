@@ -13,8 +13,6 @@ var VRButton = {
 				const gl = renderer.getContext();
 				try {
 					await gl.makeXRCompatible();
-					console.log("GL")
-					//context.Renderer.Resize();
 				} catch (err) {
 					console.log("GL error ", err)
 				}
