@@ -7,6 +7,18 @@ import { Raycaster,Group ,Vector2,Vector3} from 'three';
 class Controls {
   constructor(context) {
 
+    /// REDUCE FPS FOR INTERSECTIONS
+    this.frameCount = 0;
+    this.fps = 10;
+    this.fpsInterval = 1000 / this.fps;
+    this.now = 0;
+    this.then = Date.now();
+    this.startTime = this.then;
+    this.elapsed = 0;
+    
+
+
+
     this.enabled = true;
     this.interactivityEnabled = true;
     this.context = context;
@@ -312,9 +324,27 @@ class Controls {
       this.context.Events.dispatchEvent("gamepad2", this.gamepad2);
     }
 
-    if (this.ActiveObjects.length > 0 && this.interactivityEnabled && !this.clickDisabled) {
-      this.FindIntersection();
+    this.now = Date.now();
+    this.elapsed = this.now - this.then;
+
+    // if enough time has elapsed, draw the next frame
+
+    if (this.elapsed > this.fpsInterval) {
+
+        // Get ready for next frame by setting then=now, but also adjust for your
+        // specified fpsInterval not being a multiple of RAF's interval (16.7ms)
+      this.then = this.now - (this.elapsed % this.fpsInterval);
+
+        // Put your drawing code here
+
+      if (this.ActiveObjects.length > 0 && this.interactivityEnabled && !this.clickDisabled) {
+        this.FindIntersection();
+      }
+
+      console.log("fps 5");
     }
+
+
     // if(this.currentControls == "VR"){
     //   this.vr_controller.Update();      
     // }
@@ -470,9 +500,10 @@ class Controls {
 
   /**Interactive Objects */
   Raycast() {
-
     return this.ActiveObjects.reduce((closestIntersection, obj) => {
-      if (!obj.isClickEnabled) {
+
+      
+      if (!obj.isClickEnabled || !obj.visible) {
         return closestIntersection
       }
 
