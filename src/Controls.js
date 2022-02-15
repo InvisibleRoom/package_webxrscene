@@ -4,6 +4,8 @@ import { VRButton } from './VRButton.js';
 import { ARButton } from './ARButton.js';
 import { Raycaster,Group ,Vector2,Vector3} from 'three';
 
+import mainConfig from '../../../main.config';
+
 class Controls {
   constructor(context) {
 
@@ -316,12 +318,14 @@ class Controls {
   }
   Update(t) {
 
-    if(this.gamepad != null){
-      this.context.Events.dispatchEvent("gamepad", this.gamepad);
-    }
-    
-    if(this.gamepad2 != null){
-      this.context.Events.dispatchEvent("gamepad2", this.gamepad2);
+    if(mainConfig.savePositions){
+      if(this.gamepad != null){
+        this.context.Events.dispatchEvent("gamepad", this.gamepad);
+      }
+      
+      if(this.gamepad2 != null){
+        this.context.Events.dispatchEvent("gamepad2", this.gamepad2);
+      }
     }
 
     this.now = Date.now();
