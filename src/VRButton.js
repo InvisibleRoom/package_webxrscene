@@ -21,6 +21,13 @@ var VRButton = {
 				renderer.xr.setSession(session);
 				button.textContent = 'EXIT VR';
 
+
+        console.log("callbackSession" , button.callbackSession);
+
+        if(button.callbackSession){
+          button.callbackSession();
+        }
+
 				currentSession = session;
 
 				context.Events.dispatchEvent("OnChangeXRView", { xrMode: "VR", previousXRMode: context.Controls.GetCurrentXRMode(), session: session });

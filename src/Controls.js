@@ -19,7 +19,7 @@ class Controls {
     this.elapsed = 0;
     
 
-
+    console.log("CONTROLS", context);
 
     this.enabled = true;
     this.interactivityEnabled = true;
@@ -88,6 +88,8 @@ class Controls {
     /** VR AR DOM ELEMENTS - Buttons */
     this.vrButton = VRButton.createButton(this.context.Renderer.instance, this.context);
     this.arButton = ARButton.createButton(this.context.Renderer.instance, this.context);
+
+    
 
     this.SetupVR = this.SetupVR.bind(this);
     this.SetupAR = this.SetupAR.bind(this);
