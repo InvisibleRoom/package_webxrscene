@@ -1,65 +1,61 @@
-import {Scene} from 'three';
+import { Scene, Vector3 } from "three";
 
-class CSSSceneController{
-  constructor(context){
-    this.context = context;
-    
-    // this.scenes = {
-    //   default : new THREE.Scene()
-    // };
+class CSSSceneController {
+	constructor(context) {
+		this.context = context;
 
-    this.sceneModels = {
-      default : []
-    }
-    this.activeScene = new Scene();
-    this.activeScene.name = "default";
-    //this.scenes.default.name = "default";
+		// this.scenes = {
+		//   default : new THREE.Scene()
+		// };
 
-    //set default Scene
-    this.SetActiveScene("default");
-  }
+		this.sceneModels = {
+			default: [],
+		};
+		this.activeScene = new Scene();
+		this.activeScene.name = "default";
+		//this.scenes.default.name = "default";
 
-  AddToScene = (sceneName = "default", model) =>{
+		//set default Scene
+		this.SetActiveScene("default");
+	}
 
-    if(!this.sceneModels.hasOwnProperty(sceneName)){
-      
-      // this.scenes[sceneName] = new THREE.Scene();
-      // this.scenes[sceneName].name = sceneName;
+	AddToScene = (sceneName = "default", model) => {
+		if (!this.sceneModels.hasOwnProperty(sceneName)) {
+			// this.scenes[sceneName] = new THREE.Scene();
+			// this.scenes[sceneName].name = sceneName;
 
-      this.sceneModels[sceneName] = [];
-    }
-    
-    model.userData.scene = sceneName;
-    model.scale.divideScalar(this.context.CSSRenderer.scaleFactor);
-    this.sceneModels[sceneName].push(model);
+			this.sceneModels[sceneName] = [];
+		}
 
-    this.activeScene.add(model);
-  }
+		model.userData.scene = sceneName;
+		model.scale.divideScalar(this.context.CSSRenderer.scaleFactor);
+		this.sceneModels[sceneName].push(model);
+		this.activeScene.add(model);
+	};
 
-  RemoveObj = (mark) =>{
-    this.activeScene.remove(mark); 
-  }
+	RemoveObj = (mark) => {
+		this.activeScene.remove(mark);
+	};
 
-  SetActiveScene = (sceneName) => {
-    if(this.activeScene.name != sceneName){
-      // while(this.activeScene.children.length > 0){ 
-      //   this.activeScene.remove(this.activeScene.children[0]); 
-      // }
+	SetActiveScene = (sceneName) => {
+		if (this.activeScene.name != sceneName) {
+			// while(this.activeScene.children.length > 0){
+			//   this.activeScene.remove(this.activeScene.children[0]);
+			// }
 
-      this.activeScene.children.map(child => {
-        if(child.userData.scene == sceneName){
-          child.visible = true;
-        }else{
-          child.visible = false;
-        }
-      })
-      
-    }
-    this.activeScene.name = sceneName;
+			this.activeScene.children.map((child) => {
+				if (child.userData.scene == sceneName) {
+					child.visible = true;
+				} else {
+					child.visible = false;
+				}
+			});
+		}
+		this.activeScene.name = sceneName;
 
-   // this.sceneModels[sceneName].map(child => this.activeScene.add(child));
-    this.context.CSSRenderer.Resize();
-  }
+		// this.sceneModels[sceneName].map(child => this.activeScene.add(child));
+		this.context.CSSRenderer.Resize();
+	};
 }
 
-export {CSSSceneController};
+export { CSSSceneController };

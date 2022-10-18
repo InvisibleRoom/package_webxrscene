@@ -1,77 +1,74 @@
-import {Vector2, Clock} from 'three';
-import {CSS3DRenderer} from 'three/examples/jsm/renderers/CSS3DRenderer';
-
+import { Vector2, Clock } from "three";
+import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer";
 
 class CSSRenderer {
-  
-  constructor(id = "app", context){
-    this.context = context;
-    this.clock = new Clock();
+	constructor(id = "app", context) {
+		this.context = context;
+		this.clock = new Clock();
 
-    this.scaleFactor = 100;
-    
-    this.instance = new CSS3DRenderer();
-    this.dpr = window.devicePixelRatio ? window.devicePixelRatio : 1;
-    this.size = new Vector2(window.innerWidth, window.innerHeight);
+		this.scaleFactor = 100;
 
-    this.instance.setSize(this.size.x,this.size.y);
+		this.instance = new CSS3DRenderer();
+		this.dpr = window.devicePixelRatio ? window.devicePixelRatio : 1;
+		this.size = new Vector2(window.innerWidth, window.innerHeight);
 
-    this.instance.domElement.style.width = window.innerWidth + "px";    
-    this.instance.domElement.style.height = window.innerHeight + "px";
+		this.instance.setSize(this.size.x, this.size.y);
 
-    this.instance.domElement.classList.add("css-renderer");
-    //this.instance.setAnimationLoop(this.AnimationLoop);
+		this.instance.domElement.style.width = window.innerWidth + "px";
+		this.instance.domElement.style.height = window.innerHeight + "px";
 
-    this.domElement = document.getElementById(id);
+		this.instance.domElement.classList.add("css-renderer");
+		//this.instance.setAnimationLoop(this.AnimationLoop);
 
-    if(typeof(this.domElement) == "undefined"){console.logwarn("couldn't find an element with id:"+id);}
+		this.domElement = document.getElementById(id);
 
-    this.domElement.appendChild( this.instance.domElement );
+		if (typeof this.domElement == "undefined") {
+			console.logwarn("couldn't find an element with id:" + id);
+		}
 
-    this.instance.domElement.style.position = "absolute";
-    this.instance.domElement.style.top = "0";
-    this.instance.domElement.style.left = "0";
-    this.instance.domElement.style.right = "0";
-    this.instance.domElement.style.bottom = "0";
-    this.instance.domElement.style.zIndex = "9999";
-    this.instance.domElement.style.pointerEvents = "none";
-    
-    this.context.Events.addEventListener("OnAnimationLoop", this.AnimationLoop);
-    window.addEventListener("resize", this.Resize);
+		this.domElement.appendChild(this.instance.domElement);
 
-  }
+		this.instance.domElement.style.position = "absolute";
+		this.instance.domElement.style.top = "0";
+		this.instance.domElement.style.left = "0";
+		this.instance.domElement.style.right = "0";
+		this.instance.domElement.style.bottom = "0";
+		this.instance.domElement.style.zIndex = "9999";
+		this.instance.domElement.style.pointerEvents = "none";
 
-  SetActiveCamera = (camera) =>{
-    //console.log("this.postprocessing", camera, this.postprocessing, this.renderPass);
-  }
+		this.context.Events.addEventListener("OnAnimationLoop", this.AnimationLoop);
+		window.addEventListener("resize", this.Resize);
+	}
 
-  AnimationLoop = () => {
+	SetActiveCamera = (camera) => {
+		//console.log("this.postprocessing", camera, this.postprocessing, this.renderPass);
+	};
 
-    if(this.size.x === 0 || this.size.y === 0){
-      this.Resize();
-    }
-    
-    this.instance.render(this.context.CSSSceneController.activeScene, this.context.Camera.instance);  
-  }
+	AnimationLoop = () => {
+		if (this.size.x === 0 || this.size.y === 0) {
+			this.Resize();
+		}
 
-  Resize = () =>{
+		this.instance.render(
+			this.context.CSSSceneController.activeScene,
+			this.context.Camera.instance
+		);
+	};
 
-    var size = this.domElement.getBoundingClientRect();
-    this.size = new Vector2(size.width, size.height );
-    this.instance.setSize(this.size.x,this.size.y);
+	Resize = () => {
+		var size = this.domElement.getBoundingClientRect();
+		this.size = new Vector2(size.width, size.height);
+		this.instance.setSize(this.size.x, this.size.y);
 
-    this.instance.domElement.style.width = window.innerWidth + "px";    
-    this.instance.domElement.style.height = window.innerHeight + "px";
+		this.instance.domElement.style.width = window.innerWidth + "px";
+		this.instance.domElement.style.height = window.innerHeight + "px";
 
-    //this.instance.domElement.style.perspective =parseFloat(this.instance.domElement.style.perspective) * this.dpr;
-    if(this.context.hasOwnProperty("Camera")){
-      this.context.Camera.instance.aspect = this.size.x / this.size.y;
-      this.context.Camera.instance.updateProjectionMatrix();
-    }
-    
-
-  }
-
+		//this.instance.domElement.style.perspective =parseFloat(this.instance.domElement.style.perspective) * this.dpr;
+		if (this.context.hasOwnProperty("Camera")) {
+			this.context.Camera.instance.aspect = this.size.x / this.size.y;
+			this.context.Camera.instance.updateProjectionMatrix();
+		}
+	};
 }
 
-export {CSSRenderer};
+export { CSSRenderer };
