@@ -15,31 +15,36 @@ class DesktopControls {
 		this.static = new StaticControls(camera, domElement, context);
 		this.static.enabled = false;
 
-		this.map = new MapControls(camera, domElement, context);
+		this.mapMode = false;
+		this.map = new MapControls(camera, domElement);
 		this.map.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
 		this.map.dampingFactor = 0.05;
 		this.map.screenSpacePanning = false;
 		this.map.minDistance = 0.1;
 		this.map.maxDistance = 50;
 		this.map.maxPolarAngle = Math.PI / 2;
+		this.map.enabled = false;
 
 		this.instance = this.orbit;
 	}
 
 	ChangeToStatic = (changeToMapControls = false) => {
-		console.log("ChangeToStatic", changeToMapControls);
-		if (changeToMapControls) {
-			this.instance = this.map;
-			this.orbit.enabled = false;
-			this.static.SetActive(false);
-			return;
-		}
-
 		this.instance = this.static;
 		this.static.SetActive(true);
 		this.orbit.enabled = false;
 	};
-	ChangeToDefault = () => {
+	ChangeToDefault = (changeToMapControls = false) => {
+		if (changeToMapControls) {
+			this.mapMode = true;
+
+			this.instance = this.map;
+			this.static.SetActive(false);
+			this.orbit.enabled = false;
+			this.map.enabled = true;
+
+			return;
+		}
+
 		this.instance = this.orbit;
 		this.static.SetActive(false);
 		this.orbit.enabled = true;
@@ -50,13 +55,16 @@ class DesktopControls {
 	SetTarget = (x, y, z) => {
 		this.static.target.set(x, y, z);
 		this.orbit.target.set(x, y, z);
+		this.map.target.set(x, y, z);
 
 		this.static.update();
 		this.orbit.update();
+		this.map.update();
 	};
 
 	SetActiveCamera = (camera) => {
 		this.orbit.object = camera;
+		this.map.object = camera;
 		this.static.object = camera;
 	};
 
