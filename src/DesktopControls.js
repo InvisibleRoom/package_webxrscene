@@ -20,8 +20,9 @@ class DesktopControls {
 		this.map.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
 		this.map.dampingFactor = 0.05;
 		this.map.screenSpacePanning = false;
-		this.map.minDistance = 0.1;
-		this.map.maxDistance = 50;
+		this.map.enableRotate = false;
+		this.map.minDistance = 0.5;
+		this.map.maxDistance = 7;
 		this.map.maxPolarAngle = Math.PI / 2;
 		this.map.enabled = false;
 
