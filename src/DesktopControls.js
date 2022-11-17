@@ -7,6 +7,7 @@ import {
 import { MOUSE, TOUCH } from "three";
 
 import { StaticControls } from "./StaticControls";
+import mainConfig from "../../../main.config";
 
 class DesktopControls {
 	constructor(camera, domElement, context = null) {
@@ -33,6 +34,7 @@ class DesktopControls {
 		this.instance = this.static;
 		this.static.SetActive(true);
 		this.orbit.enabled = false;
+		this.map.enabled = false;
 	};
 	ChangeToDefault = (changeToMapControls = false) => {
 		if (changeToMapControls) {
@@ -50,7 +52,9 @@ class DesktopControls {
 		this.static.SetActive(false);
 		this.orbit.enabled = true;
 
-		console.log("ChangeToDefault");
+		if (mainConfig.log.navigation) {
+			console.log("ChangeToDefault");
+		}
 	};
 
 	SetTarget = (x, y, z) => {
@@ -59,8 +63,14 @@ class DesktopControls {
 		this.map.target.set(x, y, z);
 
 		this.static.update();
-		this.orbit.update();
-		this.map.update();
+
+		if (this.map.enabled) {
+			this.map.update();
+		}
+
+		if (this.orbit.enabled) {
+			this.orbit.update();
+		}
 	};
 
 	SetActiveCamera = (camera) => {

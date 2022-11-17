@@ -264,18 +264,21 @@ class Controls {
 		}
 	};
 	ChangeToStatic = () => {
-		console.log("%c Change TO Static ", "background:#eee;");
-
+		if (mainConfig.log.controls) {
+			console.log("%c Change TO Static ", "background:#eee;");
+		}
 		if (this.currentControls == "Desktop") {
 			this.Desktop.ChangeToStatic();
 			this.getClientBox();
 		}
 	};
 	ChangeScene = (sceneName) => {
-		console.log(
-			`%c Change Scene => Controls: ${sceneName}`,
-			"background:#673ab7;color:#fff"
-		);
+		if (mainConfig.log.controls) {
+			console.log(
+				`%c Change Scene => Controls: ${sceneName}`,
+				"background:#673ab7;color:#fff"
+			);
+		}
 		this.context.Scene.attach(this.cameraHelper);
 	};
 	SetActiveCamera = (camera, sceneName) => {
@@ -518,7 +521,7 @@ class Controls {
 				// return this.context.Camera.instance.position;//this.cameraHelper.position;
 				break;
 			default:
-				return this.context.Camera.instance.position;
+				return this.context.Camera.instance.position.clone();
 				break;
 		}
 	}
