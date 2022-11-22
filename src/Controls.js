@@ -212,6 +212,8 @@ class Controls {
 			this.getClientBox,
 			false
 		);
+
+		window.addEventListener("resize",this.getClientBox);
 	}
 	getClientBox = () => {
 		var size = {
