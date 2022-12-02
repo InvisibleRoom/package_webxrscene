@@ -109,7 +109,7 @@ class Renderer {
 		this.instance.shadowMap.autoUpdate = false;
 		this.instance.shadowMap.type = PCFSoftShadowMap;
 		this.instance.toneMapping = LinearToneMapping; // CustomToneMapping;// ReinhardToneMapping;//CustomToneMapping;//ReinhardToneMapping;//LinearToneMapping;//THREE.
-		this.instance.toneMappingExposure = 1;
+		this.instance.toneMappingExposure = 0.8;
 		this.instance.outputEncoding = sRGBEncoding;
 
 		// Set CustomToneMapping to Uncharted2
