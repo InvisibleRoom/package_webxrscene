@@ -91,9 +91,9 @@ class Renderer {
 
 		this.instance = new WebGLRenderer({
 			powerPreference: "high-performance",
-			alpha: true,
+			//alpha: true,
 			antialias: true,
-			transparent: true,
+			//transparent: true,
 			logarithmicDepthBuffer: true,
 			//ONly for screenshots
 			// preserveDrawingBuffer : mainConfig.development,
@@ -131,7 +131,7 @@ class Renderer {
 		this.instance.outputEncoding = LinearEncoding;
 		this.instance.gammaFactor = 1; //2.2;//1;//
 
-		this.instance.setClearColor(0xffffff, 0);
+		this.instance.setClearColor(0xf3f3f3, 1);
 		this.instance.domElement.classList.add("scene-renderer");
 
 		this.domElement = document.getElementById(id);
@@ -364,9 +364,9 @@ class Renderer {
 			this.postprocessing.composer.setSize(this.size.x, this.size.y);
 
 			this.postprocessing.fxaaPass.material.uniforms["resolution"].value.x =
-				1 / (this.size.x * this.dpr);
+				1 / this.size.x;
 			this.postprocessing.fxaaPass.material.uniforms["resolution"].value.y =
-				1 / (this.size.y * this.dpr);
+				1 / this.size.y;
 		}
 
 		this.instance.domElement.style.width = "100%!important";
