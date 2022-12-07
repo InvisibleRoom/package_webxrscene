@@ -89,6 +89,7 @@ class Renderer {
 
 		this.context.Events.registerEvent("OnAnimationLoop");
 		this.context.Events.registerEvent("OnAnimationLoopGraphics");
+		this.context.Events.registerEvent("OnAnimationLoopUIGraphics");
 
 		this.instance = new WebGLRenderer({
 			powerPreference: "high-performance",
@@ -280,13 +281,9 @@ class Renderer {
 		//update time dependent animations here at 30 fps
 		if (this.delta > this.graphicsInterval) {
 			this.context.Events.dispatchEvent("OnAnimationLoopGraphics", this.clock);
+			this.context.Events.dispatchEvent("OnAnimationLoopUIGraphics", this.clock);
 			this.then = this.now - (this.delta % this.graphicsInterval);
 		}
-
-		
-		
-		
-
 
 
 		if (this.size.x == 0 || this.size.y === 0) {
