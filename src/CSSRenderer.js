@@ -36,7 +36,10 @@ class CSSRenderer {
 		this.instance.domElement.style.zIndex = "9999";
 		this.instance.domElement.style.pointerEvents = "none";
 
-		this.context.Events.addEventListener("OnAnimationLoop", this.AnimationLoop);
+		this.context.Events.addEventListener(
+			"OnAnimationLoopUIGraphics",
+			this.AnimationLoop
+		);
 		window.addEventListener("resize", this.Resize);
 	}
 

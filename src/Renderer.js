@@ -81,7 +81,7 @@ class Renderer {
 	constructor(id = "app", context) {
 		this.context = context;
 		this.clock = new Clock();
-		this.factor = 0.9;
+		this.factor = 1;
 		this.postprocessing = {
 			enabled: true,
 			initialized: false,
@@ -99,7 +99,7 @@ class Renderer {
 			logarithmicDepthBuffer: true,
 			//ONly for screenshots
 			// preserveDrawingBuffer : mainConfig.development,
-			// autoClear: false,
+			autoClear: false,
 			// stencil: true,
 			//depth: false
 		});
@@ -115,9 +115,18 @@ class Renderer {
 		this.instance.outputEncoding = sRGBEncoding;
 
 		this.now = Date.now();
-		this.delta = Date.now();
-		this.then = Date.now();
-		this.graphicsInterval = 1000/30;
+
+		this.threeD_delta = Date.now();
+		this.threeD_then = Date.now();
+		this.threeD_interval = 1000 / 60;
+
+		this.graphics_delta = Date.now();
+		this.graphics_then = Date.now();
+		this.graphics_interval = 1000 / 30;
+
+		this.ui_delta = Date.now();
+		this.ui_then = Date.now();
+		this.ui_interval = 1000 / 28;
 
 		// Set CustomToneMapping to Uncharted2
 		// source: http://filmicworlds.com/blog/filmic-tonemapping-operators/
@@ -253,7 +262,7 @@ class Renderer {
 			this.postprocessing.gammaCorrectionPass
 		);
 
-		this.postprocessing.composer.addPass(this.postprocessing.bokehPass);
+		//this.postprocessing.composer.addPass(this.postprocessing.bokehPass);
 		this.postprocessing.composer.addPass(this.postprocessing.fxaaPass);
 
 		this.postprocessing.initialized = true;
@@ -272,20 +281,7 @@ class Renderer {
 		console.log("%c this.postprocessing", "background:red;color:#fff;");
 	};
 
-	AnimationLoop = () => {
-		this.context.Events.dispatchEvent("OnAnimationLoop", this.clock);
-
-    	this.now = Date.now();
-    	this.delta = this.now - this.then;
-
-		//update time dependent animations here at 30 fps
-		if (this.delta > this.graphicsInterval) {
-			this.context.Events.dispatchEvent("OnAnimationLoopGraphics", this.clock);
-			this.context.Events.dispatchEvent("OnAnimationLoopUIGraphics", this.clock);
-			this.then = this.now - (this.delta % this.graphicsInterval);
-		}
-
-
+	Rendering = () => {
 		if (this.size.x == 0 || this.size.y === 0) {
 			this.Resize();
 		}
@@ -359,6 +355,37 @@ class Renderer {
 				);
 			}
 		}
+	};
+
+	AnimationLoop = () => {
+		//console.log(this.context.Events.events.OnAnimationLoop);
+
+		this.now = Date.now();
+		this.graphics_delta = this.now - this.graphics_then;
+		this.ui_delta = this.now - this.ui_then;
+		this.threeD_delta = this.now - this.threeD_then;
+
+		if (this.threeD_delta > this.threeD_interval) {
+			this.Rendering();
+			this.threeD_then = this.now - (this.threeD_delta % this.threeD_interval);
+		}
+
+		//update time dependent animations here at 30 fps
+		if (this.graphics_delta > this.graphics_interval) {
+			this.context.Events.dispatchEvent("OnAnimationLoopGraphics", this.clock);
+			this.graphics_then =
+				this.now - (this.graphics_delta % this.graphics_interval);
+		}
+
+		if (this.ui_delta > this.ui_interval) {
+			this.context.Events.dispatchEvent(
+				"OnAnimationLoopUIGraphics",
+				this.clock
+			);
+			this.ui_then = this.now - (this.ui_delta % this.ui_interval);
+		}
+
+		this.context.Events.dispatchEvent("OnAnimationLoop", this.clock);
 	};
 
 	Resize = () => {
