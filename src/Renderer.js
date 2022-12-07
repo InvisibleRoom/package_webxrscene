@@ -88,6 +88,7 @@ class Renderer {
 		};
 
 		this.context.Events.registerEvent("OnAnimationLoop");
+		this.context.Events.registerEvent("OnAnimationLoopGraphics");
 
 		this.instance = new WebGLRenderer({
 			powerPreference: "high-performance",
@@ -111,6 +112,11 @@ class Renderer {
 		this.instance.toneMapping = LinearToneMapping; // CustomToneMapping;// ReinhardToneMapping;//CustomToneMapping;//ReinhardToneMapping;//LinearToneMapping;//THREE.
 		this.instance.toneMappingExposure = 0.8;
 		this.instance.outputEncoding = sRGBEncoding;
+
+		this.now = Date.now();
+		this.delta = Date.now();
+		this.then = Date.now();
+		this.graphicsInterval = 1000/30;
 
 		// Set CustomToneMapping to Uncharted2
 		// source: http://filmicworlds.com/blog/filmic-tonemapping-operators/
@@ -267,6 +273,21 @@ class Renderer {
 
 	AnimationLoop = () => {
 		this.context.Events.dispatchEvent("OnAnimationLoop", this.clock);
+
+    	this.now = Date.now();
+    	this.delta = this.now - this.then;
+
+		//update time dependent animations here at 30 fps
+		if (this.delta > this.graphicsInterval) {
+			this.context.Events.dispatchEvent("OnAnimationLoopGraphics", this.clock);
+			this.then = this.now - (this.delta % this.graphicsInterval);
+		}
+
+		
+		
+		
+
+
 
 		if (this.size.x == 0 || this.size.y === 0) {
 			this.Resize();
