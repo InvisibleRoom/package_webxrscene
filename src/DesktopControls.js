@@ -19,7 +19,7 @@ class DesktopControls {
 		this.mapMode = false;
 		this.map = new MapControls(camera, domElement);
 		this.map.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-		this.map.dampingFactor = 0.05;
+		this.map.dampingFactor = 0.35;
 		this.map.screenSpacePanning = true;
 		this.map.enableRotate = false;
 		this.map.minDistance = 0.5;
