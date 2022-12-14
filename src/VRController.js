@@ -1,170 +1,171 @@
-import {Mesh,SpriteMaterial,Sprite,CanvasTexture, Raycaster,MeshBasicMaterial,Geometry ,BoxBufferGeometry,Matrix4, Vector3, Color} from 'three';
-import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
+import {
+	Mesh,
+	SpriteMaterial,
+	Sprite,
+	CanvasTexture,
+	Raycaster,
+	MeshBasicMaterial,
+	Geometry,
+	BoxBufferGeometry,
+	Matrix4,
+	Vector3,
+	Color,
+} from "three";
+import { XRControllerModelFactory } from "./XRControllerModelFactory.js";
 
-import {MeshLine, MeshLineMaterial} from '../../Scene/meshline';
-
+import { MeshLine, MeshLineMaterial } from "../../Scene/meshline";
 
 class VRController {
+	constructor(context) {
+		this.context = context;
+		this.controllers = [];
+		this.controllerGrips = [];
+		this.raycaster = new Raycaster();
 
-  constructor(context){
-    this.context = context;
-    this.controllers = [];
-    this.controllerGrips = [];
-    this.raycaster = new Raycaster();
+		this.controllerModelFactory = new XRControllerModelFactory();
+		this.dummyMatrix = new Matrix4();
 
-    this.controllerModelFactory = new XRControllerModelFactory();
-    this.dummyMatrix = new Matrix4();
+		const lineMat = new MeshLineMaterial({
+			color: new Color(0xf38d2f),
+			lineWidth: 0.01,
+			sizeAttenuation: 1,
+			useAlphaMap: 1,
+			alphaMap: new CanvasTexture(this.GetRayTexture()),
+		});
 
+		/////////////////
+		// Point helper
+		/////////////////
 
-    const lineMat = new MeshLineMaterial({
-      color: new Color(0xF38D2F),
-      lineWidth: .01,
-      sizeAttenuation :1,
-      useAlphaMap: 1,
-      alphaMap : new CanvasTexture( this.GetRayTexture() ),
-    });
+		this.spriteMaterial = new SpriteMaterial({
+			color: 0xf38d2f,
+			map: new CanvasTexture(this.GetPointerTexture()),
+			sizeAttenuation: false,
+			//depthTest: false
+		});
 
+		this.pointer = new Sprite(this.spriteMaterial);
 
-    /////////////////
-    // Point helper
-    /////////////////
+		this.pointer.scale.set(0.015, 0.015, 1);
+		this.pointer.renderOrder = Infinity;
 
-    this.spriteMaterial = new SpriteMaterial({
-      color:  0xF38D2F,
-      map: new CanvasTexture( this.GetPointerTexture() ),
-      sizeAttenuation: false,
-      //depthTest: false
-    });
+		////////////////
+		// Controllers
+		////////////////
 
-    this.pointer = new Sprite( this.spriteMaterial );
+		this.controller1 = this.context.Renderer.instance.xr.getController(0);
+		this.controller2 = this.context.Renderer.instance.xr.getController(1);
 
-    this.pointer.scale.set(0.015, 0.015, 1)
-    this.pointer.renderOrder = Infinity;
+		this.controller1.name = "controller-right";
+		this.controller2.name = "controller-left";
 
-    ////////////////
-    // Controllers
-    ////////////////
+		this.controllerGrip1 = this.context.Renderer.instance.xr.getControllerGrip(
+			0
+		);
+		this.controllerGrip2 = this.context.Renderer.instance.xr.getControllerGrip(
+			1
+		);
 
-    this.controller1 = this.context.Renderer.instance.xr.getController( 0 );
-    this.controller2 = this.context.Renderer.instance.xr.getController( 1 );
+		if (this.controller1) this.controllers.push(this.controller1);
+		if (this.controller2) this.controllers.push(this.controller2);
 
-    this.controller1.name = "controller-right";
-    this.controller2.name = "controller-left";
+		if (this.controllerGrip1) this.controllerGrips.push(this.controllerGrip1);
+		if (this.controllerGrip2) this.controllerGrips.push(this.controllerGrip2);
 
-    this.controllerGrip1 = this.context.Renderer.instance.xr.getControllerGrip( 0 );
-    this.controllerGrip2 = this.context.Renderer.instance.xr.getControllerGrip( 1 );
+		this.controllers.forEach((controller) => {
+			const rayLine = new MeshLine();
+			rayLine.setPoints([new Vector3(0, 0, 0), new Vector3(0, 0, -1)]);
+			const ray = new Mesh(rayLine, lineMat);
 
-    if ( this.controller1 ) this.controllers.push( this.controller1 );
-    if ( this.controller2 ) this.controllers.push( this.controller2 );
+			//const ray = this.linesHelper.clone();
+			const point = this.pointer.clone();
 
-    if ( this.controllerGrip1 ) this.controllerGrips.push( this.controllerGrip1 );
-    if ( this.controllerGrip2 ) this.controllerGrips.push( this.controllerGrip2 );
+			controller.add(ray, point);
+			controller.ray = ray;
+			controller.line = rayLine;
+			controller.point = point;
+			controller.userData.noClip = true;
 
-    this.controllers.forEach( (controller)=> {
-      
-      const rayLine = new MeshLine();
-      rayLine.setPoints([
-        new Vector3(0,0,0),
-        new Vector3(0,0,-1),
-      ]);
-      const ray = new Mesh( rayLine, lineMat );
-      
-      //const ray = this.linesHelper.clone();
-      const point = this.pointer.clone();
+			// var renderOrder = 1;
+			// controller.renderOrder = renderOrder;
 
-      controller.add( ray, point );
-      controller.ray = ray;
-      controller.line = rayLine;
-      controller.point = point;
-      controller.userData.noClip = true;
+			// controller.children.map((child)=>{
+			//   child.userData.noClip = true;
+			//   child.renderOrder = renderOrder;
+			// })
+		});
 
-      // var renderOrder = 1;
-      // controller.renderOrder = renderOrder;
-      
-      // controller.children.map((child)=>{
-      //   child.userData.noClip = true;
-      //   child.renderOrder = renderOrder;
-      // })
-    });
-
-    this.controllerGrips.forEach( (controllerGrip)=> {
-      controllerGrip.add( this.controllerModelFactory.createControllerModel( controllerGrip ) );
-    });
-
-  }
+		this.controllerGrips.forEach((controllerGrip) => {
+			controllerGrip.add(
+				this.controllerModelFactory.createControllerModel(controllerGrip)
+			);
+		});
+	}
 	// Set the passed ray to match the given controller pointing direction
 
-	SetFromController( controllerID, ray ) {
-
-		const controller = this.controllers[ controllerID ];
+	SetFromController(controllerID, ray) {
+		const controller = this.controllers[controllerID];
 
 		// Position the intersection ray
 
-		this.dummyMatrix.identity().extractRotation( controller.matrixWorld );
+		this.dummyMatrix.identity().extractRotation(controller.matrixWorld);
 
-		ray.origin.setFromMatrixPosition( controller.matrixWorld );
-		ray.direction.set( 0, 0, - 1 ).applyMatrix4( this.dummyMatrix );
-
+		ray.origin.setFromMatrixPosition(controller.matrixWorld);
+		ray.direction.set(0, 0, -1).applyMatrix4(this.dummyMatrix);
 	}
 
 	// Position the chosen controller's pointer at the given point in space.
 	// Should be called after raycaster.intersectObject() found an intersection point.
 
-	SetPointerAt( controllerID, vec ) {
+	SetPointerAt(controllerID, vec) {
+		const controller = this.controllers[controllerID];
+		const localVec = controller.worldToLocal(vec);
 
-		const controller = this.controllers[ controllerID ];
-		const localVec = controller.worldToLocal( vec );
-
-		controller.point.position.copy( localVec );
+		controller.point.position.copy(localVec);
 		controller.point.visible = true;
 
-
-    var geometry = controller.ray.geometry.setFromPoints([
-      new Vector3(0,0,0),
-      vec,
-    ]);
-    controller.line.setGeometry(geometry);
+		var geometry = controller.ray.geometry.setFromPoints([
+			new Vector3(0, 0, 0),
+			vec,
+		]);
+		controller.line.setGeometry(geometry);
 	}
 
-  GetRayTexture() {
+	GetRayTexture() {
+		var canvas = document.createElement("canvas");
+		canvas.width = 64;
+		canvas.height = 64;
 
-    var canvas = document.createElement( 'canvas' );
-        canvas.width = 64;
-        canvas.height = 64;
+		var c = canvas.getContext("2d");
 
-        var c = canvas.getContext("2d");
+		var gradient = c.createLinearGradient(0, 0, 0, 64);
+		gradient.addColorStop(0, "black");
+		gradient.addColorStop(1, "white");
 
-    var gradient = c.createLinearGradient(0, 0, 0, 64);
-        gradient.addColorStop(0, "black");
-        gradient.addColorStop(1, "white");
+		c.fillStyle = gradient;
+		c.fillRect(0, 0, 64, 64);
 
-        c.fillStyle = gradient;
-        c.fillRect(0, 0, 64, 64);
+		return canvas;
+	}
+	GetPointerTexture() {
+		var canvas = document.createElement("canvas");
+		canvas.width = 64;
+		canvas.height = 64;
 
-        return canvas;
+		var c = canvas.getContext("2d");
 
-  }
-  GetPointerTexture() {
+		c.beginPath();
+		c.arc(32, 32, 29, 0, 2 * Math.PI);
+		c.lineWidth = 5;
+		c.stroke();
+		c.fillStyle = "white";
+		c.fill();
 
-    var canvas = document.createElement( 'canvas' );
-    canvas.width = 64;
-    canvas.height = 64;
-
-    var c = canvas.getContext("2d");
-
-    c.beginPath();
-    c.arc(32, 32, 29, 0, 2 * Math.PI);
-    c.lineWidth = 5;
-    c.stroke();
-    c.fillStyle = "white";
-    c.fill();
-
-    return canvas;
-
-  }
+		return canvas;
+	}
 }
 
-export {VRController};
+export { VRController };
 
 // //////////////////////////////
 // // CANVAS TEXTURE GENERATION

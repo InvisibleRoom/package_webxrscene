@@ -91,6 +91,7 @@ class Controls {
 			this.context.Renderer.instance,
 			this.context
 		);
+
 		this.arButton = ARButton.createButton(
 			this.context.Renderer.instance,
 			this.context
@@ -213,7 +214,7 @@ class Controls {
 			false
 		);
 
-		window.addEventListener("resize",this.getClientBox);
+		window.addEventListener("resize", this.getClientBox);
 	}
 	getClientBox = () => {
 		var size = {
