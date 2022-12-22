@@ -33,12 +33,12 @@ class Controls {
 		this.touchend = this.touchend.bind(this);
 
 		this.size = this.getClientBox();
-		(this.Desktop = new DesktopControls(
+		this.Desktop = new DesktopControls(
 			context.Camera.instance,
 			context.Renderer.instance.domElement,
 			this.context
-		)),
-			(this.Update = this.Update.bind(this));
+		);
+		this.Update = this.Update.bind(this);
 		this.SetPosition = this.SetPosition.bind(this);
 		this.SetTarget = this.SetTarget.bind(this);
 		this.GetTarget = this.GetTarget.bind(this);
@@ -152,6 +152,7 @@ class Controls {
 		});
 
 		this.vr_controller.controllers[0].addEventListener("connected", (e) => {
+			console.log("GamePad Connected");
 			this.gamepad = e.data.gamepad;
 		});
 
@@ -167,6 +168,8 @@ class Controls {
 		});
 		this.vr_controller.controllers[1].addEventListener("connected", (e) => {
 			this.gamepad2 = e.data.gamepad;
+
+			console.log("GamePad2 Connected");
 		});
 
 		this.context.Events.addEventListener("OnAnimationLoop", this.Update);
@@ -366,14 +369,12 @@ class Controls {
 		return this.arButton;
 	}
 	Update(t) {
-		if (mainConfig.savePositions) {
-			if (this.gamepad != null) {
-				this.context.Events.dispatchEvent("gamepad", this.gamepad);
-			}
+		if (this.gamepad != null) {
+			this.context.Events.dispatchEvent("gamepad", this.gamepad);
+		}
 
-			if (this.gamepad2 != null) {
-				this.context.Events.dispatchEvent("gamepad2", this.gamepad2);
-			}
+		if (this.gamepad2 != null) {
+			this.context.Events.dispatchEvent("gamepad2", this.gamepad2);
 		}
 
 		this.now = Date.now();
