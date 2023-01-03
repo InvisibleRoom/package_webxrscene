@@ -568,6 +568,8 @@ class Controls {
 		}, null);
 	}
 	FindIntersection() {
+		if (this.isClickEnabled == false) return;
+
 		// Find closest intersecting object
 		let intersect;
 		let intersect2;
