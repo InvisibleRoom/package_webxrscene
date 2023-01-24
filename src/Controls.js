@@ -76,6 +76,9 @@ class Controls {
 		this.selectState = false;
 		this.selectState2 = false;
 
+		this.squeezeState = false;
+		this.squeezeState2 = false;
+
 		this.context.Events.registerEvent("gamepad");
 		this.context.Events.registerEvent("gamepad2");
 
@@ -151,6 +154,14 @@ class Controls {
 			this.context.Events.dispatchEvent("mouse-up", {});
 		});
 
+		this.vr_controller.controllers[0].addEventListener("squeezestart", () => {
+			this.squeezeState = true;
+		});
+
+		this.vr_controller.controllers[0].addEventListener("squeezeend", () => {
+			this.squeezeState = false;
+		});
+
 		this.vr_controller.controllers[0].addEventListener("connected", (e) => {
 			console.log("GamePad Connected");
 			this.gamepad = e.data.gamepad;
@@ -166,10 +177,17 @@ class Controls {
 			this.selectState2 = false;
 			this.context.Events.dispatchEvent("mouse-up", {});
 		});
+
+		this.vr_controller.controllers[1].addEventListener("squeezestart", () => {
+			this.squeezeState2 = true;
+		});
+
+		this.vr_controller.controllers[1].addEventListener("squeezeend", () => {
+			this.squeezeState2 = false;
+		});
+
 		this.vr_controller.controllers[1].addEventListener("connected", (e) => {
 			this.gamepad2 = e.data.gamepad;
-
-			console.log("GamePad2 Connected");
 		});
 
 		this.context.Events.addEventListener("OnAnimationLoop", this.Update);
@@ -538,7 +556,6 @@ class Controls {
 
 		if (this.currentControls == "Desktop") {
 			if (this.mouse.x !== null && this.mouse.y !== null) {
-				console.log(this.mouse);
 				return this.mouse;
 			}
 		}
@@ -599,7 +616,7 @@ class Controls {
 			intersect.object.isClickEnabled &&
 			intersect.object.visible
 		) {
-			if (this.selectState) {
+			if (this.selectState || this.squeezeState) {
 				// Component.setState internally call component.set with the options you defined in component.setupState
 				intersect.object.setState("selected");
 				this.context.Events.dispatchEvent("ui-mouse-down", intersect.object);
@@ -617,7 +634,7 @@ class Controls {
 			intersect2.object.isClickEnabled &&
 			intersect2.object.visible
 		) {
-			if (this.selectState2) {
+			if (this.selectState2 || this.squeezeState2) {
 				// Component.setState internally call component.set with the options you defined in component.setupState
 				intersect2.object.setState("selected");
 				this.context.Events.dispatchEvent("ui-mouse-down", intersect2.object);
