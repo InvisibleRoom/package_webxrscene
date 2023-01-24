@@ -1,4 +1,13 @@
-import { Mesh, MeshBasicMaterial, Object3D, SphereGeometry } from "three";
+import {
+	Mesh,
+	MeshBasicMaterial,
+	MeshDepthMaterial,
+	MeshStandardMaterial,
+	Color,
+	PointLight,
+	Object3D,
+	SphereGeometry,
+} from "three";
 
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
@@ -28,8 +37,14 @@ class XRControllerModel extends Object3D {
 		this.envMap = envMap;
 		this.traverse((child) => {
 			if (child.isMesh) {
-				child.material.envMap = this.envMap;
-				child.material.needsUpdate = true;
+				child.material = this.controllerMaterial;
+
+				// child.material.envMap = this.envMap;
+				// child.material.metalness = 0;
+				// child.material.metalnessMap = null;
+				// child.material.roughness = 1;
+				// child.material.roughnessMap = null;
+				// child.material.needsUpdate = true;
 			}
 		});
 
@@ -154,19 +169,26 @@ function findNodes(motionController, scene) {
 	});
 }
 
-function addAssetSceneToControllerModel(controllerModel, scene) {
+function addAssetSceneToControllerModel(controllerModel, scene, material) {
 	// Find the nodes needed for animation and cache them on the motionController.
 	findNodes(controllerModel.motionController, scene);
 
+	let pointLight = new PointLight(0xffffff, 0.05, 1.45);
+
 	// Apply any environment map that the mesh already has set.
-	if (controllerModel.envMap) {
-		scene.traverse((child) => {
-			if (child.isMesh) {
-				child.material.envMap = controllerModel.envMap;
-				child.material.needsUpdate = true;
-			}
-		});
-	}
+	//if (controllerModel.envMap) {
+	scene.traverse((child) => {
+		if (child.isMesh) {
+			child.material = material;
+
+			child.add(pointLight);
+			pointLight.translateZ(0.01);
+			pointLight.translateY(0.005);
+
+			child.material.needsUpdate = true;
+		}
+	});
+	//}
 
 	// Add the glTF scene to the controllerModel.
 	controllerModel.add(scene);
@@ -177,6 +199,7 @@ class XRControllerModelFactory {
 		this.gltfLoader = gltfLoader;
 		this.path = DEFAULT_PROFILES_PATH;
 		this._assetCache = {};
+		this.controllerMaterial = new MeshStandardMaterial({ color: 0xffffff });
 
 		// If a GLTFLoader wasn't supplied to the constructor create a new one.
 		if (!this.gltfLoader) {
@@ -205,13 +228,21 @@ class XRControllerModelFactory {
 						assetPath
 					);
 
+					console.log(
+						"controllerModel.motionController.assetUrl",
+						controllerModel.motionController.assetUrl
+					);
 					const cachedAsset = this._assetCache[
 						controllerModel.motionController.assetUrl
 					];
 					if (cachedAsset) {
 						scene = cachedAsset.scene.clone();
 
-						addAssetSceneToControllerModel(controllerModel, scene);
+						addAssetSceneToControllerModel(
+							controllerModel,
+							scene,
+							this.controllerMaterial
+						);
 					} else {
 						if (!this.gltfLoader) {
 							throw new Error("GLTFLoader not set.");
@@ -228,7 +259,11 @@ class XRControllerModelFactory {
 
 									scene = asset.scene.clone();
 
-									addAssetSceneToControllerModel(controllerModel, scene);
+									addAssetSceneToControllerModel(
+										controllerModel,
+										scene,
+										this.controllerMaterial
+									);
 								}
 							},
 							null,
