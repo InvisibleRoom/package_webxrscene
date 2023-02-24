@@ -85,13 +85,16 @@ var VRButton = {
 
 		if ("xr" in navigator) {
 			//Safari Fix
-			// if (
-			// 	typeof navigator.xr.isSessionSupported !== "object" ||
-			// 	typeof navigator.xr.isSessionSupported !== "function" ||
-			// 	navigator.xr.isSessionSupported === null
-			// ) {
-			// 	return;
-			// }
+			if (
+				!Object.prototype.hasOwnProperty.call(navigator, "xr") ||
+				typeof navigator.xr.isSessionSupported !== "object" ||
+				typeof navigator.xr.isSessionSupported !== "function" ||
+				navigator.xr.isSessionSupported === null
+			) {
+				return;
+			}
+
+			console.log(navigator.xr);
 
 			navigator.xr.isSessionSupported("immersive-vr").then(function(supported) {
 				supported ? showEnterVR() : showWebXRNotFound();

@@ -79,11 +79,17 @@ import mainConfig from "../../../main.config";
 
 class Renderer {
 	constructor(id = "app", context) {
+		const ua = window.navigator.userAgent;
+		const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
+		const webkit = !!ua.match(/WebKit/i);
+		const iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
+
 		this.context = context;
 		this.clock = new Clock();
-		this.factor = 1;
+		this.factor = iOSSafari ? 2 : 1;
+
 		this.postprocessing = {
-			enabled: true,
+			enabled: !iOSSafari,
 			initialized: false,
 		};
 
@@ -91,21 +97,21 @@ class Renderer {
 		this.context.Events.registerEvent("OnAnimationLoopGraphics");
 		this.context.Events.registerEvent("OnAnimationLoopUIGraphics");
 
-		this.instance = new WebGLRenderer({
-			powerPreference: "high-performance",
-			//alpha: true,
-			antialias: true,
-			//transparent: true,
-			logarithmicDepthBuffer: true,
-			//ONly for screenshots
-			// preserveDrawingBuffer : mainConfig.development,
-			autoClear: false,
-			// stencil: true,
-			//depth: false
-		});
+		let renderOptions = {
+			autoClear: iOS,
+			antialias: !iOSSafari,
+			logarithmicDepthBuffer: !iOS,
+		};
+
+		if (!iOS) {
+			renderOptions.powerPreference = "high-performance";
+		}
+
+		this.instance = new WebGLRenderer(renderOptions);
+
 		this.instance.physicallyCorrectLights = true;
 		this.size = new Vector2(window.innerWidth, window.innerHeight);
-		this.dpr = window.devicePixelRatio ? window.devicePixelRatio : 1;
+		this.dpr = window.devicePixelRatio && !iOS ? window.devicePixelRatio : 1;
 
 		this.instance.shadowMap.enabled = true;
 		this.instance.shadowMap.autoUpdate = false;
