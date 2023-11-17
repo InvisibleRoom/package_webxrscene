@@ -42,13 +42,8 @@ var ARButton = {
 
 			button.onclick = function() {
 				if (currentSession === null) {
-					sessionInit.domOverlay.root =
-						typeof button._domOverlayElement != "undefined"
-							? button._domOverlayElement
-							: sessionInit.domOverlay.root;
-					navigator.xr
-						.requestSession("immersive-ar", sessionInit)
-						.then(onSessionStarted);
+					sessionInit.domOverlay.root = typeof button._domOverlayElement != "undefined" ? button._domOverlayElement : sessionInit.domOverlay.root;
+					navigator.xr.requestSession("immersive-ar", sessionInit).then(onSessionStarted);
 				} else {
 					currentSession.end();
 				}
@@ -69,12 +64,7 @@ var ARButton = {
 			var button = document.createElement("button");
 			button.id = "ARButton";
 
-			if (
-				!Object.prototype.hasOwnProperty.call(navigator, "xr") ||
-				typeof navigator.xr.isSessionSupported !== "object" ||
-				typeof navigator.xr.isSessionSupported !== "function" ||
-				navigator.xr.isSessionSupported === null
-			) {
+			if (!navigator.xr || typeof navigator.xr.isSessionSupported !== "function" || navigator.xr.isSessionSupported === null) {
 				return;
 			}
 

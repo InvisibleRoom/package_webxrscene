@@ -1,5 +1,5 @@
 var VRButton = {
-	createButton: function(renderer, context) {
+	createButton: async function(renderer, context) {
 		var button = document.createElement("button");
 		button.id = "VRButton";
 		var currentSession = null;
@@ -60,9 +60,7 @@ var VRButton = {
 				var sessionInit = {
 					optionalFeatures: ["local-floor", "local"],
 				};
-				navigator.xr
-					.requestSession("immersive-vr", sessionInit)
-					.then(onSessionStarted);
+				navigator.xr.requestSession("immersive-vr", sessionInit).then(onSessionStarted);
 			} else {
 				currentSession.end();
 			}
@@ -74,6 +72,7 @@ var VRButton = {
 		}
 
 		function showEnterVR(/*device*/) {
+			console.log("button");
 			button.textContent = "In VR starten";
 		}
 
@@ -85,26 +84,20 @@ var VRButton = {
 
 		if ("xr" in navigator) {
 			//Safari Fix
-			if (
-				!Object.prototype.hasOwnProperty.call(navigator, "xr") ||
-				typeof navigator.xr.isSessionSupported !== "object" ||
-				typeof navigator.xr.isSessionSupported !== "function" ||
-				navigator.xr.isSessionSupported === null
-			) {
+			if (!navigator.xr || typeof navigator.xr.isSessionSupported !== "function" || navigator.xr.isSessionSupported === null) {
+				console.log("Safari Fix");
 				return;
 			}
 
-			console.log(navigator.xr);
+			const supported = await navigator.xr.isSessionSupported("immersive-vr");
 
-			navigator.xr.isSessionSupported("immersive-vr").then(function(supported) {
-				supported ? showEnterVR() : showWebXRNotFound();
+			supported ? showEnterVR() : showWebXRNotFound();
 
-				if (!supported) {
-					if (button.parentNode != null) {
-						button.parentNode.removeChild(button);
-					}
+			if (!supported) {
+				if (button.parentNode != null) {
+					button.parentNode.removeChild(button);
 				}
-			});
+			}
 
 			return button;
 		} else {
