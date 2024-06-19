@@ -109,8 +109,18 @@ class Renderer {
 
 		this.instance = new WebGLRenderer(renderOptions);
 
+		this.domElement = document.getElementById(id);
+
+		if (typeof this.domElement == "undefined") {
+			console.logwarn("couldn't find an element with id:" + id);
+		}
+
+		this.domElement.appendChild(this.instance.domElement);
+
+		const rect = this.domElement.getBoundingClientRect();
+
 		this.instance.physicallyCorrectLights = true;
-		this.size = new Vector2(window.innerWidth, window.innerHeight);
+		this.size = new Vector2(rect.width, rect.height);
 		this.dpr = window.devicePixelRatio && !iOS ? window.devicePixelRatio : 1;
 
 		this.instance.shadowMap.enabled = true;
@@ -156,22 +166,13 @@ class Renderer {
 		this.instance.setClearColor(0xf3f3f3, 1);
 		this.instance.domElement.classList.add("scene-renderer");
 
-		this.domElement = document.getElementById(id);
-
-		if (typeof this.domElement == "undefined") {
-			console.logwarn("couldn't find an element with id:" + id);
-		}
-
-		this.domElement.appendChild(this.instance.domElement);
-		this.instance.setSize(window.innerWidth, window.innerHeight);
+		this.instance.setSize(rect.width, rect.height);
 
 		this.instance.xr.enabled = true;
 		this.instance.setAnimationLoop(this.AnimationLoop);
 
 		if (this.postprocessing.enabled) {
-			this.context.Events.addEventListener("OnMount", () =>
-				this.InitComposer()
-			);
+			this.context.Events.addEventListener("OnMount", () => this.InitComposer());
 		}
 
 		window.addEventListener("resize", this.Resize);
@@ -180,41 +181,29 @@ class Renderer {
 	InitComposer = () => {
 		this.effects = true;
 
-		console.log(
-			"%c Postprocessing enabled ",
-			"background:#2196f3; color:#fff;"
-		);
+		console.log("%c Postprocessing enabled ", "background:#2196f3; color:#fff;");
 
 		this.postprocessing.composer = new EffectComposer(this.instance);
 
 		/** RenderPass*/
-		this.postprocessing.RenderPass = new RenderPass(
-			this.context.Scene,
-			this.context.Camera.instance
-		);
+		this.postprocessing.RenderPass = new RenderPass(this.context.Scene, this.context.Camera.instance);
 
 		/** FXAA */
 		this.postprocessing.fxaaPass = new ShaderPass(FXAAShader);
 		this.postprocessing.fxaaPass.renderToScreen = true;
 
-		this.postprocessing.fxaaPass.material.uniforms["resolution"].value.x =
-			1 / (this.size.x * this.dpr);
-		this.postprocessing.fxaaPass.material.uniforms["resolution"].value.y =
-			1 / (this.size.y * this.dpr);
+		this.postprocessing.fxaaPass.material.uniforms["resolution"].value.x = 1 / (this.size.x * this.dpr);
+		this.postprocessing.fxaaPass.material.uniforms["resolution"].value.y = 1 / (this.size.y * this.dpr);
 
 		/** Bokeh */
-		this.postprocessing.bokehPass = new BokehPass(
-			this.context.Scene,
-			this.context.Camera.instance,
-			{
-				aperture: 0,
-				focus: 37,
-				maxblur: 0.004,
+		this.postprocessing.bokehPass = new BokehPass(this.context.Scene, this.context.Camera.instance, {
+			aperture: 0,
+			focus: 37,
+			maxblur: 0.004,
 
-				width: this.size.x,
-				height: this.size.y,
-			}
-		);
+			width: this.size.x,
+			height: this.size.y,
+		});
 
 		//this.postprocessing.bokehPass.renderToScreen = true;
 
@@ -261,12 +250,8 @@ class Renderer {
 		//this.postprocessing.composer.addPass( this.postprocessing.lutPass );
 		// this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
 
-		this.postprocessing.gammaCorrectionPass = new ShaderPass(
-			GammaCorrectionShader
-		);
-		this.postprocessing.composer.addPass(
-			this.postprocessing.gammaCorrectionPass
-		);
+		this.postprocessing.gammaCorrectionPass = new ShaderPass(GammaCorrectionShader);
+		this.postprocessing.composer.addPass(this.postprocessing.gammaCorrectionPass);
 
 		//this.postprocessing.composer.addPass(this.postprocessing.bokehPass);
 		this.postprocessing.composer.addPass(this.postprocessing.fxaaPass);
@@ -325,40 +310,22 @@ class Renderer {
 			this.instance.autoClear = true;
 			this.instance.render(this.context.Scene, this.context.Camera.instance);
 
-			if (
-				this.context.SceneController != null &&
-				this.context.SceneController.scenes.UI_3D != undefined
-			) {
+			if (this.context.SceneController != null && this.context.SceneController.scenes.UI_3D != undefined) {
 				this.instance.autoClear = false;
 				this.instance.clearDepth();
-				this.instance.render(
-					this.context.SceneController.scenes.UI_3D,
-					this.context.Camera.instance
-				);
+				this.instance.render(this.context.SceneController.scenes.UI_3D, this.context.Camera.instance);
 			}
 
-			if (
-				this.context.SceneController != null &&
-				this.context.SceneController.scenes.UI != undefined
-			) {
+			if (this.context.SceneController != null && this.context.SceneController.scenes.UI != undefined) {
 				this.instance.autoClear = false;
 				this.instance.clearDepth();
-				this.instance.render(
-					this.context.SceneController.scenes.UI,
-					this.context.Camera.instance
-				);
+				this.instance.render(this.context.SceneController.scenes.UI, this.context.Camera.instance);
 			}
 
-			if (
-				this.context.SceneController != null &&
-				this.context.SceneController.scenes.Controller != undefined
-			) {
+			if (this.context.SceneController != null && this.context.SceneController.scenes.Controller != undefined) {
 				this.instance.autoClear = false;
 				this.instance.clearDepth();
-				this.instance.render(
-					this.context.SceneController.scenes.Controller,
-					this.context.Camera.instance
-				);
+				this.instance.render(this.context.SceneController.scenes.Controller, this.context.Camera.instance);
 			}
 		}
 	};
@@ -379,15 +346,11 @@ class Renderer {
 		//update time dependent animations here at 30 fps
 		if (this.graphics_delta > this.graphics_interval) {
 			this.context.Events.dispatchEvent("OnAnimationLoopGraphics", this.clock);
-			this.graphics_then =
-				this.now - (this.graphics_delta % this.graphics_interval);
+			this.graphics_then = this.now - (this.graphics_delta % this.graphics_interval);
 		}
 
 		if (this.ui_delta > this.ui_interval) {
-			this.context.Events.dispatchEvent(
-				"OnAnimationLoopUIGraphics",
-				this.clock
-			);
+			this.context.Events.dispatchEvent("OnAnimationLoopUIGraphics", this.clock);
 			this.ui_then = this.now - (this.ui_delta % this.ui_interval);
 		}
 
@@ -401,7 +364,7 @@ class Renderer {
 
 		var size = this.domElement.getBoundingClientRect();
 
-		this.size = new Vector2(window.innerWidth, window.innerHeight);
+		this.size = new Vector2(size.width, size.height);
 		this.size.x = this.size.x / this.factor;
 		this.size.y = this.size.y / this.factor;
 
@@ -414,10 +377,8 @@ class Renderer {
 		if (this.postprocessing.enabled) {
 			this.postprocessing.composer.setSize(this.size.x, this.size.y);
 
-			this.postprocessing.fxaaPass.material.uniforms["resolution"].value.x =
-				1 / this.size.x;
-			this.postprocessing.fxaaPass.material.uniforms["resolution"].value.y =
-				1 / this.size.y;
+			this.postprocessing.fxaaPass.material.uniforms["resolution"].value.x = 1 / this.size.x;
+			this.postprocessing.fxaaPass.material.uniforms["resolution"].value.y = 1 / this.size.y;
 		}
 
 		this.instance.domElement.style.width = "100%!important";

@@ -8,25 +8,25 @@ class CSSRenderer {
 
 		this.scaleFactor = 100;
 
-		this.instance = new CSS3DRenderer();
-		this.dpr = window.devicePixelRatio ? window.devicePixelRatio : 1;
-		this.size = new Vector2(window.innerWidth, window.innerHeight);
-
-		this.instance.setSize(this.size.x, this.size.y);
-
-		this.instance.domElement.style.width = window.innerWidth + "px";
-		this.instance.domElement.style.height = window.innerHeight + "px";
-
-		this.instance.domElement.classList.add("css-renderer");
-		//this.instance.setAnimationLoop(this.AnimationLoop);
-
 		this.domElement = document.getElementById(id);
 
 		if (typeof this.domElement == "undefined") {
 			console.logwarn("couldn't find an element with id:" + id);
 		}
 
-		this.domElement.appendChild(this.instance.domElement);
+		const rect = this.domElement.getBoundingClientRect();
+
+		this.instance = new CSS3DRenderer();
+		this.dpr = window.devicePixelRatio ? window.devicePixelRatio : 1;
+		this.size = new Vector2(rect.width, rect.height);
+
+		this.instance.setSize(this.size.x, this.size.y);
+
+		this.instance.domElement.style.width = rect.width + "px";
+		this.instance.domElement.style.height = rect.height + "px";
+
+		this.instance.domElement.classList.add("css-renderer");
+		//this.instance.setAnimationLoop(this.AnimationLoop);
 
 		this.instance.domElement.style.position = "absolute";
 		this.instance.domElement.style.top = "0";
@@ -35,6 +35,8 @@ class CSSRenderer {
 		this.instance.domElement.style.bottom = "0";
 		this.instance.domElement.style.zIndex = "9999";
 		this.instance.domElement.style.pointerEvents = "none";
+
+		this.domElement.appendChild(this.instance.domElement);
 
 		this.context.Events.addEventListener("OnAnimationLoopUIGraphics", this.AnimationLoop);
 		window.addEventListener("resize", this.Resize);
@@ -57,8 +59,8 @@ class CSSRenderer {
 		this.size = new Vector2(size.width, size.height);
 		this.instance.setSize(this.size.x, this.size.y);
 
-		this.instance.domElement.style.width = window.innerWidth + "px";
-		this.instance.domElement.style.height = window.innerHeight + "px";
+		this.instance.domElement.style.width = size.width + "px";
+		this.instance.domElement.style.height = size.height + "px";
 
 		//this.instance.domElement.style.perspective =parseFloat(this.instance.domElement.style.perspective) * this.dpr;
 		if (this.context.hasOwnProperty("Camera")) {
