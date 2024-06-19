@@ -36,10 +36,7 @@ class CSSRenderer {
 		this.instance.domElement.style.zIndex = "9999";
 		this.instance.domElement.style.pointerEvents = "none";
 
-		this.context.Events.addEventListener(
-			"OnAnimationLoopUIGraphics",
-			this.AnimationLoop
-		);
+		this.context.Events.addEventListener("OnAnimationLoopUIGraphics", this.AnimationLoop);
 		window.addEventListener("resize", this.Resize);
 	}
 
@@ -52,10 +49,7 @@ class CSSRenderer {
 			this.Resize();
 		}
 
-		this.instance.render(
-			this.context.CSSSceneController.activeScene,
-			this.context.Camera.instance
-		);
+		this.instance.render(this.context.CSSSceneController.activeScene, this.context.Camera.instance);
 	};
 
 	Resize = () => {
