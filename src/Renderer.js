@@ -79,10 +79,10 @@ import mainConfig from "../../../main.config";
 
 class Renderer {
 	constructor(id = "app", context) {
-		const ua = window.navigator.userAgent;
-		const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
-		const webkit = !!ua.match(/WebKit/i);
-		const iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
+		//const ua = window.navigator.userAgent;
+		const iOS = false; // !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
+		//const webkit = !!ua.match(/WebKit/i);
+		const iOSSafari = false; //iOS && webkit && !ua.match(/CriOS/i);
 
 		this.context = context;
 		this.clock = new Clock();
@@ -163,7 +163,7 @@ class Renderer {
 		this.instance.outputEncoding = LinearEncoding;
 		this.instance.gammaFactor = 1; //2.2;//1;//
 
-		this.instance.setClearColor(0xf3f3f3, 1);
+		this.instance.setClearColor(0xffffff, 1);
 		this.instance.domElement.classList.add("scene-renderer");
 
 		this.instance.setSize(rect.width, rect.height);
