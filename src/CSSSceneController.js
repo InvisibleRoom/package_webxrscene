@@ -20,7 +20,7 @@ class CSSSceneController {
 	}
 
 	AddToScene = (sceneName = "default", model) => {
-		if (!this.sceneModels.hasOwnProperty(sceneName)) {
+		if (!Object.prototype.hasOwnProperty.call(this.sceneModels, sceneName)) {
 			// this.scenes[sceneName] = new THREE.Scene();
 			// this.scenes[sceneName].name = sceneName;
 

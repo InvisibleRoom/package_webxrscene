@@ -1,12 +1,4 @@
-import {
-	PMREMGenerator,
-	Scene,
-	Group,
-	Mesh,
-	BoxGeometry,
-	MeshNormalMaterial,
-	Object3D,
-} from "three";
+import { PMREMGenerator, Scene, Group, Mesh, BoxGeometry, MeshNormalMaterial, Object3D } from "three";
 
 import { TransformControls } from "three/examples/jsm/controls/TransformControls";
 import mainConfig from "../../../main.config";
@@ -46,7 +38,7 @@ class SceneController {
 		this.SetActiveScene("default");
 	}
 	RemoveFromScene = (sceneName = "default", model) => {
-		if (this.sceneGroups.hasOwnProperty(sceneName)) {
+		if (Object.prototype.hasOwnProperty.call(this.sceneGroups, sceneName)) {
 			this.sceneGroups[sceneName].remove(model);
 		}
 	};
@@ -62,23 +54,20 @@ class SceneController {
 
 		this.scenes[sceneName].attach(this.sceneGroups[sceneName]);
 
-		this.sceneTarget[sceneName] = new Mesh(
-			new BoxGeometry(0, 0, 0),
-			new MeshNormalMaterial()
-		);
+		this.sceneTarget[sceneName] = new Mesh(new BoxGeometry(0, 0, 0), new MeshNormalMaterial());
 		this.sceneTarget[sceneName].position.set(0, 0, 20);
 		this.sceneTarget[sceneName].userData.noClip = true;
 		this.sceneGroups[sceneName].attach(this.sceneTarget[sceneName]);
 	};
 	AddToScene = (sceneName = "default", model) => {
-		if (!this.scenes.hasOwnProperty(sceneName)) {
+		if (!Object.prototype.hasOwnProperty.call(this.scenes, sceneName)) {
 			this.CreateScene(sceneName);
 		}
 
 		model.traverse((child) => {
 			if (child.type == "Mesh" || child.type == "SkinnedMesh") {
-				if (child.material.hasOwnProperty("metalness")) {
-					if (child.material.hasOwnProperty("envMap")) {
+				if (Object.prototype.hasOwnProperty.call(child.material, "metalness")) {
+					if (Object.prototype.hasOwnProperty.call(child.material, "envMap")) {
 						//this.scenes[sceneName].reflectiveObjects.push(child);
 						child.material.envMap = this.scenes[sceneName].environment;
 					}
@@ -94,7 +83,7 @@ class SceneController {
 	};
 
 	SetActiveScene = (sceneName) => {
-		if (!this.scenes.hasOwnProperty(sceneName)) {
+		if (!Object.prototype.hasOwnProperty.call(this.scenes, sceneName)) {
 			console.warn(`Scene with Name:"${sceneName}" does not exist`);
 			return false;
 		}
@@ -103,6 +92,8 @@ class SceneController {
 			console.warn(`Scene with Name:"${sceneName}" is already current Scene`);
 			return false;
 		}
+
+		console.log("SetActiveScene ", sceneName);
 
 		this.context.Scene = this.scenes[sceneName];
 		this.activeScene = this.scenes[sceneName].name;
@@ -137,7 +128,7 @@ class SceneController {
 
 		// }
 
-		if (this.context.hasOwnProperty("Controls")) {
+		if (Object.prototype.hasOwnProperty.call(this.context, "Controls")) {
 			this.context.Controls.ChangeScene(sceneName);
 		}
 

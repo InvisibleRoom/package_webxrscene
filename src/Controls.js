@@ -33,11 +33,7 @@ class Controls {
 		this.touchend = this.touchend.bind(this);
 
 		this.size = this.getClientBox();
-		this.Desktop = new DesktopControls(
-			context.Camera.instance,
-			context.Renderer.instance.domElement,
-			this.context
-		);
+		this.Desktop = new DesktopControls(context.Camera.instance, context.Renderer.instance.domElement, this.context);
 		this.Update = this.Update.bind(this);
 		this.SetPosition = this.SetPosition.bind(this);
 		this.SetTarget = this.SetTarget.bind(this);
@@ -58,10 +54,7 @@ class Controls {
 
 		this.controller_cameraHelper = new Group();
 		this.controller_cameraHelper.name = "controller_cameraHelper";
-		this.context.SceneController.AddToScene(
-			"Controller",
-			this.controller_cameraHelper
-		);
+		this.context.SceneController.AddToScene("Controller", this.controller_cameraHelper);
 
 		this.isClickEnabled = true;
 
@@ -90,15 +83,9 @@ class Controls {
 		this.context.Events.registerEvent("OnChangeXRView");
 
 		/** VR AR DOM ELEMENTS - Buttons */
-		this.vrButton = VRButton.createButton(
-			this.context.Renderer.instance,
-			this.context
-		);
+		this.vrButton = VRButton.createButton(this.context.Renderer.instance, this.context);
 
-		this.arButton = ARButton.createButton(
-			this.context.Renderer.instance,
-			this.context
-		);
+		this.arButton = ARButton.createButton(this.context.Renderer.instance, this.context);
 
 		this.SetupVR = this.SetupVR.bind(this);
 		this.SetupAR = this.SetupAR.bind(this);
@@ -125,23 +112,11 @@ class Controls {
 		/**VR Controls */
 		this.vr_controller = new VRController(this.context);
 
-		this.context.SceneController.AddToScene(
-			"Controller",
-			this.vr_controller.controllerGrips[0]
-		);
-		this.context.SceneController.AddToScene(
-			"Controller",
-			this.vr_controller.controllers[0]
-		);
+		this.context.SceneController.AddToScene("Controller", this.vr_controller.controllerGrips[0]);
+		this.context.SceneController.AddToScene("Controller", this.vr_controller.controllers[0]);
 
-		this.context.SceneController.AddToScene(
-			"Controller",
-			this.vr_controller.controllerGrips[1]
-		);
-		this.context.SceneController.AddToScene(
-			"Controller",
-			this.vr_controller.controllers[1]
-		);
+		this.context.SceneController.AddToScene("Controller", this.vr_controller.controllerGrips[1]);
+		this.context.SceneController.AddToScene("Controller", this.vr_controller.controllers[1]);
 
 		//CONTROLLER 1
 		this.vr_controller.controllers[0].addEventListener("selectstart", () => {
@@ -204,47 +179,19 @@ class Controls {
 
 		this.selectState = false;
 
-		this.context.Renderer.instance.domElement.addEventListener(
-			"pointermove",
-			this.mousemove,
-			false
-		);
-		this.context.Renderer.instance.domElement.addEventListener(
-			"pointerdown",
-			this.mousedown,
-			false
-		);
-		this.context.Renderer.instance.domElement.addEventListener(
-			"pointerup",
-			this.mouseup,
-			false
-		);
-		this.context.Renderer.instance.domElement.addEventListener(
-			"touchstart",
-			this.touchstart,
-			false
-		);
-		this.context.Renderer.instance.domElement.addEventListener(
-			"touchend",
-			this.touchend,
-			false
-		);
-		this.context.Renderer.instance.domElement.addEventListener(
-			"resize",
-			this.getClientBox,
-			false
-		);
+		this.context.Renderer.instance.domElement.addEventListener("pointermove", this.mousemove, false);
+		this.context.Renderer.instance.domElement.addEventListener("pointerdown", this.mousedown, false);
+		this.context.Renderer.instance.domElement.addEventListener("pointerup", this.mouseup, false);
+		this.context.Renderer.instance.domElement.addEventListener("touchstart", this.touchstart, false);
+		this.context.Renderer.instance.domElement.addEventListener("touchend", this.touchend, false);
+		this.context.Renderer.instance.domElement.addEventListener("resize", this.getClientBox, false);
 
 		window.addEventListener("resize", this.getClientBox);
 	}
 	getClientBox = () => {
 		var size = {
-			width:
-				this.context.Renderer.instance.domElement.width *
-				this.context.Renderer.factor,
-			height:
-				this.context.Renderer.instance.domElement.height *
-				this.context.Renderer.factor,
+			width: this.context.Renderer.instance.domElement.width * this.context.Renderer.factor,
+			height: this.context.Renderer.instance.domElement.height * this.context.Renderer.factor,
 			x: 0,
 			y: 0,
 		};
@@ -266,13 +213,13 @@ class Controls {
 			this.getClientBox();
 		}
 
-		this.mouse.x = (e.clientX / this.size.width) * 2 - 1;
-		this.mouse.y = -(e.clientY / this.size.height) * 2 + 1;
+		this.mouse.x = ((e.clientX - this.context.Renderer.instance.domElement.parentElement.offsetLeft) / this.size.width) * 2 - 1;
+		this.mouse.y = -((e.clientY - this.context.Renderer.instance.domElement.parentElement.offsetTop) / this.size.height) * 2 + 1;
 	}
 	touchstart(e) {
 		this.selectState = true;
-		this.mouse.x = (e.touches[0].clientX / this.size.width) * 2 - 1;
-		this.mouse.y = -(e.touches[0].clientY / this.size.height) * 2 + 1;
+		this.mouse.x = ((e.touches[0].clientX - this.context.Renderer.instance.domElement.parentElement.offsetLeft) / this.size.width) * 2 - 1;
+		this.mouse.y = -((e.touches[0].clientY - this.context.Renderer.instance.domElement.parentElement.offsetTop) / this.size.height) * 2 + 1;
 	}
 	touchend(e) {
 		this.selectState = false;
@@ -298,10 +245,7 @@ class Controls {
 	};
 	ChangeScene = (sceneName) => {
 		if (mainConfig.log.controls) {
-			console.log(
-				`%c Change Scene => Controls: ${sceneName}`,
-				"background:#673ab7;color:#fff"
-			);
+			console.log(`%c Change Scene => Controls: ${sceneName}`, "background:#673ab7;color:#fff");
 		}
 		this.context.Scene.attach(this.cameraHelper);
 	};
@@ -327,19 +271,13 @@ class Controls {
 	}
 
 	SetupVR(settings) {
-		var vrCamera = this.context.Renderer.instance.xr.getCamera(
-			this.context.Camera.instance
-		);
+		var vrCamera = this.context.Renderer.instance.xr.getCamera(this.context.Camera.instance);
 		//this.cameraHelper.add(vrCamera);
 		var _position = vrCamera.position.clone();
 		this.cameraHelper.position.set(_position.x, _position.y, _position.z);
 		this.ui_cameraHelper.position.set(_position.x, _position.y, _position.z);
 		this.ui3D_cameraHelper.position.set(_position.x, _position.y, _position.z);
-		this.controller_cameraHelper.position.set(
-			_position.x,
-			_position.y,
-			_position.z
-		);
+		this.controller_cameraHelper.position.set(_position.x, _position.y, _position.z);
 		this.cameraHelper.attach(this.context.Camera.instance);
 
 		this.Desktop.SetEnabled(false);
@@ -407,11 +345,7 @@ class Controls {
 
 			// Put your drawing code here
 
-			if (
-				this.ActiveObjects.length > 0 &&
-				this.interactivityEnabled &&
-				!this.clickDisabled
-			) {
+			if (this.ActiveObjects.length > 0 && this.interactivityEnabled && !this.clickDisabled) {
 				this.FindIntersection();
 			}
 		}
@@ -532,14 +466,10 @@ class Controls {
 	GetCameraPosition() {
 		switch (this.currentControls) {
 			case "VR":
-				return this.context.Renderer.instance.xr.getCamera(
-					this.context.Camera.instance
-				).position;
+				return this.context.Renderer.instance.xr.getCamera(this.context.Camera.instance).position;
 				break;
 			case "AR":
-				return this.context.Renderer.instance.xr.getCamera(
-					this.context.Camera.instance
-				).position;
+				return this.context.Renderer.instance.xr.getCamera(this.context.Camera.instance).position;
 				// return this.context.Camera.instance.position;//this.cameraHelper.position;
 				break;
 			default:
@@ -572,10 +502,7 @@ class Controls {
 
 			if (!intersection[0]) return closestIntersection;
 
-			if (
-				!closestIntersection ||
-				intersection[0].distance < closestIntersection.distance
-			) {
+			if (!closestIntersection || intersection[0].distance < closestIntersection.distance) {
 				intersection[0].object = obj;
 
 				return intersection[0];
@@ -611,11 +538,7 @@ class Controls {
 		}
 
 		//Intersect
-		if (
-			intersect &&
-			intersect.object.isClickEnabled &&
-			intersect.object.visible
-		) {
+		if (intersect && intersect.object.isClickEnabled && intersect.object.visible) {
 			if (this.selectState || this.squeezeState) {
 				// Component.setState internally call component.set with the options you defined in component.setupState
 				intersect.object.setState("selected");
@@ -629,11 +552,7 @@ class Controls {
 		}
 
 		//Intersect
-		if (
-			intersect2 &&
-			intersect2.object.isClickEnabled &&
-			intersect2.object.visible
-		) {
+		if (intersect2 && intersect2.object.isClickEnabled && intersect2.object.visible) {
 			if (this.selectState2 || this.squeezeState2) {
 				// Component.setState internally call component.set with the options you defined in component.setupState
 				intersect2.object.setState("selected");
@@ -648,11 +567,7 @@ class Controls {
 
 		//Deselect every activeObject that is not the current intersect object
 		this.ActiveObjects.forEach((obj) => {
-			if (
-				(!intersect || obj !== intersect.object) &&
-				(!intersect2 || obj !== intersect2.object) &&
-				(obj.isUI || obj.isClickEnabled)
-			) {
+			if ((!intersect || obj !== intersect.object) && (!intersect2 || obj !== intersect2.object) && (obj.isUI || obj.isClickEnabled)) {
 				// Component.setState internally call component.set with the options you defined in component.setupState
 				obj.setState("idle", obj);
 				this.context.Events.dispatchEvent("ui-idle", null);
