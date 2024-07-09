@@ -100,6 +100,7 @@ function Transition( sceneA, sceneB ) {
       this.sceneB.render( delta, true );
       renderer.setRenderTarget( null );
       renderer.clear();
+
       renderer.render( this.scene, this.cameraOrtho );
     }
   }

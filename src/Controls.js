@@ -25,14 +25,14 @@ class Controls {
 		this.currentControls = "Desktop";
 		//Binding
 		this.SetupMouse = this.SetupMouse.bind(this);
-		this.getClientBox = this.getClientBox.bind(this);
+		this.Resize = this.Resize.bind(this);
 		this.mousedown = this.mousedown.bind(this);
 		this.mousemove = this.mousemove.bind(this);
 		this.mouseup = this.mouseup.bind(this);
 		this.touchstart = this.touchstart.bind(this);
 		this.touchend = this.touchend.bind(this);
 
-		this.size = this.getClientBox();
+		this.size = this.Resize("Constructor");
 		this.Desktop = new DesktopControls(context.Camera.instance, context.Renderer.instance.domElement, this.context);
 		this.Update = this.Update.bind(this);
 		this.SetPosition = this.SetPosition.bind(this);
@@ -184,11 +184,12 @@ class Controls {
 		this.context.Renderer.instance.domElement.addEventListener("pointerup", this.mouseup, false);
 		this.context.Renderer.instance.domElement.addEventListener("touchstart", this.touchstart, false);
 		this.context.Renderer.instance.domElement.addEventListener("touchend", this.touchend, false);
-		this.context.Renderer.instance.domElement.addEventListener("resize", this.getClientBox, false);
+		this.context.Renderer.instance.domElement.addEventListener("resize", () => this.Resize("domElement"), false);
 
-		window.addEventListener("resize", this.getClientBox);
+		// Resize domElement
+		window.addEventListener("resize", () => this.Resize("window"));
 	}
-	getClientBox = () => {
+	Resize = (byElement) => {
 		var size = {
 			width: this.context.Renderer.instance.domElement.width * this.context.Renderer.factor,
 			height: this.context.Renderer.instance.domElement.height * this.context.Renderer.factor,
@@ -197,6 +198,9 @@ class Controls {
 		};
 
 		this.size = size;
+
+		console.log("=> Resize Triggered by Renderer Instance", this.size, byElement);
+
 		return size;
 	};
 	GetCurrentXRMode() {
@@ -210,7 +214,7 @@ class Controls {
 	};
 	mousemove(e) {
 		if (this.size.width === 0 || this.size.height === 0) {
-			this.getClientBox();
+			this.Resize("mousemove");
 		}
 
 		this.mouse.x = ((e.clientX - this.context.Renderer.instance.domElement.parentElement.offsetLeft) / this.size.width) * 2 - 1;
@@ -231,7 +235,7 @@ class Controls {
 		if (this.currentControls == "Desktop") {
 			this.Desktop.ChangeToDefault();
 
-			this.getClientBox();
+			this.Resize("changeToDefault");
 		}
 	};
 	ChangeToStatic = () => {
@@ -240,7 +244,7 @@ class Controls {
 		}
 		if (this.currentControls == "Desktop") {
 			this.Desktop.ChangeToStatic();
-			this.getClientBox();
+			this.Resize("ChangeToStatic");
 		}
 	};
 	ChangeScene = (sceneName) => {
@@ -252,7 +256,7 @@ class Controls {
 	SetActiveCamera = (camera, sceneName) => {
 		this.Desktop.SetActiveCamera(camera);
 
-		this.getClientBox();
+		this.Resize("SetActiveCamera");
 	};
 
 	SetupDesktop(settings) {
@@ -267,7 +271,7 @@ class Controls {
 			this[this.currentControls].instance.update();
 		}
 		this.context.Renderer.instance.setClearColor(0xffffff, 0);
-		this.getClientBox();
+		this.Resize("SetupDesktop");
 	}
 
 	SetupVR(settings) {
@@ -296,7 +300,7 @@ class Controls {
 			this.controller_cameraHelper.add(controller);
 		});
 
-		this.getClientBox();
+		this.Resize("SetupVR");
 	}
 
 	SetupAR() {
@@ -314,7 +318,7 @@ class Controls {
 		// this.cameraHelper.attach(controller);
 		// });
 
-		this.getClientBox();
+		this.Resize("SetupAR");
 	}
 
 	GetVRButton() {

@@ -38,7 +38,7 @@ import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
 
 // import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 // import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { BokehPass } from "three/examples/jsm/postprocessing/BokehPass.js";
+// import { BokehPass } from "three/examples/jsm/postprocessing/BokehPass.js";
 // import { SavePass } from 'three/examples/jsm/postprocessing/SavePass.js';
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 
@@ -86,7 +86,7 @@ class Renderer {
 
 		this.context = context;
 		this.clock = new Clock();
-		this.factor = iOSSafari ? 2 : 1;
+		this.factor = iOSSafari ? 2 : 0.8;
 
 		this.postprocessing = {
 			enabled: !iOSSafari,
@@ -192,18 +192,18 @@ class Renderer {
 		this.postprocessing.fxaaPass = new ShaderPass(FXAAShader);
 		this.postprocessing.fxaaPass.renderToScreen = true;
 
-		this.postprocessing.fxaaPass.material.uniforms["resolution"].value.x = 1 / (this.size.x * this.dpr);
-		this.postprocessing.fxaaPass.material.uniforms["resolution"].value.y = 1 / (this.size.y * this.dpr);
+		this.postprocessing.fxaaPass.material.uniforms["resolution"].value.x = 1 / (this.size.x / this.dpr);
+		this.postprocessing.fxaaPass.material.uniforms["resolution"].value.y = 1 / (this.size.y / this.dpr);
 
 		/** Bokeh */
-		this.postprocessing.bokehPass = new BokehPass(this.context.Scene, this.context.Camera.instance, {
-			aperture: 0,
-			focus: 37,
-			maxblur: 0.004,
+		// this.postprocessing.bokehPass = new BokehPass(this.context.Scene, this.context.Camera.instance, {
+		// 	aperture: 0,
+		// 	focus: 37,
+		// 	maxblur: 0.104,
 
-			width: this.size.x,
-			height: this.size.y,
-		});
+		// 	width: this.size.x,
+		// 	height: this.size.y,
+		// });
 
 		//this.postprocessing.bokehPass.renderToScreen = true;
 
@@ -368,7 +368,7 @@ class Renderer {
 		this.size.x = this.size.x / this.factor;
 		this.size.y = this.size.y / this.factor;
 
-		this.dpr = 1; // window.devicePixelRatio ? window.devicePixelRatio : 1;
+		this.dpr = window.devicePixelRatio ? window.devicePixelRatio : 1;
 		this.instance.setSize(this.size.x, this.size.y);
 
 		this.context.Camera.instance.aspect = this.size.x / this.size.y;

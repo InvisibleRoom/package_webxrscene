@@ -7,7 +7,7 @@
 
 import { Vector2, Vector3, Quaternion, EventDispatcher } from "three";
 
-var CustomTrackballControls = function(object, domElement) {
+var CustomTrackballControls = function (object, domElement) {
 	var _this = this;
 	var STATE = { NONE: -1, ROTATE: 0, ZOOM: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_ZOOM_PAN: 4 };
 
@@ -72,7 +72,7 @@ var CustomTrackballControls = function(object, domElement) {
 
 	// methods
 
-	this.handleResize = function() {
+	this.handleResize = function () {
 		if (this.domElement === document) {
 			this.screen.left = 0;
 			this.screen.top = 0;
@@ -90,13 +90,13 @@ var CustomTrackballControls = function(object, domElement) {
 		}
 	};
 
-	this.handleEvent = function(event) {
+	this.handleEvent = function (event) {
 		if (typeof this[event.type] == "function") {
 			this[event.type](event);
 		}
 	};
 
-	var getMouseOnScreen = (function() {
+	var getMouseOnScreen = (function () {
 		var vector = new Vector2();
 
 		return function getMouseOnScreen(pageX, pageY) {
@@ -106,7 +106,7 @@ var CustomTrackballControls = function(object, domElement) {
 		};
 	})();
 
-	var getMouseOnCircle = (function() {
+	var getMouseOnCircle = (function () {
 		var vector = new Vector2();
 
 		return function getMouseOnCircle(pageX, pageY) {
@@ -119,7 +119,7 @@ var CustomTrackballControls = function(object, domElement) {
 		};
 	})();
 
-	this.rotateCamera = (function() {
+	this.rotateCamera = (function () {
 		var axis = new Vector3(),
 			quaternion = new Quaternion(),
 			eyeDirection = new Vector3(),
@@ -167,7 +167,7 @@ var CustomTrackballControls = function(object, domElement) {
 		};
 	})();
 
-	this.zoomCamera = function() {
+	this.zoomCamera = function () {
 		var factor;
 
 		if (_state === STATE.TOUCH_ZOOM_PAN) {
@@ -189,7 +189,7 @@ var CustomTrackballControls = function(object, domElement) {
 		}
 	};
 
-	this.panCamera = (function() {
+	this.panCamera = (function () {
 		var mouseChange = new Vector2(),
 			objectUp = new Vector3(),
 			pan = new Vector3();
@@ -200,10 +200,7 @@ var CustomTrackballControls = function(object, domElement) {
 			if (mouseChange.lengthSq()) {
 				mouseChange.multiplyScalar(_eye.length() * _this.panSpeed);
 
-				pan
-					.copy(_eye)
-					.cross(_this.object.up)
-					.setLength(mouseChange.x);
+				pan.copy(_eye).cross(_this.object.up).setLength(mouseChange.x);
 				pan.add(objectUp.copy(_this.object.up).setLength(mouseChange.y));
 
 				_this.object.position.add(pan);
@@ -218,7 +215,7 @@ var CustomTrackballControls = function(object, domElement) {
 		};
 	})();
 
-	this.checkDistances = function() {
+	this.checkDistances = function () {
 		if (!_this.noZoom || !_this.noPan) {
 			if (_eye.lengthSq() > _this.maxDistance * _this.maxDistance) {
 				_this.object.position.addVectors(_this.target, _eye.setLength(_this.maxDistance));
@@ -232,7 +229,7 @@ var CustomTrackballControls = function(object, domElement) {
 		}
 	};
 
-	this.update = function() {
+	this.update = function () {
 		_eye.subVectors(_this.object.position, _this.target);
 
 		if (!_this.noRotate) {
@@ -262,7 +259,7 @@ var CustomTrackballControls = function(object, domElement) {
 		_this.object.up.copy(new Vector3(0, 1, 0));
 	};
 
-	this.reset = function() {
+	this.reset = function () {
 		_state = STATE.NONE;
 		_prevState = STATE.NONE;
 
@@ -370,8 +367,9 @@ var CustomTrackballControls = function(object, domElement) {
 
 		//_state = STATE.NONE;
 
-		document.removeEventListener("mousemove", mousemove);
-		document.removeEventListener("mouseup", mouseup);
+		//Disable mousemove
+		// document.removeEventListener("mousemove", mousemove);
+		// document.removeEventListener("mouseup", mouseup);
 		_this.dispatchEvent(endEvent);
 	}
 
@@ -478,7 +476,7 @@ var CustomTrackballControls = function(object, domElement) {
 		event.preventDefault();
 	}
 
-	this.dispose = function() {
+	this.dispose = function () {
 		this.domElement.removeEventListener("contextmenu", contextmenu, false);
 		this.domElement.removeEventListener("pointerdown", mousedown, false);
 		//this.domElement.removeEventListener( 'wheel', mousewheel, false );
@@ -487,8 +485,8 @@ var CustomTrackballControls = function(object, domElement) {
 		// this.domElement.removeEventListener( 'touchend', touchend, false );
 		// this.domElement.removeEventListener( 'touchmove', touchmove, false );
 
-		document.removeEventListener("pointermove", mousemove, false);
-		document.removeEventListener("pointerup", mouseup, false);
+		this.domElement.removeEventListener("pointermove", mousemove, false);
+		this.domElement.removeEventListener("pointerup", mouseup, false);
 
 		window.removeEventListener("keydown", keydown, false);
 		window.removeEventListener("keyup", keyup, false);
@@ -510,8 +508,8 @@ var CustomTrackballControls = function(object, domElement) {
 	// force an update at start
 	this.update();
 
-	document.addEventListener("pointermove", mousemove, false);
-	document.addEventListener("pointerup", mouseup, false);
+	this.domElement.addEventListener("pointermove", mousemove, false);
+	this.domElement.addEventListener("pointerup", mouseup, false);
 };
 
 CustomTrackballControls.prototype = Object.create(EventDispatcher.prototype);
