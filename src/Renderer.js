@@ -89,7 +89,7 @@ class Renderer {
 		this.factor = iOSSafari ? 2 : 0.8;
 
 		this.postprocessing = {
-			enabled: !iOSSafari,
+			enabled: true,
 			initialized: false,
 		};
 
@@ -98,9 +98,9 @@ class Renderer {
 		this.context.Events.registerEvent("OnAnimationLoopUIGraphics");
 
 		let renderOptions = {
-			autoClear: iOS,
-			antialias: !iOSSafari,
-			logarithmicDepthBuffer: !iOS,
+			autoClear: true, // iOS,
+			antialias: true, // !iOSSafari,
+			logarithmicDepthBuffer: true, // !iOS,
 		};
 
 		if (!iOS) {
