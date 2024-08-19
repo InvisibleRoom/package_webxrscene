@@ -7,10 +7,9 @@ class Camera {
 	constructor(context) {
 		this.context = context;
 
-		console.log("=> Context from Camera", context.Renderer.domElement);
 		const rect = context.Renderer.domElement.getBoundingClientRect();
 
-		this.instance = new PerspectiveCamera(55, rect.width / rect.height, 0.01, 200);
+		this.instance = new PerspectiveCamera(20, rect.width / rect.height, 0.01, 1000);
 
 		this.context.Events.addEventListener("OnMount", this.AddEvents);
 

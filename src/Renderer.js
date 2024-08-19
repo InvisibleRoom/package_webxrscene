@@ -29,8 +29,8 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 
-// import { LUTPass } from 'three/examples/jsm/postprocessing/LUTPass.js';
-// import { LUTCubeLoader } from 'three/examples/jsm/loaders/LUTCubeLoader.js';
+// import { LUTPass } from "three/examples/jsm/postprocessing/LUTPass.js";
+// import { LUTCubeLoader } from "three/examples/jsm/loaders/LUTCubeLoader.js";
 
 import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
 
@@ -38,7 +38,7 @@ import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
 
 // import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 // import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-// import { BokehPass } from "three/examples/jsm/postprocessing/BokehPass.js";
+//import { BokehPass } from "three/examples/jsm/postprocessing/BokehPass.js";
 // import { SavePass } from 'three/examples/jsm/postprocessing/SavePass.js';
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 
@@ -53,29 +53,29 @@ import mainConfig from "../../../main.config";
 // import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
 // import { DoFShader } from './DoFShader.js';
 
-// import lut1 from './luts/Bourbon 64.CUBE';
-// import lut2 from './luts/Remy 24.CUBE';
-// import lut3 from './luts/Cubicle 99.CUBE';
-// import lut4 from './luts/Chemical 168.CUBE';
-// import lut5 from './luts/Clayton 33.CUBE';
-// import lut6 from './luts/Emulation.CUBE';
-// import lut7 from './luts/roadrunner.CUBE';
-// import lut8 from './luts/luminous.CUBE';
-// import lut9 from './luts/WarmTeal.CUBE';
-// import lut10 from './luts/Optima.CUBE';
+// import lut1 from "./luts/Bourbon 64.CUBE";
+// import lut2 from "./luts/Remy 24.CUBE";
+// import lut3 from "./luts/Cubicle 99.CUBE";
+// import lut4 from "./luts/Chemical 168.CUBE";
+// import lut5 from "./luts/Clayton 33.CUBE";
+// import lut6 from "./luts/Emulation.CUBE";
+// import lut7 from "./luts/roadrunner.CUBE";
+// import lut8 from "./luts/luminous.CUBE";
+// import lut9 from "./luts/WarmTeal.CUBE";
+// import lut10 from "./luts/Optima.CUBE";
 
 // const luts = {
-//   'Chemical': lut2,
-// 	'Clayton': lut3,
-// 	'Cubicle': lut4,
-// 	'Remy': lut5,
-//   'Bourbon': lut1,
-//   'Luminous': lut8,
-//   'WarmTeal': lut9,
-//   'Optima': lut10,
-//   'Emulation' : lut6,
-//   'RoadRunner': lut7,
-// }
+// 	Chemical: lut2,
+// 	Clayton: lut3,
+// 	Cubicle: lut4,
+// 	Remy: lut5,
+// 	Bourbon: lut1,
+// 	Luminous: lut8,
+// 	WarmTeal: lut9,
+// 	Optima: lut10,
+// 	Emulation: lut6,
+// 	RoadRunner: lut7,
+// };
 
 class Renderer {
 	constructor(id = "app", context) {
@@ -115,6 +115,7 @@ class Renderer {
 			console.logwarn("couldn't find an element with id:" + id);
 		}
 
+		this.instance.domElement.style.transition = "all .5s";
 		this.domElement.appendChild(this.instance.domElement);
 
 		const rect = this.domElement.getBoundingClientRect();
@@ -205,57 +206,57 @@ class Renderer {
 		// 	height: this.size.y,
 		// });
 
-		//this.postprocessing.bokehPass.renderToScreen = true;
+		// this.postprocessing.bokehPass.renderToScreen = true;
 
 		// this.postprocessing.renderScene = new RenderPass( this.context.Scene, this.context.Camera.instance  );
 
 		/** Bloom */
 		var bloomSettings = {
-			threshold: 0.75,
-			strength: 0.15,
-			radius: 0.05,
+			threshold: 0.9,
+			strength: 0.1,
+			radius: 0.03,
 		};
 
-		//this.postprocessing.bloomPass = new UnrealBloomPass( new THREE.Vector2( this.size.x ,this.size.y ), bloomSettings.strength, bloomSettings.radius, bloomSettings.threshold );
+		//this.postprocessing.bloomPass = new UnrealBloomPass(new Vector2(this.size.x, this.size.y), bloomSettings.strength, bloomSettings.radius, bloomSettings.threshold);
 
 		/** LUTs */
 		// this.postprocessing.lutPass = new LUTPass();
 		// this.lutMap = {
-		//   'Chemical': null,
-		//   'Clayton': null,
-		//   'Cubicle': null,
-		//   'Remy': null,
-		//   'Bourbon': null,
-		//   'RoadRunner': null,
-		//   'Luminous': null,
-		//   'WarmTeal': null,
-		//   'Optima': null,
-		//   'Emulation' : null,
-		// }
+		// 	Chemical: null,
+		// 	Clayton: null,
+		// 	Cubicle: null,
+		// 	Remy: null,
+		// 	Bourbon: null,
+		// 	RoadRunner: null,
+		// 	Luminous: null,
+		// 	WarmTeal: null,
+		// 	Optima: null,
+		// 	Emulation: null,
+		// };
 
-		// Object.keys(luts).map((lMap)=>{
+		// Object.keys(luts).map((lMap) => {
+		// 	new LUTCubeLoader().load(luts[lMap], (result) => {
+		// 		this.lutMap[lMap] = result.texture;
 
-		//   new LUTCubeLoader().load( luts[lMap] , ( result ) => {
-
-		//     this.lutMap[ lMap ] = result.texture;
-
-		//     this.postprocessing.lutPass.lut = result.texture;
-		//   });
-		// })
+		// 		this.postprocessing.lutPass.lut = result.texture;
+		// 	});
+		// });
 
 		// this.postprocessing.lutPass.enabled = true;
 		// this.postprocessing.lutPass.intensity = 1;
 
+		// this.postprocessing.composer.addPass(this.postprocessing.lutPass);
+
 		this.postprocessing.composer.addPass(this.postprocessing.RenderPass);
-		//this.postprocessing.composer.addPass( this.postprocessing.lutPass );
-		// this.postprocessing.composer.addPass( this.postprocessing.bloomPass );
+		//this.postprocessing.composer.addPass(this.postprocessing.bloomPass);
 
 		this.postprocessing.gammaCorrectionPass = new ShaderPass(GammaCorrectionShader);
+
 		this.postprocessing.composer.addPass(this.postprocessing.gammaCorrectionPass);
 
-		//this.postprocessing.composer.addPass(this.postprocessing.bokehPass);
 		this.postprocessing.composer.addPass(this.postprocessing.fxaaPass);
 
+		//this.postprocessing.composer.addPass(this.postprocessing.bokehPass);
 		this.postprocessing.initialized = true;
 	};
 

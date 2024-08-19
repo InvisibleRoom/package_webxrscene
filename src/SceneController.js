@@ -93,8 +93,6 @@ class SceneController {
 			return false;
 		}
 
-		console.log("SetActiveScene ", sceneName);
-
 		this.context.Scene = this.scenes[sceneName];
 		this.activeScene = this.scenes[sceneName].name;
 
@@ -151,7 +149,9 @@ class SceneController {
 
 		this.context.Renderer.instance.shadowMap.needsUpdate = true;
 
-		console.log("SetActiveScene => SceneController", sceneName);
+		console.log("SetActiveScene", sceneName);
+
+		// console.log("SetActiveScene => SceneController", sceneName);
 	};
 }
 

@@ -199,7 +199,7 @@ class Controls {
 
 		this.size = size;
 
-		console.log("=> Resize Triggered by Renderer Instance", this.size, byElement);
+		//console.log("=> Resize Triggered by Renderer Instance", this.size, byElement);
 
 		return size;
 	};

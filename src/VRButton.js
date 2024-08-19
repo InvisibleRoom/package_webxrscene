@@ -1,7 +1,11 @@
 var VRButton = {
-	createButton: async function(renderer, context) {
+	createButton: async function (renderer, context) {
 		var button = document.createElement("button");
 		button.id = "VRButton";
+		button.className = "default-button";
+		var buttonText = document.createElement("div");
+		buttonText.classList.add("text-container");
+		button.appendChild(buttonText);
 		var currentSession = null;
 
 		const onSessionStarted = async (session) => {
@@ -35,7 +39,7 @@ var VRButton = {
 		function onSessionEnded(/*event*/) {
 			currentSession.removeEventListener("end", onSessionEnded);
 
-			button.textContent = "In VR starten";
+			buttonText.textContent = "In VR starten";
 
 			currentSession = null;
 
@@ -46,9 +50,9 @@ var VRButton = {
 			});
 		}
 
-		button.textContent = "In VR starten";
+		buttonText.textContent = "In VR starten";
 
-		button.onclick = function() {
+		button.onclick = function () {
 			if (currentSession === null) {
 				// WebXR's requestReferenceSpace only works if the corresponding feature
 				// was requested at session creation time. For simplicity, just ask for
@@ -73,13 +77,13 @@ var VRButton = {
 
 		function showEnterVR(/*device*/) {
 			console.log("button");
-			button.textContent = "In VR starten";
+			buttonText.textContent = "In VR starten";
 		}
 
 		function showWebXRNotFound() {
 			disableButton();
 
-			button.textContent = "VR nicht unterstützt";
+			buttonText.textContent = "VR nicht unterstützt";
 		}
 
 		if ("xr" in navigator) {
