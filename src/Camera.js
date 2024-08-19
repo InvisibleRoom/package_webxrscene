@@ -9,7 +9,7 @@ class Camera {
 
 		const rect = context.Renderer.domElement.getBoundingClientRect();
 
-		this.instance = new PerspectiveCamera(20, rect.width / rect.height, 0.01, 1000);
+		this.instance = new PerspectiveCamera(50, rect.width / rect.height, 0.01, 400);
 
 		this.context.Events.addEventListener("OnMount", this.AddEvents);
 

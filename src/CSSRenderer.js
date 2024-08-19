@@ -62,7 +62,7 @@ class CSSRenderer {
 		this.instance.domElement.style.width = size.width + "px";
 		this.instance.domElement.style.height = size.height + "px";
 
-		//this.instance.domElement.style.perspective =parseFloat(this.instance.domElement.style.perspective) * this.dpr;
+		// this.instance.domElement.style.perspective = parseFloat(this.instance.domElement.style.perspective) * this.dpr;
 		if (Object.prototype.hasOwnProperty.call(this.context, "Camera")) {
 			this.context.Camera.instance.aspect = this.size.x / this.size.y;
 			this.context.Camera.instance.updateProjectionMatrix();

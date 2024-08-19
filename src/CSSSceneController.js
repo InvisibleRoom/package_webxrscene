@@ -28,6 +28,7 @@ class CSSSceneController {
 		}
 
 		model.userData.scene = sceneName;
+
 		model.scale.divideScalar(this.context.CSSRenderer.scaleFactor);
 		this.sceneModels[sceneName].push(model);
 		this.activeScene.add(model);
