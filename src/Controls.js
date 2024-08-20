@@ -508,7 +508,12 @@ class Controls {
 		while (obj.parent) {
 			obj = obj.parent;
 		}
-		return obj instanceof Scene ? obj : null;
+
+		if (obj.isCustomUI) {
+			console.log("=========================> findScene ", obj);
+		}
+
+		return obj instanceof Scene || (obj.type == "Object3D" && obj.isUI) ? obj : null;
 	}
 	/**Interactive Objects */
 	Raycast() {
@@ -516,8 +521,7 @@ class Controls {
 			let sceneName = this.findScene(obj)?.name;
 			let currentScene = this.context.Scene.name;
 
-			if (!obj.isClickEnabled || !obj.visible || sceneName != currentScene) {
-				// console.log("Wird nicht berücksichtigt als ActiveObject", sceneName, currentScene);
+			if (!obj.isClickEnabled || !obj.visible || (sceneName != currentScene && obj.type != "Object3D" && this.currentControls != "VR" && sceneName != "UI")) {
 				return closestIntersection;
 			}
 
