@@ -2,7 +2,7 @@ import { DesktopControls } from "./DesktopControls";
 import { VRController } from "./VRController";
 import { VRButton } from "./VRButton.js";
 import { ARButton } from "./ARButton.js";
-import { Raycaster, Group, Vector2, Vector3 } from "three";
+import { Raycaster, Group, Vector2, Vector3, Scene } from "three";
 
 import mainConfig from "../../../main.config";
 
@@ -328,6 +328,13 @@ class Controls {
 	GetARButton() {
 		return this.arButton;
 	}
+
+	AddActiveObject(obj) {
+		// console.log("AddActiveObject", obj, obj.parent, obj.userData);
+
+		this.ActiveObjects.push(obj);
+	}
+
 	Update(t) {
 		if (this.gamepad != null) {
 			this.context.Events.dispatchEvent("gamepad", this.gamepad);
@@ -351,6 +358,8 @@ class Controls {
 
 			if (this.ActiveObjects.length > 0 && this.interactivityEnabled && !this.clickDisabled) {
 				this.FindIntersection();
+
+				// console.log("Uodate Controls FindIntersection");
 			}
 		}
 
@@ -494,11 +503,21 @@ class Controls {
 			}
 		}
 	}
-
+	findScene(object) {
+		let obj = object;
+		while (obj.parent) {
+			obj = obj.parent;
+		}
+		return obj instanceof Scene ? obj : null;
+	}
 	/**Interactive Objects */
 	Raycast() {
 		return this.ActiveObjects.reduce((closestIntersection, obj) => {
-			if (!obj.isClickEnabled || !obj.visible) {
+			let sceneName = this.findScene(obj)?.name;
+			let currentScene = this.context.Scene.name;
+
+			if (!obj.isClickEnabled || !obj.visible || sceneName != currentScene) {
+				// console.log("Wird nicht berücksichtigt als ActiveObject", sceneName, currentScene);
 				return closestIntersection;
 			}
 
