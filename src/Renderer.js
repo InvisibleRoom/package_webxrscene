@@ -127,7 +127,7 @@ class Renderer {
 		this.instance.shadowMap.enabled = true;
 		this.instance.shadowMap.autoUpdate = false;
 		this.instance.shadowMap.type = PCFSoftShadowMap;
-		this.instance.toneMapping = LinearToneMapping; // CustomToneMapping;// ReinhardToneMapping;//CustomToneMapping;//ReinhardToneMapping;//LinearToneMapping;//THREE.
+		this.instance.toneMapping = LinearToneMapping;
 		this.instance.toneMappingExposure = 0.8;
 		this.instance.outputEncoding = sRGBEncoding;
 
