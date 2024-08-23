@@ -149,7 +149,7 @@ class SceneController {
 
 		this.context.Renderer.instance.shadowMap.needsUpdate = true;
 
-		console.log("SetActiveScene", sceneName);
+		//console.log("SetActiveScene", sceneName);
 
 		// console.log("SetActiveScene => SceneController", sceneName);
 	};

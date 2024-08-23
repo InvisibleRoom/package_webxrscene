@@ -79,17 +79,18 @@ import mainConfig from "../../../main.config";
 
 class Renderer {
 	constructor(id = "app", context) {
-		//const ua = window.navigator.userAgent;
-		const iOS = false; // !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
-		//const webkit = !!ua.match(/WebKit/i);
-		const iOSSafari = false; //iOS && webkit && !ua.match(/CriOS/i);
+		const ua = window.navigator.userAgent;
+
+		const isIPad = !!ua.match(/iPad/i);
+
+		console.log("context", context);
 
 		this.context = context;
 		this.clock = new Clock();
-		this.factor = iOSSafari ? 2 : 0.8;
+		this.factor = 0.8; //isIPad ? 1.2 : 0.8;
 
 		this.postprocessing = {
-			enabled: true,
+			enabled: !isIPad,
 			initialized: false,
 		};
 
@@ -98,12 +99,12 @@ class Renderer {
 		this.context.Events.registerEvent("OnAnimationLoopUIGraphics");
 
 		let renderOptions = {
-			autoClear: true, // iOS,
-			antialias: true, // !iOSSafari,
-			logarithmicDepthBuffer: true, // !iOS,
+			autoClear: true,
+			antialias: true,
+			logarithmicDepthBuffer: true,
 		};
 
-		if (!iOS) {
+		if (!isIPad) {
 			renderOptions.powerPreference = "high-performance";
 		}
 
@@ -122,7 +123,7 @@ class Renderer {
 
 		this.instance.physicallyCorrectLights = true;
 		this.size = new Vector2(rect.width, rect.height);
-		this.dpr = window.devicePixelRatio && !iOS ? window.devicePixelRatio : 1;
+		this.dpr = window.devicePixelRatio ? window.devicePixelRatio : 1;
 
 		this.instance.shadowMap.enabled = true;
 		this.instance.shadowMap.autoUpdate = false;
@@ -144,21 +145,6 @@ class Renderer {
 		this.ui_delta = Date.now();
 		this.ui_then = Date.now();
 		this.ui_interval = 1000 / 28;
-
-		// Set CustomToneMapping to Uncharted2
-		// source: http://filmicworlds.com/blog/filmic-tonemapping-operators/
-		// ShaderChunk.tonemapping_pars_fragment = ShaderChunk.tonemapping_pars_fragment.replace(
-		//   'vec3 CustomToneMapping( vec3 color ) { return color; }',
-		//   `#define Uncharted2Helper( x ) max( ( ( x * ( 0.15 * x + 0.10 * 0.50 ) + 0.20 * 0.02 ) / ( x * ( 0.15 * x + 0.50 ) + 0.20 * 0.30 ) ) - 0.02 / 0.30, vec3( 0.0 ) )
-		//   float toneMappingWhitePoint = 1.0;
-		//   vec3 CustomToneMapping( vec3 color ) {
-		//     color *= toneMappingExposure;
-		//     return saturate( Uncharted2Helper( color ) / Uncharted2Helper( vec3( toneMappingWhitePoint ) ) );
-		//   }`
-		// );
-
-		//MASK
-		// this.instance.localClippingEnabled = true;
 
 		this.instance.colorManagement = true;
 		this.instance.outputEncoding = LinearEncoding;
@@ -182,7 +168,7 @@ class Renderer {
 	InitComposer = () => {
 		this.effects = true;
 
-		console.log("%c Postprocessing enabled ", "background:#2196f3; color:#fff;");
+		// console.log("%c Postprocessing enabled ", "background:#2196f3; color:#fff;");
 
 		this.postprocessing.composer = new EffectComposer(this.instance);
 
