@@ -21,7 +21,7 @@ var VRButton = {
 			renderer.xr.setSession(session);
 			button.textContent = "EXIT VR";
 
-			console.log("callbackSession", button.callbackSession);
+			//console.log("callbackSession", button.callbackSession);
 
 			if (button.callbackSession) {
 				button.callbackSession();
@@ -76,7 +76,6 @@ var VRButton = {
 		}
 
 		function showEnterVR(/*device*/) {
-			console.log("button");
 			buttonText.textContent = "In VR starten";
 		}
 

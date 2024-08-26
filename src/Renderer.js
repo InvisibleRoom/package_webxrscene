@@ -83,8 +83,6 @@ class Renderer {
 
 		const isIPad = !!ua.match(/iPad/i);
 
-		console.log("context", context);
-
 		this.context = context;
 		this.clock = new Clock();
 		this.factor = 0.8; //isIPad ? 1.2 : 0.8;
